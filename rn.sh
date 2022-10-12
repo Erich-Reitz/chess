@@ -1,0 +1,1 @@
+make sfml && ./sfml-app
