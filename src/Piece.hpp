@@ -1,5 +1,4 @@
-#ifndef PIECE_HPP
-#define PIECE_HPP
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -8,27 +7,23 @@
 #include <string>
 #include <stdio.h>
 
-#include "Position.cpp"
+#include "Position.hpp"
 
-class Piece {
+class Piece : public sf::Drawable {
   public:
-    Piece() {};
+    Piece(); 
     virtual ~Piece() {};
-    virtual std::string getName() {
-        return name;
-    }
-    virtual char getChar() {
-        return name[0];
-    }
-    virtual bool isWhite() {
-        return white;
-    }
-    virtual bool canMove(Position cur, Position dest) {
-        return true;
-    }
+    virtual bool canMove(Position cur, Position dest) const = 0; 
+
+    void draw(sf::RenderTarget &window) const ; 
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+    void setXPos(float x); 
+    void setYPos(float y);
+    void setPosition(float x, float y); 
+    void setRadius(float radius); 
+    
   private:
     bool white;
-    std::string name;
+    sf::CircleShape piece; 
 };
-
-#endif

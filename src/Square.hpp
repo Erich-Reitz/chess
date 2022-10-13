@@ -1,6 +1,8 @@
-#ifndef SQUARE_HPP
-#define SQUARE_HPP
 #pragma once
+
+#include <functional>
+#include <iostream>
+#include <optional>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -12,8 +14,7 @@
 class Square : public sf::Drawable {
   public:
     Square() {};
-    Square(bool white);
-    Square(bool white, Piece *piece);
+    Square(bool white, float xPos, float yPos, float size, std::optional<Piece*> piece);
     Piece *getPiece();
     
     void draw(sf::RenderTarget &window) const ; 
@@ -21,10 +22,7 @@ class Square : public sf::Drawable {
 
   protected:
     bool white;
-    bool occupied = false;
   private:
-    Piece *piece;
+    std::optional<Piece*> piece;
     sf::RectangleShape shape; 
 };
-
-#endif

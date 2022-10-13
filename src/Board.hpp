@@ -1,5 +1,4 @@
-#ifndef BOARD_HPP
-#define BOARD_HPP
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -16,5 +15,3 @@ class Board : public sf::Drawable {
   protected:
     std::vector<std::vector<Square*>> board; 
 };
-
-#endif

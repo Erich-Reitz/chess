@@ -20,7 +20,6 @@ void World::HandleInput(sf::Vector2i mousePos) {
 
 
 void World::Render(sf::RenderWindow& window) {
-    std::cout << "World::Render" << std::endl;
     window.draw(gameBoard);
 }
 
