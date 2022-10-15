@@ -32,7 +32,7 @@ check:
 format:
 	-astyle --style=google ${SRC_DIR}/*.cpp ${SRC_DIR}/pieces/*.*pp -xe
 	
-	rm -f ${SRC_DIR}/*.orig ${SRC_DIR}/objects/*.orig
+	rm -f ${SRC_DIR}/*.orig ${SRC_DIR}/pieces/*.orig
 
 run: $(PROGRAM_NAME)
 	./$(PROGRAM_NAME)
