@@ -16,17 +16,22 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(
-  unitTests
-  unitTests.cpp
+  UnitTests
+  rookTests.cpp
+  bishopTests.cpp
+  queenTests.cpp
+  kingTests.cpp
+  knightTests.cpp
+  pawnTests.cpp
   ../src/Piece
   ../src/Piece.cpp
   )
 target_link_libraries(
-  unitTests
+  UnitTests
   gtest_main
   sfml-graphics sfml-window sfml-system 
 )
 
 include(GoogleTest)
-gtest_discover_tests(unitTests)
+gtest_discover_tests(UnitTests)
 

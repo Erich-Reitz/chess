@@ -4,7 +4,7 @@
 
 #include "Board.hpp"
 #include "Piece.hpp"
-#include "Rook.hpp"
+#include "pieces/Rook.hpp"
 
 std::optional<Piece*> inital_piece(int x, int y) {
     // if (x == 0 || x == 7) {

@@ -7,13 +7,13 @@
 #include <string>
 #include <stdio.h>
 
-#include "Piece.hpp"
+#include "../Piece.hpp"
 
 class Rook : public Piece {
   public:
-    Rook(); 
-    ~Rook(); 
-    
-    bool canMove(int originalx, int originaly, int destx, int desty) const override; 
+    Rook();
+    ~Rook();
+
+    bool canMove(int originalx, int originaly, int destx, int desty) const override;
 };
 
