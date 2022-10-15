@@ -7,13 +7,12 @@
 #include <string>
 #include <stdio.h>
 
-#include "Position.hpp"
 
 class Piece : public sf::Drawable {
   public:
-    Piece(); 
-    virtual ~Piece() {};
-    virtual bool canMove(Position cur, Position dest) const = 0; 
+    Piece() ; 
+    virtual ~Piece(); 
+    virtual bool canMove(int original_x, int original_y, int dest_x, int dest_y) const = 0; 
 
     void draw(sf::RenderTarget &window) const ; 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

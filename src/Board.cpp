@@ -31,7 +31,6 @@ std::optional<Piece*> inital_piece(int x, int y) {
     //     return new Pawn(x == 1)
     // }
     if ((x == 0 || x == 7) && y == 0) {
-        std::cout << "return new Rook()" << std::endl;
         return new Rook();
     }
     return {};

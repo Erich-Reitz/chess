@@ -9,11 +9,11 @@
 
 #include "Piece.hpp"
 
-class Rook : public Piece {
+class Bishop : public Piece {
   public:
-    Rook(); 
-    ~Rook(); 
+    Bishop(); 
+    ~Bishop(); 
     
-    bool canMove(int originalx, int originaly, int destx, int desty) const override; 
+    bool canMove(int original_x, int original_y, int dest_x, int dest_y) const override; 
 };
 

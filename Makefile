@@ -8,7 +8,6 @@ LDFLAGS := -lsfml-graphics -lsfml-window -lsfml-system
 
 PROGRAM_NAME := sfml-app
 
-
 all: $(OBJ_FILES)
 	$(CXX) $(CXXFLAGS) $(OBJ_FILES) $(LDFLAGS) -o $(PROGRAM_NAME)
 
@@ -38,6 +37,9 @@ format:
 run: $(PROGRAM_NAME)
 	./$(PROGRAM_NAME)
 	
+.PHONY: test 
+test: 
+	@cd test && ./test.sh
 
 echo:
 	echo ${SRC_FILES}

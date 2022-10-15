@@ -7,8 +7,10 @@
 
 #include "Piece.hpp"
 
+
+Piece::~Piece() {}; 
+
 Piece::Piece() {
-    std::cout << "piece init called" << std::endl;
     piece = sf::CircleShape() ;
     piece.setFillColor(sf::Color::Green);
 };
