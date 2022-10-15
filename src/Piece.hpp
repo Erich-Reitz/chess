@@ -11,6 +11,7 @@
 class Piece : public sf::Drawable {
   public:
     Piece() ; 
+    Piece(bool white) ; 
     virtual ~Piece(); 
     virtual bool canMove(int original_x, int original_y, int dest_x, int dest_y) const = 0; 
 
@@ -20,7 +21,10 @@ class Piece : public sf::Drawable {
     void setXPos(float x); 
     void setYPos(float y);
     void setPosition(float x, float y); 
-    void setRadius(float radius); 
+    void setRadius(float radius);
+
+    bool isWhite() const; 
+    bool isBlack() const; 
     
   private:
     bool white;

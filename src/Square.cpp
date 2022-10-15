@@ -9,7 +9,7 @@ Square::Square(bool white, float xPos, float yPos, float size, std::optional<Pie
     this->shape.setSize(sf::Vector2f(size, size));
     this->shape.setPosition(sf::Vector2f(xPos, yPos));
     if (white) {
-        this->shape.setFillColor(sf::Color::White);
+        this->shape.setFillColor(sf::Color::Yellow);
     } else {
         this->shape.setFillColor(sf::Color::Magenta);
     }

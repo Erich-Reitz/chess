@@ -2,7 +2,7 @@ CXX := g++
 CXXFLAGS := -Wall -Wextra -pedantic-errors -Wno-unused-parameter  -g -std=c++17 -o3
 SRC_DIR = ./src
 OBJ_DIR := ./obj
-SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard ${SRC_DIR}/objects/*.cpp)  
+SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard ${SRC_DIR}/pieces/*.cpp)  
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 LDFLAGS := -lsfml-graphics -lsfml-window -lsfml-system 
 

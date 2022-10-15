@@ -12,6 +12,7 @@
 class Queen : public Piece {
   public:
     Queen();
+    Queen(bool white);
     ~Queen();
 
     bool canMove(int original_x, int original_y, int dest_x, int dest_y) const override;

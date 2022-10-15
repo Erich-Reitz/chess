@@ -8,30 +8,48 @@ namespace {
         EXPECT_EQ(king->canMove(0, 0, 0, 0), false); 
     }
 
-    TEST(test_king, TestCanMoveHorizontally) {
+    TEST(test_king, TestCanMoveOneToTheRight) {
         King *king = new King(); 
-        EXPECT_EQ(king->canMove(0, 0, 7, 0), true); 
-        EXPECT_EQ(king->canMove(7, 0, 0, 0), true); 
+        EXPECT_EQ(king->canMove(0, 0, 1, 0), true);
     }
 
-    TEST(test_king, TestCanMoveVertically) {
+    TEST(test_king, TestCanMoveOneUp) {
         King *king = new King(); 
-        EXPECT_EQ(king->canMove(0, 7, 0, 0), true); 
-        EXPECT_EQ(king->canMove(7, 0, 7, 7), true); 
+        EXPECT_EQ(king->canMove(0, 0, 0, 1), true);
     }
 
-    TEST(test_king, TestCanMoveDiagonallyUpRight) {
+    TEST(test_king, TestCanMoveOneDown) {
         King *king = new King(); 
-        EXPECT_EQ(king->canMove(0, 0, 1, 1), true); 
+        EXPECT_EQ(king->canMove(0, 1, 0, 0), true);
     }
 
-    TEST(test_king, TestCanMoveDiagonallyDownLeft) {
+    TEST(test_king, TestCanMoveOneLeft) {
         King *king = new King(); 
-        EXPECT_EQ(king->canMove(1, 1, 0, 0), true); 
+        EXPECT_EQ(king->canMove(1, 0, 0, 0), true);
     }
 
-    TEST(test_king, TestKingCannotMoveInvalidMove) {
+    TEST(test_king, TestCanMoveOneUpRight) {
         King *king = new King(); 
-        EXPECT_EQ(king->canMove(0, 0, 2, 3), false); 
+        EXPECT_EQ(king->canMove(0, 0, 1, 1), true);
+    }
+
+    TEST(test_king, TestCanMoveOneUpLeft) {
+        King *king = new King(); 
+        EXPECT_EQ(king->canMove(1, 0, 0, 1), true);
+    }
+
+    TEST(test_king, TestCanMoveOneDownRight) {
+        King *king = new King(); 
+        EXPECT_EQ(king->canMove(0, 1, 1, 0), true);
+    }
+
+    TEST(test_king, TestCanMoveOneDownLeft) {
+        King *king = new King(); 
+        EXPECT_EQ(king->canMove(1, 1, 0, 0), true);
+    }
+
+    TEST(test_king, TestKingCannotMoveTwoDiagonally) {
+        King *king = new King(); 
+        EXPECT_EQ(king->canMove(0, 0, 2, 2), false);
     }
 }

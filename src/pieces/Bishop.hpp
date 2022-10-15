@@ -12,6 +12,7 @@
 class Bishop : public Piece {
   public:
     Bishop();
+    Bishop(bool white);
     ~Bishop();
 
     bool canMove(int original_x, int original_y, int dest_x, int dest_y) const override;

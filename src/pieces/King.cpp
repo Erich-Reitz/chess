@@ -2,6 +2,8 @@
 
 King::King() {};
 
+King::King(bool white) : Piece(white) {};
+
 King::~King() {};
 
 bool King::canMove(int original_x, int original_y, int dest_x, int dest_y) const {

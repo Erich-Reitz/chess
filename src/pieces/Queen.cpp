@@ -2,6 +2,8 @@
 
 Queen::Queen() {};
 
+Queen::Queen(bool white) : Piece(white) {};
+
 Queen::~Queen() {};
 
 bool Queen::canMove(int original_x, int original_y, int dest_x, int dest_y) const {

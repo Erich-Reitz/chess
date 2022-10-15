@@ -12,6 +12,7 @@
 class Rook : public Piece {
   public:
     Rook();
+    Rook(bool white);
     ~Rook();
 
     bool canMove(int originalx, int originaly, int destx, int desty) const override;

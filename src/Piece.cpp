@@ -10,6 +10,16 @@
 
 Piece::~Piece() {};
 
+Piece::Piece(bool _white)  {
+    piece = sf::CircleShape() ;
+    this->white = _white;
+    if (_white) {
+        piece.setFillColor(sf::Color::White);
+    } else {
+        piece.setFillColor(sf::Color::Black);
+    }
+}
+
 Piece::Piece() {
     piece = sf::CircleShape() ;
     piece.setFillColor(sf::Color::Green);
@@ -37,6 +47,15 @@ void Piece::draw(sf::RenderTarget &window) const {};
 void Piece::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(piece);
 }
+
+bool Piece::isWhite() const {
+    return this->white;
+}
+
+bool Piece::isBlack() const {
+    return !this->white;
+}
+
 
 
 

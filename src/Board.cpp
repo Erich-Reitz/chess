@@ -5,33 +5,37 @@
 #include "Board.hpp"
 #include "Piece.hpp"
 #include "pieces/Rook.hpp"
+#include "pieces/Bishop.hpp"
+#include "pieces/Knight.hpp"
+#include "pieces/Queen.hpp"
+#include "pieces/King.hpp"
+#include "pieces/Pawn.hpp"
+
 
 std::optional<Piece*> inital_piece(int x, int y) {
-    // if (x == 0 || x == 7) {
-    //     switch (y) {
-    //     case 0:
-    //         return new Rook(false) ;
-    //     case 1:
-    //         return new Knight(false) ;
-    //     case 2:
-    //         return new Bishop(false);
-    //     case 3:
-    //         return new Queen(false) ;
-    //     case 4:
-    //         return new King(false) ;
-    //     case 5:
-    //         return new Bishop(false);
-    //     case 6:
-    //         return new Knight(false) ;
-    //     case 7:
-    //         return new Rook(false) ;
-    //     }
-    // }
-    // if (x == 1 || x == 6) {
-    //     return new Pawn(x == 1)
-    // }
-    if ((x == 0 || x == 7) && y == 0) {
-        return new Rook();
+    bool isWhitePiece = y == 6 || y == 7;
+    if (y == 0 || y == 7) {
+        switch (x) {
+        case 0:
+            return new Rook(isWhitePiece) ;
+        case 1:
+            return new Knight(isWhitePiece) ;
+        case 2:
+            return new Bishop(isWhitePiece);
+        case 3:
+            return new Queen(isWhitePiece) ;
+        case 4:
+            return new King(isWhitePiece) ;
+        case 5:
+            return new Bishop(isWhitePiece);
+        case 6:
+            return new Knight(isWhitePiece) ;
+        case 7:
+            return new Rook(isWhitePiece) ;
+        }
+    }
+    if (y == 1 || y == 6) {
+        return new Pawn(isWhitePiece);
     }
     return {};
 }

@@ -2,6 +2,8 @@
 
 Bishop::Bishop() {};
 
+Bishop::Bishop(bool white) : Piece(white) {};
+
 Bishop::~Bishop() {};
 
 bool Bishop::canMove(int original_x, int original_y, int dest_x, int dest_y) const {
