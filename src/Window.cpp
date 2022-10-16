@@ -116,16 +116,10 @@ sf::Window *Window::GetWindow() {
 
 
 
-sf::Vector2i Window::convertToGameCoordinates(sf::Vector2i mousePos) {
-    sf::Vector2f viewSize = GetView()->getSize();
-    float xGameCordsCenterScreen = GetView()->getCenter().x;
-    float yGameCordsCenterScreen = GetView()->getCenter().y;
-    sf::Vector2f scale = getScaleOfWindowSizeToView();
-    float halfViewSizeY = viewSize.y / 2.f;
-    float halfViewSizeX = viewSize.x / 2.f;
-    float xGameCordsCenter = (mousePos.x - halfViewSizeX) * scale.x + xGameCordsCenterScreen;
-    float yGameCordsCenter = (mousePos.y - halfViewSizeY ) * scale.y + yGameCordsCenterScreen;
-    return sf::Vector2i(xGameCordsCenter, yGameCordsCenter);
+sf::Vector2f Window::convertToGameCoordinates(sf::Vector2i mousePos) {
+    // convert it to world coordinates
+    sf::Vector2f worldPos = m_window.mapPixelToCoords(mousePos);
+    return worldPos;
 }
 
 sf::Vector2f Window::getScaleOfWindowSizeToView() {

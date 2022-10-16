@@ -16,7 +16,7 @@ void Game::HandleInput() {
     unsigned int maximumViewSize = m_window.getMaximumViewSize();
     // get mouse position in absolute coordinates
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window.GetWindow());
-    sf::Vector2i gameCoordinates = m_window.convertToGameCoordinates(mousePos);
+    sf::Vector2f gameCoordinates = m_window.convertToGameCoordinates(mousePos);
     m_world.HandleInput(gameCoordinates);
 }
 

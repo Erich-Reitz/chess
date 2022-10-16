@@ -59,3 +59,14 @@ void Board::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     }
 }
 
+std::optional<Piece*> Board::selectedPiece(sf::Vector2f mousePos) const {
+    for (const auto &row : board) {
+        for (const auto &square : row) {
+            if (square->getBoundaries().contains(mousePos)) {
+                return square->getPiece();
+            }
+        }
+    }
+    return {};
+}
+

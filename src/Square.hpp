@@ -15,10 +15,12 @@ class Square : public sf::Drawable {
   public:
     Square() {};
     Square(bool white, float xPos, float yPos, float size, std::optional<Piece*> piece);
-    Piece *getPiece();
+    std::optional<Piece*> getPiece() const; 
     
     void draw(sf::RenderTarget &window) const ; 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override; 
+
+    sf::FloatRect getBoundaries() const;
 
   protected:
     bool white;

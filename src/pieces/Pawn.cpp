@@ -23,10 +23,11 @@ bool Pawn::canMove(int original_x, int original_y, int dest_x, int dest_y) const
         return true;
     }
     if (absYDifference == 2 && (absXDifference == 0 || absXDifference == 1 )) {
-        if (this->hasMoved == true) {
+        if (this->hasMoved() == true) {
             return false;
         }
         return true;
     }
     return false;
 }
+

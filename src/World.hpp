@@ -17,7 +17,7 @@ public:
     void Render(sf::RenderWindow& l_window);
 
     void HandleInput() ;
-    void HandleInput(sf::Vector2i mousePos);
+    void HandleInput(sf::Vector2f mousePos);
 
 private:
     // updates

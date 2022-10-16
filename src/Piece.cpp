@@ -56,6 +56,13 @@ bool Piece::isBlack() const {
     return !this->white;
 }
 
+bool Piece::hasMoved() const {
+    return this->has_self_moved;
+}
 
+
+void Piece::setMoved(bool hasMoved) {
+    this->has_self_moved = hasMoved;
+}
 
 

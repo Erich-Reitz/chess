@@ -15,7 +15,12 @@ World::World(sf::Vector2f l_size) {
 
 World::~World() {}
 
-void World::HandleInput(sf::Vector2i mousePos) {
+void World::HandleInput(sf::Vector2f mousePos) {
+    if (gameBoard.selectedPiece(mousePos).has_value()) {
+        std::cout << "piece selected" << std::endl;
+    } else {
+        std::cout << "no piece selected" << std::endl;
+    }
 }
 
 

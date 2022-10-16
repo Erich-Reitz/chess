@@ -25,8 +25,11 @@ class Piece : public sf::Drawable {
 
     bool isWhite() const; 
     bool isBlack() const; 
-    
+
+    bool hasMoved() const; 
+    void setMoved(bool hasMoved) ; 
   private:
+    bool has_self_moved = false;
     bool white;
     sf::CircleShape piece; 
 };

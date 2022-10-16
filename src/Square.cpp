@@ -27,14 +27,14 @@ void Square::draw(sf::RenderTarget& target) const {
     }
 }
 
+sf::FloatRect Square::getBoundaries() const {
+    return shape.getGlobalBounds();
+}
+
+std::optional<Piece*> Square::getPiece() const {
+    return this->piece;
+}
+
 
 // unused
 void Square::draw(sf::RenderTarget& target, sf::RenderStates states) const {}
-
-// Piece* Square::getPiece() {
-//     if (this->occupied == false) {
-//         throw UnoccupiedSquare();
-//     } else {
-//         return this->piece;
-//     }
-// }
