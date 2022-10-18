@@ -21,5 +21,4 @@ class Game{
             sf::Time m_elapsed = sf::Time(sf::seconds(1/60.f));
             World m_world;
             sf::Shader m_blur;
-            void renderHud(); 
         };

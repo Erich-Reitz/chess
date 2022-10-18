@@ -15,12 +15,21 @@ World::World(sf::Vector2f l_size) {
 
 World::~World() {}
 
-void World::HandleInput(sf::Vector2f mousePos) {
-    if (gameBoard.selectedPiece(mousePos).has_value()) {
-        std::cout << "piece selected" << std::endl;
-    } else {
-        std::cout << "no piece selected" << std::endl;
+void World::handleMouseDownWithSelectedPiece() {}
+
+void World::HandleInput(sf::Vector2f mousePos, bool mouseDown, bool mouseUp) {
+    std::optional<Square*> pressedSquare;
+    if (mouseDown) {
+        pressedSquare = gameBoard.selectedSquare(mousePos);
+        if (!pressedSquare.has_value()) {
+            return;
+        }
+        std::optional<Piece*> piece = pressedSquare.value()->getPiece();
+        if (!piece.has_value()) {
+            return;
+        }
     }
+    return;
 }
 
 
@@ -31,4 +40,7 @@ void World::Render(sf::RenderWindow& window) {
 void World::update(sf::Time deltaTime) {
 }
 
+bool World::havePieceSelected() const {
+    return this->pieceSelected.has_value();
+}
 

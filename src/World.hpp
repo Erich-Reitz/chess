@@ -1,6 +1,7 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include <optional>
 
+#include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -17,13 +18,18 @@ public:
     void Render(sf::RenderWindow& l_window);
 
     void HandleInput() ;
-    void HandleInput(sf::Vector2f mousePos);
+    void HandleInput(sf::Vector2f mousePos, bool mouseDown, bool mouseUp);
 
 private:
+    bool havePieceSelected() const; 
+    void handleMouseDownWithSelectedPiece(); 
+    void handleMouseDownWithNoSelectedPiece(); 
     // updates
     Board gameBoard; 
     sf::Vector2f m_viewCenter;
     sf::Vector2f m_viewSize;
+    std::optional<Square*> selectedSquare = {}; 
+    std::optional<Piece*> pieceSelected = {}; 
 
 
 };

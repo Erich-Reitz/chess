@@ -31,13 +31,14 @@ void Window::Create() {
     m_window.setFramerateLimit(60);
     m_window.setView(m_view);
     // m_window.setVerticalSyncEnabled(true);
-    // m_window.setMouseCursorVisible(true);
+    m_window.setMouseCursorVisible(true);
 }
 void Window::Destroy() {
     m_window.close();
 }
 
 void Window::Update() {
+    lastMouseDownState = m_down;
     sf::Event event {};
     while (
         m_window.pollEvent(event)
@@ -49,6 +50,12 @@ void Window::Update() {
             if (event.key.code == sf::Keyboard::Escape) {
                 m_isDone = true;
             }
+        }
+        if (!m_down && event.type == sf::Event::MouseButtonPressed) {
+            m_down = true;
+        }
+        if (m_down && event.type == sf::Event::MouseButtonReleased) {
+            m_down = false;
         }
         if (event.type == sf::Event::Resized) {
             m_view.setSize(event.size.width, event.size.height);
@@ -128,5 +135,17 @@ sf::Vector2f Window::getScaleOfWindowSizeToView() {
     return sf::Vector2f(windowSize.x / viewSize.x, windowSize.y / viewSize.y);
 }
 
+bool Window::isMouseUp() {
+    if (m_down == false && lastMouseDownState == true) {
+        return true;
+    }
+    return false;
+}
 
+bool Window::isMouseDown() {
+    if (m_down == true && lastMouseDownState == false) {
+        return true;
+    }
+    return false;
+}
 

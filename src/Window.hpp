@@ -26,6 +26,8 @@ class Window{
         sf::Vector2f convertToGameCoordinates(sf::Vector2i viewportCoordinates);
         sf::RenderWindow m_window;
         sf::Vector2f getScaleOfWindowSizeToView();
+        bool isMouseUp(); 
+        bool isMouseDown(); 
         private:
             void Setup(const std::string& l_title, const sf::Vector2u& l_size);
             
@@ -42,7 +44,8 @@ class Window{
             int minimumViewSize = 100;
             int maximumViewSize = 3000;
 
-
+            bool m_down = false; 
+            bool lastMouseDownState = false;
             float historicalZoom = 1;
             
 };

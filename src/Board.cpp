@@ -70,3 +70,14 @@ std::optional<Piece*> Board::selectedPiece(sf::Vector2f mousePos) const {
     return {};
 }
 
+std::optional<Square*> Board::selectedSquare(sf::Vector2f mousePos) const {
+    for (const auto &row : board) {
+        for (const auto &square : row) {
+            if (square->getBoundaries().contains(mousePos)) {
+                return square;
+            }
+        }
+    }
+    return {};
+}
+

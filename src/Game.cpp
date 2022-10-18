@@ -11,13 +11,9 @@
 Game::Game(): m_window( std::string("CHESS GAME"), sf::Vector2u(1920, 1080) ) {
 }
 void Game::HandleInput() {
-    unsigned int currentViewPortSize = m_window.GetWindowSize().x;
-    unsigned int minimumViewSize = m_window.getMinimumViewSize();
-    unsigned int maximumViewSize = m_window.getMaximumViewSize();
-    // get mouse position in absolute coordinates
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window.GetWindow());
     sf::Vector2f gameCoordinates = m_window.convertToGameCoordinates(mousePos);
-    m_world.HandleInput(gameCoordinates);
+    m_world.HandleInput(gameCoordinates, m_window.isMouseDown(), m_window.isMouseUp());
 }
 
 //destructor
