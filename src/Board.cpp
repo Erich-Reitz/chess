@@ -99,12 +99,21 @@ bool Board::canMove(Position current, Position destination) const {
     return true;
 }
 
+std::optional<Piece*> Board::pieceAtPosition(Position pos) const {
+    return this->board[pos.row][pos.col]->getPiece();
+}
+
+void Board::removePieceFromSquare(Position coordinates) {
+    this->board[coordinates.row][coordinates.col]->removePiece();
+}
+
+
 void Board::move(Position current, Position destination) {
-    Square *currentSquare = this->board[current.row][current.col] ;
-    if (!currentSquare->getPiece().has_value()) {
+    std::optional<Piece*> userSelectedPiece = pieceAtPosition(current);
+    if (!userSelectedPiece.has_value()) {
         throw CurrentSquareDoesNotContainPiece();
     }
-    Piece *movingPiece = currentSquare->getPiece().value();
-    currentSquare->removePiece();
-    this->board[destination.row][destination.col]->setPiece({movingPiece});
+    Piece *movingPiece = userSelectedPiece.value();
+    removePieceFromSquare(current);
+    this->board[destination.row][destination.col]->setPiece(movingPiece);
 }

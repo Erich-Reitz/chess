@@ -30,7 +30,7 @@ private:
     Board gameBoard; 
     sf::Vector2f m_viewCenter;
     sf::Vector2f m_viewSize;
-    std::optional<Position> previouslySelectedCoordinates;
+    std::optional<Position> previouslySelectedCoordinatesOfPiece;
 
 
 };

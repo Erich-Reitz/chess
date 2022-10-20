@@ -62,6 +62,9 @@ bool Piece::hasMoved() const {
     return this->has_self_moved;
 }
 
+void Piece::setColor(sf::Color color) {
+    this->piece.setFillColor(color);
+}
 
 void Piece::setMoved(bool hasMoved) {
     this->has_self_moved = hasMoved;

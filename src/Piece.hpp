@@ -22,6 +22,7 @@ class Piece : public sf::Drawable {
     void setYPos(float y);
     void setPosition(float x, float y); 
     void setRadius(float radius);
+    void setColor(sf::Color color); 
 
     bool isWhite() const; 
     bool isBlack() const; 

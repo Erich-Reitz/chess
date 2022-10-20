@@ -53,10 +53,5 @@ Position Square::getPosition() const {
     return position;
 }
 
-
-
-
 // unused
-void Square::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    std::cout << "other draw" << std::endl;
-}
+void Square::draw(sf::RenderTarget& target, sf::RenderStates states) const {}
