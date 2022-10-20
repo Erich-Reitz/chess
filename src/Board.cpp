@@ -11,6 +11,8 @@
 #include "pieces/King.hpp"
 #include "pieces/Pawn.hpp"
 
+#include "chess_exceptions.cpp"
+
 
 std::optional<Piece*> inital_piece(int x, int y) {
     bool isWhitePiece = y == 6 || y == 7;
@@ -46,7 +48,8 @@ Board::Board() {
     int inital_y_offset = 300;
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
-            board[row][col] = new Square((row+col) % 2 == 0, inital_x_offset + col * 50, inital_y_offset + row * 50, 50.f, inital_piece(col, row));
+            bool isWhite = (row + col) % 2 == 0;
+            board[row][col] = new Square(isWhite, row, col, inital_x_offset + col * 50, inital_y_offset + row * 50, 50.f, inital_piece(col, row));
         }
     }
 }
@@ -81,3 +84,27 @@ std::optional<Square*> Board::selectedSquare(sf::Vector2f mousePos) const {
     return {};
 }
 
+std::optional<Position> Board::getRowAndColOfMouse(sf::Vector2f mousePos) const {
+    for (const auto &row : board) {
+        for (const auto &square : row) {
+            if (square->getBoundaries().contains(mousePos)) {
+                return square->getPosition();
+            }
+        }
+    }
+    return {};
+}
+
+bool Board::canMove(Position current, Position destination) const {
+    return true;
+}
+
+void Board::move(Position current, Position destination) {
+    Square *currentSquare = this->board[current.row][current.col] ;
+    if (!currentSquare->getPiece().has_value()) {
+        throw CurrentSquareDoesNotContainPiece();
+    }
+    Piece *movingPiece = currentSquare->getPiece().value();
+    currentSquare->removePiece();
+    this->board[destination.row][destination.col]->setPiece({movingPiece});
+}

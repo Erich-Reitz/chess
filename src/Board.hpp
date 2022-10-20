@@ -14,7 +14,11 @@ class Board : public sf::Drawable {
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     std::optional<Piece*> selectedPiece(sf::Vector2f mousePos) const;
-    std::optional<Square*> selectedSquare(sf::Vector2f mousePos) const; 
+    std::optional<Square*> selectedSquare(sf::Vector2f mousePos) const;
+    bool canMove(Position current, Position destination) const;
+    void move(Position current, Position destination); 
+    
+    std::optional<Position> getRowAndColOfMouse(sf::Vector2f mousePos) const;
   protected:
     std::vector<std::vector<Square*>> board; 
 };

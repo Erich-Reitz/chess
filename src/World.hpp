@@ -21,15 +21,16 @@ public:
     void HandleInput(sf::Vector2f mousePos, bool mouseDown, bool mouseUp);
 
 private:
-    bool havePieceSelected() const; 
-    void handleMouseDownWithSelectedPiece(); 
-    void handleMouseDownWithNoSelectedPiece(); 
+    bool havePreviouslySelectedCoordinates() const; 
+    void handleMouseDownWithSelectedPiece(Position pressedSquare); 
+    void handleMouseDownWithNoSelectedPiece(Position pressedSquare);
+    void handleMouseDown(sf::Vector2f mousePos); 
+    void handleMouseDownOnSquare(Position pressedCoordinates); 
     // updates
     Board gameBoard; 
     sf::Vector2f m_viewCenter;
     sf::Vector2f m_viewSize;
-    std::optional<Square*> selectedSquare = {}; 
-    std::optional<Piece*> pieceSelected = {}; 
+    std::optional<Position> previouslySelectedCoordinates;
 
 
 };

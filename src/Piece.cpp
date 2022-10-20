@@ -42,7 +42,9 @@ void Piece::setRadius(float radius) {
     piece.setRadius(radius);
 }
 
-void Piece::draw(sf::RenderTarget &window) const {};
+void Piece::draw(sf::RenderTarget &target) const {
+    target.draw(piece);
+};
 
 void Piece::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(piece);

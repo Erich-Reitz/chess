@@ -9,22 +9,29 @@
 
 
 #include "Piece.hpp"
+#include "Position.hpp"
 
 
 class Square : public sf::Drawable {
   public:
     Square() {};
-    Square(bool white, float xPos, float yPos, float size, std::optional<Piece*> piece);
+    Square(bool white, int row, int col, float xPos, float yPos, float size, std::optional<Piece*> piece);
     std::optional<Piece*> getPiece() const; 
-    
+
+    void setPiece(Piece* _piece); 
+    void removePiece(); 
+
     void draw(sf::RenderTarget &window) const ; 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override; 
 
     sf::FloatRect getBoundaries() const;
+    Position getPosition() const; 
 
   protected:
     bool white;
   private:
     std::optional<Piece*> piece;
-    sf::RectangleShape shape; 
+    sf::RectangleShape shape;
+
+    Position position; 
 };

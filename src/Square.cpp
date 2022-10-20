@@ -2,9 +2,10 @@
 #include <iostream>
 
 #include "Square.hpp"
+#include "Position.hpp"
 
-
-Square::Square(bool white, float xPos, float yPos, float size, std::optional<Piece*> _piece ) {
+Square::Square(bool white, int _row, int _col, float xPos, float yPos, float size, std::optional<Piece*> _piece ) {
+    this->position = Position(_row, _col);
     this->white = white;
     this->shape.setSize(sf::Vector2f(size, size));
     this->shape.setPosition(sf::Vector2f(xPos, yPos));
@@ -35,6 +36,27 @@ std::optional<Piece*> Square::getPiece() const {
     return this->piece;
 }
 
+void Square::setPiece(Piece *piece) {
+    this->piece = {piece};
+    sf::Vector2f currentSquarePosition = this->shape.getPosition();
+    if (!this->piece.has_value()) {
+        throw ("Unexpected no value");
+    }
+    this->piece.value()->setPosition(currentSquarePosition.x, currentSquarePosition.y);
+}
+
+void Square::removePiece() {
+    this->piece = std::nullopt;
+}
+
+Position Square::getPosition() const {
+    return position;
+}
+
+
+
 
 // unused
-void Square::draw(sf::RenderTarget& target, sf::RenderStates states) const {}
+void Square::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    std::cout << "other draw" << std::endl;
+}
