@@ -30,7 +30,7 @@ check:
 	cppcheck --enable=all . 2> err.txt
 
 format:
-	-astyle --style=google ${SRC_DIR}/*.cpp ${SRC_DIR}/pieces/*.*pp -xe
+	-astyle --style=google ${SRC_DIR}/*.*pp ${SRC_DIR}/pieces/*.*pp -xe
 	
 	rm -f ${SRC_DIR}/*.orig ${SRC_DIR}/pieces/*.orig
 
