@@ -32,11 +32,7 @@ void World::handleMouseDownWithSelectedPiece(Position pressedSquare) {
         }
         // erase previsouly selected
         Piece  *piece = gameBoard.pieceAtPosition(pressedSquare).value();
-        if (piece->isWhite()) {
-            piece->setColor(sf::Color::White);
-        } else {
-            piece->setColor(sf::Color::Black);
-        }
+        piece->setOriginalColor();
         previouslySelectedCoordinatesOfPiece = {};
         return;
     }
@@ -58,8 +54,7 @@ void World::handleMouseDownOnSquare(Position pressedSquare) {
 }
 
 void World::handleMouseDown(sf::Vector2f mousePos) {
-    std::optional<Position> pressedPosition;
-    pressedPosition = gameBoard.getRowAndColOfMouse(mousePos);
+    std::optional<Position> pressedPosition  = gameBoard.getRowAndColOfMouse(mousePos);
     if (!pressedPosition.has_value()) {
         return;
     }

@@ -71,3 +71,12 @@ void Piece::setMoved(bool hasMoved) {
 }
 
 
+void Piece::setOriginalColor() {
+    if (isWhite()) {
+        setColor(sf::Color::White);
+    } else {
+        setColor(sf::Color::Black);
+    }
+}
+
+
