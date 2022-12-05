@@ -16,16 +16,16 @@ class Square : public sf::Drawable {
   public:
     Square() {};
     Square(bool white, int row, int col, float xPos, float yPos, float size, std::optional<Piece*> piece);
-    std::optional<Piece*> getPiece() const; 
+    std::optional<Piece*> getPiece() const;
 
-    void setPiece(Piece* _piece); 
-    void removePiece(); 
+    void setPiece(Piece* _piece);
+    void removePiece();
 
-    void draw(sf::RenderTarget &window) const ; 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override; 
+    void draw(sf::RenderTarget &window) const ;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     sf::FloatRect getBoundaries() const;
-    Position getPosition() const; 
+    Position getPosition() const;
 
   protected:
     bool white;
@@ -33,5 +33,5 @@ class Square : public sf::Drawable {
     std::optional<Piece*> piece;
     sf::RectangleShape shape;
 
-    Position position; 
+    Position position;
 };

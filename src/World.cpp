@@ -23,18 +23,25 @@ World::~World() {}
 
 
 void World::handleMouseDownWithSelectedPiece(Position pressedSquare) {
-    if (gameBoard.canMove(previouslySelectedCoordinatesOfPiece.value(), pressedSquare)) {
-        //
-        try {
-            gameBoard.move(previouslySelectedCoordinatesOfPiece.value(), pressedSquare);
-        } catch (CurrentSquareDoesNotContainPiece &e) {
-            std::cerr << e.what() << std::endl;
-        }
-        // erase previsouly selected
-        Piece  *piece = gameBoard.pieceAtPosition(pressedSquare).value();
-        piece->setOriginalColor();
-        previouslySelectedCoordinatesOfPiece = {};
+    if (gameBoard.hasPieceAtPosition(pressedSquare)) {
+        Piece  *previouslySelectedPiece = gameBoard.pieceAtPosition(this->previouslySelectedCoordinatesOfPiece.value()).value();
+        previouslySelectedPiece->setOriginalColor();
+        handleMouseDownWithNoSelectedPiece(pressedSquare) ;
         return;
+    } else {
+        if (gameBoard.canMove(previouslySelectedCoordinatesOfPiece.value(), pressedSquare)) {
+            //
+            try {
+                gameBoard.move(previouslySelectedCoordinatesOfPiece.value(), pressedSquare);
+            } catch (CurrentSquareDoesNotContainPiece &e) {
+                std::cerr << e.what() << std::endl;
+            }
+            // erase previsouly selected
+            Piece  *piece = gameBoard.pieceAtPosition(pressedSquare).value();
+            piece->setOriginalColor();
+            previouslySelectedCoordinatesOfPiece = {};
+            return;
+        }
     }
 }
 

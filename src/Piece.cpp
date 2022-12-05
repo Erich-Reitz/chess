@@ -11,8 +11,8 @@
 Piece::~Piece() {};
 
 Piece::Piece(bool _white)  {
-    piece = sf::CircleShape() ;
     this->white = _white;
+    this->type == PieceType::unkown;
     if (_white) {
         piece.setFillColor(sf::Color::White);
     } else {
@@ -20,10 +20,6 @@ Piece::Piece(bool _white)  {
     }
 }
 
-Piece::Piece() {
-    piece = sf::CircleShape() ;
-    piece.setFillColor(sf::Color::Green);
-};
 
 void Piece::setXPos(float x) {
     float currentY = piece.getPosition().y ;

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <functional>
 #include <iostream>
 #include <optional>
@@ -43,7 +44,6 @@ std::optional<Piece*> inital_piece(int x, int y) {
 }
 
 Board::Board() {
-    board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
     int inital_x_offset = 720;
     int inital_y_offset = 300;
     for (int row = 0; row < 8; row++) {
@@ -95,13 +95,36 @@ std::optional<Position> Board::getRowAndColOfMouse(sf::Vector2f mousePos) const 
     return {};
 }
 
+std::vector<Position> Board::generateAllValidMovesForPiece(Position current, Piece *piece) const {
+    std::vector<Position> validMoves;
+    return validMoves;
+}
+
 bool Board::canMove(Position current, Position destination) const {
+    // // check if it's possible for the piece
+    // std::optional<Piece*> optPiece = pieceAtPosition(current);
+    // if (!optPiece.has_value()) {
+    //     throw CurrentSquareDoesNotContainPiece();
+    // }
+    // // generate all moves for piece off a piece::type variable
+    // Piece *piece = optPiece.value();
+    // std::vector<Position> allValidPositions = generateAllValidMovesForPiece(current, piece);
+    // if (std::find(allValidPositions.begin(), allValidPositions.end(), destination) != allValidPositions.end()) {
+    //     return true;
+    // }
+    // return false;
     return true;
 }
 
 std::optional<Piece*> Board::pieceAtPosition(Position pos) const {
     return this->board[pos.row][pos.col]->getPiece();
 }
+
+
+bool Board::hasPieceAtPosition(Position pos) const {
+    return this->board[pos.row][pos.col]->getPiece().has_value();
+}
+
 
 void Board::removePieceFromSquare(Position coordinates) {
     this->board[coordinates.row][coordinates.col]->removePiece();

@@ -12,7 +12,6 @@
 
 class Piece : public sf::Drawable {
   public:
-    Piece() ;
     Piece(bool white) ;
     virtual ~Piece();
     virtual bool canMove(int original_x, int original_y, int dest_x, int dest_y) const = 0;
@@ -36,6 +35,6 @@ class Piece : public sf::Drawable {
   private:
     bool has_self_moved = false;
     bool white;
-    sf::CircleShape piece;
+    sf::CircleShape piece = sf::CircleShape() ;
     PieceType type;
 };
