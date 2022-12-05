@@ -7,14 +7,17 @@
 #include <string>
 #include <stdio.h>
 
+#include "PieceType.hpp"
 #include "../Piece.hpp"
 
 class Bishop : public Piece {
   public:
-    Bishop();
-    Bishop(bool white);
+
+    explicit Bishop(bool white) ;
     ~Bishop();
 
     bool canMove(int original_x, int original_y, int dest_x, int dest_y) const override;
+  private:
+    PieceType type = PieceType::bishop;
 };
 

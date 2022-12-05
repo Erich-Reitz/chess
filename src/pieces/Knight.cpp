@@ -1,6 +1,6 @@
 #include "Knight.hpp"
 
-Knight::Knight() {};
+
 
 Knight::Knight(bool white) : Piece(white) {};
 

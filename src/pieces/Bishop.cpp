@@ -1,6 +1,6 @@
 #include "Bishop.hpp"
 
-Bishop::Bishop() {};
+
 
 Bishop::Bishop(bool white) : Piece(white) {};
 

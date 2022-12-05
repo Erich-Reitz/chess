@@ -8,13 +8,18 @@
 #include <stdio.h>
 
 #include "../Piece.hpp"
+#include "PieceType.hpp"
+
 
 class Queen : public Piece {
   public:
-    Queen();
-    Queen(bool white);
+    explicit Queen(bool white);
     ~Queen();
 
     bool canMove(int original_x, int original_y, int dest_x, int dest_y) const override;
+  private:
+    PieceType type = PieceType::queen;
+
+
 };
 

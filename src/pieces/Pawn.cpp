@@ -1,6 +1,6 @@
 #include "Pawn.hpp"
 
-Pawn::Pawn() {};
+
 
 Pawn::Pawn(bool white) : Piece(white) {};
 

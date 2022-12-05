@@ -1,6 +1,6 @@
 #include "King.hpp"
 
-King::King() {};
+
 
 King::King(bool white) : Piece(white) {};
 

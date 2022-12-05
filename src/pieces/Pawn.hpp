@@ -8,14 +8,18 @@
 #include <stdio.h>
 
 #include "../Piece.hpp"
+#include "PieceType.hpp"
+
 
 class Pawn : public Piece {
   public:
-    Pawn();
-    Pawn(bool white);
+
+    explicit Pawn(bool white);
     ~Pawn();
 
     bool canMove(int original_x, int original_y, int dest_x, int dest_y) const override;
+  private:
+    PieceType type = PieceType::pawn;
 
 };
 

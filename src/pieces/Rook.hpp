@@ -8,13 +8,16 @@
 #include <stdio.h>
 
 #include "../Piece.hpp"
+#include "PieceType.hpp"
 
 class Rook : public Piece {
   public:
-    Rook();
-    Rook(bool white);
+    explicit Rook(bool white);
     ~Rook();
 
     bool canMove(int originalx, int originaly, int destx, int desty) const override;
+  private:
+    PieceType type = PieceType::rook;
+
 };
 

@@ -1,6 +1,5 @@
 #include "Rook.hpp"
 
-Rook::Rook() {};
 
 Rook::Rook(bool white) : Piece(white) {};
 

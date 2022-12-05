@@ -1,6 +1,6 @@
 #include "Queen.hpp"
 
-Queen::Queen() {};
+
 
 Queen::Queen(bool white) : Piece(white) {};
 
