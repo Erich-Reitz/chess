@@ -1,5 +1,5 @@
 CXX := g++ 
-CXXFLAGS := -Wall -Wextra -pedantic-errors -Wno-unused-parameter  -g -std=c++17 -o3
+CXXFLAGS := -Wall -Wextra -pedantic-errors -Wno-unused-parameter  -g -std=c++17
 SRC_DIR = ./src
 OBJ_DIR := ./obj
 SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard ${SRC_DIR}/pieces/*.cpp)  
@@ -27,7 +27,7 @@ clean:
 	rm -f ${PROGRAM_NAME}
 
 check:
-	cppcheck --enable=all . 2> err.txt
+	cppcheck --enable=all src/ 2> err.txt
 
 format:
 	-astyle --style=google ${SRC_DIR}/*.*pp ${SRC_DIR}/pieces/*.*pp -xe
