@@ -7,7 +7,7 @@ Position::Position(int row, int col) {
     this->col = col;
 }
 
-bool Position::operator==(const Position& rhs) {
+bool Position::operator==(const Position& rhs) const {
     return this->row == rhs.row && this->col == rhs.col;
 }
 

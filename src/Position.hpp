@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ostream>
+#include <iostream>
 
 class Position {
   public:
@@ -11,8 +12,8 @@ class Position {
         return stream;
     }
     ~Position();
-    bool operator==(const Position& rhs) ;
+    bool operator==(const Position& rhs) const ;
 
-    int row;
-    int col;
+    int row{};
+    int col{};
 };

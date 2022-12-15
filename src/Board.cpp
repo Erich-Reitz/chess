@@ -1,6 +1,4 @@
-#include <algorithm>
 #include <functional>
-#include <iostream>
 #include <optional>
 
 #include "Board.hpp"
@@ -11,11 +9,12 @@
 #include "pieces/Queen.hpp"
 #include "pieces/King.hpp"
 #include "pieces/Pawn.hpp"
+#include "Position.hpp"
 
 #include "chess_exceptions.cpp"
 
 
-std::optional<Piece*> inital_piece(int row, int col) {
+std::optional<Piece*> initial_piece(int row, int col) {
     bool isWhitePiece = row == 6 || row == 7;
     if (row == 0 || row == 7) {
         switch (col) {
@@ -35,6 +34,8 @@ std::optional<Piece*> inital_piece(int row, int col) {
             return new Knight(isWhitePiece) ;
         case 7:
             return new Rook(isWhitePiece) ;
+        default:
+            throw RuntimeError();
         }
     }
     if (row == 1 || row == 6) {
@@ -44,12 +45,12 @@ std::optional<Piece*> inital_piece(int row, int col) {
 }
 
 Board::Board() {
-    int inital_x_offset = 720;
-    int inital_y_offset = 300;
+    int initial_x_offset = 720;
+    int initial_y_offset = 300;
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
             bool isWhite = (row + col) % 2 == 0;
-            board[row][col] = new Square(isWhite, row, col, inital_x_offset + col * 50, inital_y_offset + row * 50, 50.f, inital_piece(row, col));
+            board[row][col] = new Square(isWhite, row, col, initial_x_offset + col * 50, initial_y_offset + row * 50, 50.f, initial_piece(row, col));
         }
     }
 }
@@ -95,18 +96,23 @@ std::optional<Position> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) 
     return {};
 }
 
-std::vector<Position> Board::generateAllValidMovesForPiece(const Position current, const Piece *piece) const {
+std::vector<Position> Board::generateAllValidMovesForPiece(const Position& current, const Piece *piece) const {
     std::vector<Position> validMoves;
+    bool isPieceWhite = piece->isWhite();
+    Position oneSpaceForward = Position(current.row +  (isPieceWhite ? - 1 : 1), current.col) ;
+    Position oneSpaceForwardOneSpaceRight = Position(current.row +  (isPieceWhite ? - 1 : 1), current.col + (isPieceWhite ? 1 : -1)) ;
     if (piece->getType() == PieceType::pawn) {
-        int oneSpaceForward = piece->isWhite() ? -1 : 1;
-        int twoSpaceForward =  piece->isWhite() ? -2 : 2;
         if (!piece->hasMoved()) {
-            if (!hasPieceAtPosition(current.row + twoSpaceForward, current.col)) {
-                validMoves.push_back(Position(current.row+twoSpaceForward, current.col)) ;
+            Position twoSpacesForward = Position(current.row + (isPieceWhite ? - 2 : 2), current.col) ;
+            if (!hasPieceAtPosition(twoSpacesForward)) {
+                validMoves.emplace_back(twoSpacesForward) ;
             }
         }
-        if (!hasPieceAtPosition(current.row + oneSpaceForward, current.col)) {
-            validMoves.push_back(Position(current.row + oneSpaceForward, current.col)) ;
+        if (!hasPieceAtPosition(oneSpaceForward)) {
+            validMoves.emplace_back(oneSpaceForward)  ;
+        }
+        if (hasPieceAtPosition(oneSpaceForwardOneSpaceRight)) {
+            validMoves.emplace_back(oneSpaceForwardOneSpaceRight) ;
         }
     }
     return validMoves;
@@ -122,10 +128,8 @@ bool Board::canMove(const Position& current, const Position& destination) const 
     Piece *piece = optPiece.value();
     std::vector<Position> allValidPositions = generateAllValidMovesForPiece(current, piece);
     if (std::find(allValidPositions.begin(), allValidPositions.end(), destination) != allValidPositions.end()) {
-        std::cout << "can move " << current << " to " << destination << std::endl;
         return true;
     }
-    std::cout << "cannot move " << current << " to " << destination << std::endl;
     return false;
 }
 
@@ -158,4 +162,5 @@ void Board::move(const Position& current, const Position& destination) {
     Piece *movingPiece = userSelectedPiece.value();
     removePieceFromSquare(current);
     this->board[destination.row][destination.col]->setPiece(movingPiece);
+    movingPiece->setMoved(true);
 }
