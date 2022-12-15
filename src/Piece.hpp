@@ -14,7 +14,6 @@ class Piece : public sf::Drawable {
   public:
     Piece(bool _white, PieceType _type) ;
     ~Piece() override;
-    virtual bool canMove(int original_x, int original_y, int dest_x, int dest_y) const = 0;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
