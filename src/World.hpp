@@ -22,10 +22,10 @@ class World  {
 
   private:
     bool havePreviouslySelectedCoordinates() const;
-    void handleMouseDownWithSelectedPiece(Position pressedSquare);
-    void handleMouseDownWithNoSelectedPiece(Position pressedSquare);
+    void handleMouseDownWithSelectedPiece(const Position& pressedSquare);
+    void handleMouseDownWithNoSelectedPiece(const Position& pressedSquare);
     void handleMouseDown(sf::Vector2f mousePos);
-    void handleMouseDownOnSquare(Position pressedCoordinates);
+    void handleMouseDownOnSquare(const Position& pressedCoordinates);
     // updates
     Board gameBoard;
     sf::Vector2f m_viewCenter;

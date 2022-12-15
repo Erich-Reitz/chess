@@ -1,6 +1,4 @@
-#include <algorithm>
 #include <functional>
-#include <iostream>
 #include <optional>
 
 #include "Board.hpp"
@@ -11,11 +9,12 @@
 #include "pieces/Queen.hpp"
 #include "pieces/King.hpp"
 #include "pieces/Pawn.hpp"
+#include "Position.hpp"
 
 #include "chess_exceptions.cpp"
 
 
-std::optional<Piece*> inital_piece(int row, int col) {
+std::optional<Piece*> initial_piece(int row, int col) {
     bool isWhitePiece = row == 6 || row == 7;
     if (row == 0 || row == 7) {
         switch (col) {
@@ -35,6 +34,8 @@ std::optional<Piece*> inital_piece(int row, int col) {
             return new Knight(isWhitePiece) ;
         case 7:
             return new Rook(isWhitePiece) ;
+        default:
+            throw RuntimeError();
         }
     }
     if (row == 1 || row == 6) {
@@ -44,12 +45,12 @@ std::optional<Piece*> inital_piece(int row, int col) {
 }
 
 Board::Board() {
-    int inital_x_offset = 720;
-    int inital_y_offset = 300;
+    int initial_x_offset = 720;
+    int initial_y_offset = 300;
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
             bool isWhite = (row + col) % 2 == 0;
-            board[row][col] = new Square(isWhite, row, col, inital_x_offset + col * 50, inital_y_offset + row * 50, 50.f, inital_piece(row, col));
+            board[row][col] = new Square(isWhite, row, col, initial_x_offset + col * 50, initial_y_offset + row * 50, 50.f, initial_piece(row, col));
         }
     }
 }
@@ -95,22 +96,29 @@ std::optional<Position> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) 
     return {};
 }
 
-std::vector<Position> Board::generateAllValidMovesForPiece(const Position current, const Piece *piece) const {
+std::vector<Position> Board::generateAllValidMovesForPiece(const Position& current, const Piece *piece) const {
     std::vector<Position> validMoves;
-    std::cout << "piece type: " << piece->getType() << std::endl;
+    bool isPieceWhite = piece->isWhite();
+    Position oneSpaceForward = Position(current.row +  (isPieceWhite ? - 1 : 1), current.col) ;
+    Position oneSpaceForwardOneSpaceRight = Position(current.row +  (isPieceWhite ? - 1 : 1), current.col + (isPieceWhite ? 1 : -1)) ;
     if (piece->getType() == PieceType::pawn) {
-        int oneSpaceForward = piece->isWhite() ? -1 : 1;
-        int twoSpaceForward =  piece->isWhite() ? -2 : 2;
-        if (piece->hasMoved() == false) {
-            if (!hasPieceAtPosition(current.row + twoSpaceForward, current.col)) {
-                validMoves.push_back(Position(current.row+twoSpaceForward, current.col)) ;
+        if (!piece->hasMoved()) {
+            Position twoSpacesForward = Position(current.row + (isPieceWhite ? - 2 : 2), current.col) ;
+            if (!hasPieceAtPosition(twoSpacesForward)) {
+                validMoves.emplace_back(twoSpacesForward) ;
             }
+        }
+        if (!hasPieceAtPosition(oneSpaceForward)) {
+            validMoves.emplace_back(oneSpaceForward)  ;
+        }
+        if (hasPieceAtPosition(oneSpaceForwardOneSpaceRight)) {
+            validMoves.emplace_back(oneSpaceForwardOneSpaceRight) ;
         }
     }
     return validMoves;
 }
 
-bool Board::canMove(Position current, Position destination) const {
+bool Board::canMove(const Position& current, const Position& destination) const {
     // check if it's possible for the piece
     std::optional<Piece*> optPiece = pieceAtPosition(current);
     if (!optPiece.has_value()) {
@@ -119,14 +127,13 @@ bool Board::canMove(Position current, Position destination) const {
     // generate all moves for piece off a piece::type variable
     Piece *piece = optPiece.value();
     std::vector<Position> allValidPositions = generateAllValidMovesForPiece(current, piece);
-    std::cout << "number of valid positions " << allValidPositions.size() << std::endl;
     if (std::find(allValidPositions.begin(), allValidPositions.end(), destination) != allValidPositions.end()) {
         return true;
     }
     return false;
 }
 
-std::optional<Piece*> Board::pieceAtPosition(Position pos) const {
+std::optional<Piece*> Board::pieceAtPosition(const Position& pos) const {
     return this->board[pos.row][pos.col]->getPiece();
 }
 
@@ -137,17 +144,17 @@ bool Board::hasPieceAtPosition(int row, int col) const {
 }
 
 
-bool Board::hasPieceAtPosition(Position pos) const {
+bool Board::hasPieceAtPosition(const Position& pos) const {
     return this->board[pos.row][pos.col]->getPiece().has_value();
 }
 
 
-void Board::removePieceFromSquare(Position coordinates) {
+void Board::removePieceFromSquare(const Position& coordinates) {
     this->board[coordinates.row][coordinates.col]->removePiece();
 }
 
 
-void Board::move(Position current, Position destination) {
+void Board::move(const Position& current, const Position& destination) {
     std::optional<Piece*> userSelectedPiece = pieceAtPosition(current);
     if (!userSelectedPiece.has_value()) {
         throw CurrentSquareDoesNotContainPiece();
@@ -155,4 +162,5 @@ void Board::move(Position current, Position destination) {
     Piece *movingPiece = userSelectedPiece.value();
     removePieceFromSquare(current);
     this->board[destination.row][destination.col]->setPiece(movingPiece);
+    movingPiece->setMoved(true);
 }
