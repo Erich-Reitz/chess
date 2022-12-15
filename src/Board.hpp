@@ -10,15 +10,11 @@
 class Board : public sf::Drawable {
   public:
     Board();
-    void draw(sf::RenderWindow &window) const  {};
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    std::optional<Piece*> selectedPiece(sf::Vector2f mousePos) const;
-    std::optional<Square*> selectedSquare(sf::Vector2f mousePos) const;
 
     std::optional<Piece*> pieceAtPosition(const Position& pos) const;
     bool hasPieceAtPosition(const Position& pos) const ;
-    bool hasPieceAtPosition(int row, int col) const ;
 
     bool canMove(const Position& current, const Position& destination) const;
     void move(const Position& current, const Position& destination);

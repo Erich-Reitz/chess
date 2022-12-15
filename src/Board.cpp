@@ -63,27 +63,7 @@ void Board::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     }
 }
 
-std::optional<Piece*> Board::selectedPiece(const sf::Vector2f mousePos) const {
-    for (const auto &row : board) {
-        for (const auto &square : row) {
-            if (square->getBoundaries().contains(mousePos)) {
-                return square->getPiece();
-            }
-        }
-    }
-    return {};
-}
 
-std::optional<Square*> Board::selectedSquare(const sf::Vector2f mousePos) const {
-    for (const auto &row : board) {
-        for (const auto &square : row) {
-            if (square->getBoundaries().contains(mousePos)) {
-                return square;
-            }
-        }
-    }
-    return {};
-}
 
 std::optional<Position> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) const {
     for (const auto &row : board) {
@@ -139,9 +119,7 @@ std::optional<Piece*> Board::pieceAtPosition(const Position& pos) const {
 
 
 
-bool Board::hasPieceAtPosition(int row, int col) const {
-    return this->board[row][col]->getPiece().has_value();
-}
+
 
 
 bool Board::hasPieceAtPosition(const Position& pos) const {
