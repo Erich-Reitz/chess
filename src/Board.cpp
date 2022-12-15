@@ -97,7 +97,6 @@ std::optional<Position> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) 
 
 std::vector<Position> Board::generateAllValidMovesForPiece(const Position current, const Piece *piece) const {
     std::vector<Position> validMoves;
-    std::cout << "piece type: " << piece->getType() << std::endl;
     if (piece->getType() == PieceType::pawn) {
         int oneSpaceForward = piece->isWhite() ? -1 : 1;
         int twoSpaceForward =  piece->isWhite() ? -2 : 2;
@@ -105,6 +104,9 @@ std::vector<Position> Board::generateAllValidMovesForPiece(const Position curren
             if (!hasPieceAtPosition(current.row + twoSpaceForward, current.col)) {
                 validMoves.push_back(Position(current.row+twoSpaceForward, current.col)) ;
             }
+        }
+        if (!hasPieceAtPosition(current.row + oneSpaceForward, current.col)) {
+            validMoves.push_back(Position(current.row + oneSpaceForward, current.col)) ;
         }
     }
     return validMoves;
