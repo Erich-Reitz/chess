@@ -1,8 +1,4 @@
 #include <iostream>
-#include <functional>
-#include <vector>
-#include <cmath>
-#include <assert.h>     /* assert */
 
 #include <SFML/Graphics/RectangleShape.hpp>
 
@@ -15,48 +11,35 @@
 World::World() {
 }
 
-World::World(sf::Vector2f l_size) {
-}
 
 World::~World() {}
 
 
 
+void World::movePiece(Piece *piece, const Position &destination) {
+    if (gameBoard.canMove(previouslySelectedCoordinatesOfPiece.value(), destination)) {
+        try {
+            gameBoard.move(previouslySelectedCoordinatesOfPiece.value(), destination);
+        } catch (CurrentSquareDoesNotContainPiece &e) {
+            std::cerr << e.what() << std::endl;
+        }
+        piece->setOriginalColor();
+        previouslySelectedCoordinatesOfPiece = {};
+        return;
+    }
+}
+
 void World::handleMouseDownWithSelectedPiece(const Position& pressedSquare) {
+    Piece  *previouslySelectedPiece = gameBoard.pieceAtPosition(this->previouslySelectedCoordinatesOfPiece.value()).value();
     if (gameBoard.hasPieceAtPosition(pressedSquare)) {
-        Piece  *previouslySelectedPiece = gameBoard.pieceAtPosition(this->previouslySelectedCoordinatesOfPiece.value()).value();
         if (gameBoard.pieceAtPosition(pressedSquare).value()->isWhite() == previouslySelectedPiece->isWhite()) {
             previouslySelectedPiece->setOriginalColor();
             handleMouseDownWithNoSelectedPiece(pressedSquare) ;
         } else {
-            if (gameBoard.canMove(previouslySelectedCoordinatesOfPiece.value(), pressedSquare)) {
-                //
-                try {
-                    gameBoard.move(previouslySelectedCoordinatesOfPiece.value(), pressedSquare);
-                } catch (CurrentSquareDoesNotContainPiece &e) {
-                    std::cerr << e.what() << std::endl;
-                }
-                // erase previously selected
-                Piece  *piece = gameBoard.pieceAtPosition(pressedSquare).value();
-                piece->setOriginalColor();
-                previouslySelectedCoordinatesOfPiece = {};
-                return;
-            }
+            this->movePiece(previouslySelectedPiece, pressedSquare);
         }
     } else {
-        if (gameBoard.canMove(previouslySelectedCoordinatesOfPiece.value(), pressedSquare)) {
-            //
-            try {
-                gameBoard.move(previouslySelectedCoordinatesOfPiece.value(), pressedSquare);
-            } catch (CurrentSquareDoesNotContainPiece &e) {
-                std::cerr << e.what() << std::endl;
-            }
-            // erase previously selected
-            Piece  *piece = gameBoard.pieceAtPosition(pressedSquare).value();
-            piece->setOriginalColor();
-            previouslySelectedCoordinatesOfPiece = {};
-            return;
-        }
+        this->movePiece(previouslySelectedPiece, pressedSquare);
     }
 }
 

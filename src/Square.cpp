@@ -1,6 +1,3 @@
-#include <string>
-#include <iostream>
-
 #include "Square.hpp"
 #include "Position.hpp"
 
@@ -36,12 +33,9 @@ std::optional<Piece*> Square::getPiece() const {
     return this->piece;
 }
 
-void Square::setPiece(Piece *piece) {
-    this->piece = {piece};
+void Square::setPiece(Piece *_piece) {
+    this->piece = {_piece};
     sf::Vector2f currentSquarePosition = this->shape.getPosition();
-    if (!this->piece.has_value()) {
-        throw ("Unexpected no value");
-    }
     this->piece.value()->setPosition(currentSquarePosition.x, currentSquarePosition.y);
 }
 

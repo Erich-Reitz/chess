@@ -21,7 +21,6 @@ class Window {
     unsigned int getMaximumViewSize();
     sf::Window *GetWindow();
     void ToggleFullscreen();
-    void Draw(sf::Drawable& l_drawable);
     void Zoom(float l_zoom);
     sf::Vector2f convertToGameCoordinates(sf::Vector2i viewportCoordinates);
     sf::RenderWindow m_window;

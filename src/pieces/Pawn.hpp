@@ -17,9 +17,5 @@ class Pawn : public Piece {
     explicit Pawn(bool white);
     ~Pawn();
 
-    bool canMove(int original_x, int original_y, int dest_x, int dest_y) const override;
-  private:
-    PieceType type = PieceType::pawn;
-
 };
 

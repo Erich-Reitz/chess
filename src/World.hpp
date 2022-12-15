@@ -11,13 +11,11 @@ class World  {
 
   public:
     World();
-    World(sf::Vector2f l_size);
     ~World();
 
     void update(sf::Time deltaTime);
     void Render(sf::RenderWindow& l_window);
 
-    void HandleInput() ;
     void HandleInput(sf::Vector2f mousePos, bool mouseDown, bool mouseUp);
 
   private:
@@ -33,4 +31,7 @@ class World  {
     std::optional<Position> previouslySelectedCoordinatesOfPiece;
 
 
+    void movePiece(const Position &current, const Position &destination);
+
+    void movePiece(Piece *piece, const Position &destination);
 };

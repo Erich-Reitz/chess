@@ -1,6 +1,6 @@
 #include "Position.hpp"
 
-Position::Position() {};
+Position::Position() = default;;
 
 Position::Position(int row, int col) {
     this->row = row;
@@ -11,4 +11,4 @@ bool Position::operator==(const Position& rhs) const {
     return this->row == rhs.row && this->col == rhs.col;
 }
 
-Position::~Position() {};
+Position::~Position() = default;;

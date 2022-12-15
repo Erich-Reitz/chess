@@ -109,9 +109,7 @@ bool Window::IsFullscreen() {
 sf::Vector2u Window::GetWindowSize() {
     return m_windowSize;
 }
-void Window::Draw(sf::Drawable&l_drawable) {
-    m_window.draw(l_drawable);
-}
+
 
 sf::RenderWindow* Window::GetRenderWindow() {
     return &m_window;
@@ -136,14 +134,14 @@ sf::Vector2f Window::getScaleOfWindowSizeToView() {
 }
 
 bool Window::isMouseUp() {
-    if (m_down == false && lastMouseDownState == true) {
+    if (!m_down && lastMouseDownState) {
         return true;
     }
     return false;
 }
 
 bool Window::isMouseDown() {
-    if (m_down == true && lastMouseDownState == false) {
+    if (m_down && !lastMouseDownState) {
         return true;
     }
     return false;

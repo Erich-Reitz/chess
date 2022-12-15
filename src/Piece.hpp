@@ -5,23 +5,18 @@
 
 #include <iostream>
 #include <string>
-#include <stdio.h>
+#include <cstdio>
 
 #include "pieces/PieceType.hpp"
 
 
 class Piece : public sf::Drawable {
   public:
-    Piece(bool white) ;
     Piece(bool _white, PieceType _type) ;
-    virtual ~Piece();
-    virtual bool canMove(int original_x, int original_y, int dest_x, int dest_y) const = 0;
+    ~Piece() override;
 
-    void draw(sf::RenderTarget &window) const ;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    void setXPos(float x);
-    void setYPos(float y);
     void setPosition(float x, float y);
     void setRadius(float radius);
     void setColor(sf::Color color);

@@ -15,9 +15,5 @@ class Rook : public Piece {
     explicit Rook(bool white);
     ~Rook();
 
-    bool canMove(int originalx, int originaly, int destx, int desty) const override;
-  private:
-    PieceType type = PieceType::rook;
-
 };
 
