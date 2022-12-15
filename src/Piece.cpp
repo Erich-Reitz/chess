@@ -12,7 +12,16 @@ Piece::~Piece() {};
 
 Piece::Piece(bool _white)  {
     this->white = _white;
-    this->type == PieceType::unkown;
+    if (_white) {
+        piece.setFillColor(sf::Color::White);
+    } else {
+        piece.setFillColor(sf::Color::Black);
+    }
+}
+
+Piece::Piece(bool _white, PieceType _type)  {
+    this->white = _white;
+    this->type = _type;
     if (_white) {
         piece.setFillColor(sf::Color::White);
     } else {
@@ -66,6 +75,9 @@ void Piece::setMoved(bool hasMoved) {
     this->has_self_moved = hasMoved;
 }
 
+PieceType Piece::getType() const {
+    return this->type;
+}
 
 void Piece::setOriginalColor() {
     if (isWhite()) {

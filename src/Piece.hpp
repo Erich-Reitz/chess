@@ -13,6 +13,7 @@
 class Piece : public sf::Drawable {
   public:
     Piece(bool white) ;
+    Piece(bool _white, PieceType _type) ;
     virtual ~Piece();
     virtual bool canMove(int original_x, int original_y, int dest_x, int dest_y) const = 0;
 
@@ -30,6 +31,7 @@ class Piece : public sf::Drawable {
 
     bool hasMoved() const;
     void setMoved(bool hasMoved) ;
+    PieceType getType() const ;
 
     void setOriginalColor();
   private:

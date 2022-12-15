@@ -15,10 +15,10 @@
 #include "chess_exceptions.cpp"
 
 
-std::optional<Piece*> inital_piece(int x, int y) {
-    bool isWhitePiece = y == 6 || y == 7;
-    if (y == 0 || y == 7) {
-        switch (x) {
+std::optional<Piece*> inital_piece(int row, int col) {
+    bool isWhitePiece = row == 6 || row == 7;
+    if (row == 0 || row == 7) {
+        switch (col) {
         case 0:
             return new Rook(isWhitePiece) ;
         case 1:
@@ -37,7 +37,7 @@ std::optional<Piece*> inital_piece(int x, int y) {
             return new Rook(isWhitePiece) ;
         }
     }
-    if (y == 1 || y == 6) {
+    if (row == 1 || row == 6) {
         return new Pawn(isWhitePiece);
     }
     return {};
@@ -49,7 +49,7 @@ Board::Board() {
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
             bool isWhite = (row + col) % 2 == 0;
-            board[row][col] = new Square(isWhite, row, col, inital_x_offset + col * 50, inital_y_offset + row * 50, 50.f, inital_piece(col, row));
+            board[row][col] = new Square(isWhite, row, col, inital_x_offset + col * 50, inital_y_offset + row * 50, 50.f, inital_piece(row, col));
         }
     }
 }
@@ -62,7 +62,7 @@ void Board::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     }
 }
 
-std::optional<Piece*> Board::selectedPiece(sf::Vector2f mousePos) const {
+std::optional<Piece*> Board::selectedPiece(const sf::Vector2f mousePos) const {
     for (const auto &row : board) {
         for (const auto &square : row) {
             if (square->getBoundaries().contains(mousePos)) {
@@ -73,7 +73,7 @@ std::optional<Piece*> Board::selectedPiece(sf::Vector2f mousePos) const {
     return {};
 }
 
-std::optional<Square*> Board::selectedSquare(sf::Vector2f mousePos) const {
+std::optional<Square*> Board::selectedSquare(const sf::Vector2f mousePos) const {
     for (const auto &row : board) {
         for (const auto &square : row) {
             if (square->getBoundaries().contains(mousePos)) {
@@ -84,7 +84,7 @@ std::optional<Square*> Board::selectedSquare(sf::Vector2f mousePos) const {
     return {};
 }
 
-std::optional<Position> Board::getRowAndColOfMouse(sf::Vector2f mousePos) const {
+std::optional<Position> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) const {
     for (const auto &row : board) {
         for (const auto &square : row) {
             if (square->getBoundaries().contains(mousePos)) {
@@ -95,29 +95,45 @@ std::optional<Position> Board::getRowAndColOfMouse(sf::Vector2f mousePos) const 
     return {};
 }
 
-std::vector<Position> Board::generateAllValidMovesForPiece(Position current, Piece *piece) const {
+std::vector<Position> Board::generateAllValidMovesForPiece(const Position current, const Piece *piece) const {
     std::vector<Position> validMoves;
+    std::cout << "piece type: " << piece->getType() << std::endl;
+    if (piece->getType() == PieceType::pawn) {
+        int oneSpaceForward = piece->isWhite() ? -1 : 1;
+        int twoSpaceForward =  piece->isWhite() ? -2 : 2;
+        if (piece->hasMoved() == false) {
+            if (!hasPieceAtPosition(current.row + twoSpaceForward, current.col)) {
+                validMoves.push_back(Position(current.row+twoSpaceForward, current.col)) ;
+            }
+        }
+    }
     return validMoves;
 }
 
 bool Board::canMove(Position current, Position destination) const {
-    // // check if it's possible for the piece
-    // std::optional<Piece*> optPiece = pieceAtPosition(current);
-    // if (!optPiece.has_value()) {
-    //     throw CurrentSquareDoesNotContainPiece();
-    // }
-    // // generate all moves for piece off a piece::type variable
-    // Piece *piece = optPiece.value();
-    // std::vector<Position> allValidPositions = generateAllValidMovesForPiece(current, piece);
-    // if (std::find(allValidPositions.begin(), allValidPositions.end(), destination) != allValidPositions.end()) {
-    //     return true;
-    // }
-    // return false;
-    return true;
+    // check if it's possible for the piece
+    std::optional<Piece*> optPiece = pieceAtPosition(current);
+    if (!optPiece.has_value()) {
+        throw CurrentSquareDoesNotContainPiece();
+    }
+    // generate all moves for piece off a piece::type variable
+    Piece *piece = optPiece.value();
+    std::vector<Position> allValidPositions = generateAllValidMovesForPiece(current, piece);
+    std::cout << "number of valid positions " << allValidPositions.size() << std::endl;
+    if (std::find(allValidPositions.begin(), allValidPositions.end(), destination) != allValidPositions.end()) {
+        return true;
+    }
+    return false;
 }
 
 std::optional<Piece*> Board::pieceAtPosition(Position pos) const {
     return this->board[pos.row][pos.col]->getPiece();
+}
+
+
+
+bool Board::hasPieceAtPosition(int row, int col) const {
+    return this->board[row][col]->getPiece().has_value();
 }
 
 

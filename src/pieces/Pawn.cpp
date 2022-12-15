@@ -2,7 +2,7 @@
 
 
 
-Pawn::Pawn(bool white) : Piece(white) {};
+Pawn::Pawn(bool white) : Piece(white, PieceType::pawn) {};
 
 Pawn::~Pawn() {};
 
