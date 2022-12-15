@@ -22,12 +22,27 @@ World::~World() {}
 
 
 
-void World::handleMouseDownWithSelectedPiece(Position pressedSquare) {
+void World::handleMouseDownWithSelectedPiece(const Position& pressedSquare) {
     if (gameBoard.hasPieceAtPosition(pressedSquare)) {
         Piece  *previouslySelectedPiece = gameBoard.pieceAtPosition(this->previouslySelectedCoordinatesOfPiece.value()).value();
-        previouslySelectedPiece->setOriginalColor();
-        handleMouseDownWithNoSelectedPiece(pressedSquare) ;
-        return;
+        if (gameBoard.pieceAtPosition(pressedSquare).value()->isWhite() == previouslySelectedPiece->isWhite()) {
+            previouslySelectedPiece->setOriginalColor();
+            handleMouseDownWithNoSelectedPiece(pressedSquare) ;
+        } else {
+            if (gameBoard.canMove(previouslySelectedCoordinatesOfPiece.value(), pressedSquare)) {
+                //
+                try {
+                    gameBoard.move(previouslySelectedCoordinatesOfPiece.value(), pressedSquare);
+                } catch (CurrentSquareDoesNotContainPiece &e) {
+                    std::cerr << e.what() << std::endl;
+                }
+                // erase previously selected
+                Piece  *piece = gameBoard.pieceAtPosition(pressedSquare).value();
+                piece->setOriginalColor();
+                previouslySelectedCoordinatesOfPiece = {};
+                return;
+            }
+        }
     } else {
         if (gameBoard.canMove(previouslySelectedCoordinatesOfPiece.value(), pressedSquare)) {
             //
@@ -36,7 +51,7 @@ void World::handleMouseDownWithSelectedPiece(Position pressedSquare) {
             } catch (CurrentSquareDoesNotContainPiece &e) {
                 std::cerr << e.what() << std::endl;
             }
-            // erase previsouly selected
+            // erase previously selected
             Piece  *piece = gameBoard.pieceAtPosition(pressedSquare).value();
             piece->setOriginalColor();
             previouslySelectedCoordinatesOfPiece = {};
@@ -45,7 +60,7 @@ void World::handleMouseDownWithSelectedPiece(Position pressedSquare) {
     }
 }
 
-void World::handleMouseDownWithNoSelectedPiece(Position pressedSquare) {
+void World::handleMouseDownWithNoSelectedPiece(const Position& pressedSquare) {
     std::optional<Piece*>  piece = gameBoard.pieceAtPosition(pressedSquare) ;
     if (piece.has_value()) {
         previouslySelectedCoordinatesOfPiece = pressedSquare;
@@ -53,7 +68,7 @@ void World::handleMouseDownWithNoSelectedPiece(Position pressedSquare) {
     }
 }
 
-void World::handleMouseDownOnSquare(Position pressedSquare) {
+void World::handleMouseDownOnSquare(const Position& pressedSquare) {
     if (havePreviouslySelectedCoordinates()) {
         return handleMouseDownWithSelectedPiece(pressedSquare);
     }
@@ -72,7 +87,6 @@ void World::HandleInput(sf::Vector2f mousePos, bool mouseDown, bool mouseUp) {
     if (mouseDown) {
         handleMouseDown(mousePos) ;
     }
-    return;
 }
 
 

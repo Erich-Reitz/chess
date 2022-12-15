@@ -100,7 +100,7 @@ std::vector<Position> Board::generateAllValidMovesForPiece(const Position curren
     if (piece->getType() == PieceType::pawn) {
         int oneSpaceForward = piece->isWhite() ? -1 : 1;
         int twoSpaceForward =  piece->isWhite() ? -2 : 2;
-        if (piece->hasMoved() == false) {
+        if (!piece->hasMoved()) {
             if (!hasPieceAtPosition(current.row + twoSpaceForward, current.col)) {
                 validMoves.push_back(Position(current.row+twoSpaceForward, current.col)) ;
             }
@@ -112,7 +112,7 @@ std::vector<Position> Board::generateAllValidMovesForPiece(const Position curren
     return validMoves;
 }
 
-bool Board::canMove(Position current, Position destination) const {
+bool Board::canMove(const Position& current, const Position& destination) const {
     // check if it's possible for the piece
     std::optional<Piece*> optPiece = pieceAtPosition(current);
     if (!optPiece.has_value()) {
@@ -121,14 +121,15 @@ bool Board::canMove(Position current, Position destination) const {
     // generate all moves for piece off a piece::type variable
     Piece *piece = optPiece.value();
     std::vector<Position> allValidPositions = generateAllValidMovesForPiece(current, piece);
-    std::cout << "number of valid positions " << allValidPositions.size() << std::endl;
     if (std::find(allValidPositions.begin(), allValidPositions.end(), destination) != allValidPositions.end()) {
+        std::cout << "can move " << current << " to " << destination << std::endl;
         return true;
     }
+    std::cout << "cannot move " << current << " to " << destination << std::endl;
     return false;
 }
 
-std::optional<Piece*> Board::pieceAtPosition(Position pos) const {
+std::optional<Piece*> Board::pieceAtPosition(const Position& pos) const {
     return this->board[pos.row][pos.col]->getPiece();
 }
 
@@ -139,17 +140,17 @@ bool Board::hasPieceAtPosition(int row, int col) const {
 }
 
 
-bool Board::hasPieceAtPosition(Position pos) const {
+bool Board::hasPieceAtPosition(const Position& pos) const {
     return this->board[pos.row][pos.col]->getPiece().has_value();
 }
 
 
-void Board::removePieceFromSquare(Position coordinates) {
+void Board::removePieceFromSquare(const Position& coordinates) {
     this->board[coordinates.row][coordinates.col]->removePiece();
 }
 
 
-void Board::move(Position current, Position destination) {
+void Board::move(const Position& current, const Position& destination) {
     std::optional<Piece*> userSelectedPiece = pieceAtPosition(current);
     if (!userSelectedPiece.has_value()) {
         throw CurrentSquareDoesNotContainPiece();

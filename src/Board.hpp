@@ -16,16 +16,16 @@ class Board : public sf::Drawable {
     std::optional<Piece*> selectedPiece(sf::Vector2f mousePos) const;
     std::optional<Square*> selectedSquare(sf::Vector2f mousePos) const;
 
-    std::optional<Piece*> pieceAtPosition(Position pos) const;
-    bool hasPieceAtPosition(Position pos) const ;
+    std::optional<Piece*> pieceAtPosition(const Position& pos) const;
+    bool hasPieceAtPosition(const Position& pos) const ;
     bool hasPieceAtPosition(int row, int col) const ;
 
-    bool canMove(Position current, Position destination) const;
-    void move(Position current, Position destination);
+    bool canMove(const Position& current, const Position& destination) const;
+    void move(const Position& current, const Position& destination);
 
     std::optional<Position> getRowAndColOfMouse(sf::Vector2f mousePos) const;
   protected:
     std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
-    void removePieceFromSquare(Position coordinates);
+    void removePieceFromSquare(const Position& coordinates);
     std::vector<Position> generateAllValidMovesForPiece(const Position current, const Piece *piece) const;
 };
