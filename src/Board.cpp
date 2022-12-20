@@ -1,5 +1,6 @@
 #include <functional>
 #include <optional>
+#include <set>
 
 #include "Board.hpp"
 #include "Piece.hpp"
@@ -76,26 +77,37 @@ std::optional<Position> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) 
     return {};
 }
 
-std::vector<Position> Board::generateAllValidMovesForPiece(const Position& current, const Piece *piece) const {
-    std::vector<Position> validMoves;
+
+std::set<Position> Board::generateAllValidMovesForPawn(const Position& current, const Piece *piece) const {
+    std::set<Position> validMoves;
     bool isPieceWhite = piece->isWhite();
+    bool oppositeColorOfPiece = !isPieceWhite;
     Position oneSpaceForward = Position(current.row +  (isPieceWhite ? - 1 : 1), current.col) ;
     Position oneSpaceForwardOneSpaceRight = Position(current.row +  (isPieceWhite ? - 1 : 1), current.col + (isPieceWhite ? 1 : -1)) ;
-    if (piece->getType() == PieceType::pawn) {
-        if (!piece->hasMoved()) {
-            Position twoSpacesForward = Position(current.row + (isPieceWhite ? - 2 : 2), current.col) ;
-            if (!hasPieceAtPosition(twoSpacesForward)) {
-                validMoves.emplace_back(twoSpacesForward) ;
-            }
-        }
-        if (!hasPieceAtPosition(oneSpaceForward)) {
-            validMoves.emplace_back(oneSpaceForward)  ;
-        }
-        if (hasPieceAtPosition(oneSpaceForwardOneSpaceRight)) {
-            validMoves.emplace_back(oneSpaceForwardOneSpaceRight) ;
+    Position oneSpaceForwardOneSpaceLeft = Position(current.row +  (isPieceWhite ? - 1 : 1), current.col + (isPieceWhite ? -1 : 1)) ;
+    if (!piece->hasMoved()) {
+        Position twoSpacesForward = Position(current.row + (isPieceWhite ? - 2 : 2), current.col) ;
+        if (!hasPieceAtPosition(twoSpacesForward)) {
+            validMoves.insert(twoSpacesForward) ;
         }
     }
+    if (!hasPieceAtPosition(oneSpaceForward)) {
+        validMoves.insert(oneSpaceForward)  ;
+    }
+    if (hasPieceAtPosition(oneSpaceForwardOneSpaceRight, oppositeColorOfPiece)) {
+        validMoves.insert(oneSpaceForwardOneSpaceRight) ;
+    }
+    if (hasPieceAtPosition(oneSpaceForwardOneSpaceLeft, oppositeColorOfPiece)) {
+        validMoves.insert(oneSpaceForwardOneSpaceLeft) ;
+    }
     return validMoves;
+}
+
+std::set<Position> Board::generateAllValidMovesForPiece(const Position& current, const Piece *piece) const {
+    if (piece->getType() == PieceType::pawn) {
+        return generateAllValidMovesForPawn(current, piece) ;
+    }
+    return {};
 }
 
 bool Board::canMove(const Position& current, const Position& destination) const {
@@ -104,26 +116,25 @@ bool Board::canMove(const Position& current, const Position& destination) const 
     if (!optPiece.has_value()) {
         throw CurrentSquareDoesNotContainPiece();
     }
-    // generate all moves for piece off a piece::type variable
     Piece *piece = optPiece.value();
-    std::vector<Position> allValidPositions = generateAllValidMovesForPiece(current, piece);
-    if (std::find(allValidPositions.begin(), allValidPositions.end(), destination) != allValidPositions.end()) {
-        return true;
-    }
-    return false;
+    std::set<Position> allValidPositions = generateAllValidMovesForPiece(current, piece);
+    return allValidPositions.find(destination) != allValidPositions.end() ;
 }
 
 std::optional<Piece*> Board::pieceAtPosition(const Position& pos) const {
     return this->board[pos.row][pos.col]->getPiece();
 }
 
-
-
-
-
-
 bool Board::hasPieceAtPosition(const Position& pos) const {
     return this->board[pos.row][pos.col]->getPiece().has_value();
+}
+
+bool Board::hasPieceAtPosition(const Position& pos, const bool targetColorIsWhite) const {
+    auto piece = this->board[pos.row][pos.col]->getPiece();
+    if (! piece.has_value() ) {
+        return false;
+    }
+    return piece.value()->isWhite() == targetColorIsWhite;
 }
 
 
@@ -140,5 +151,5 @@ void Board::move(const Position& current, const Position& destination) {
     Piece *movingPiece = userSelectedPiece.value();
     removePieceFromSquare(current);
     this->board[destination.row][destination.col]->setPiece(movingPiece);
-    movingPiece->setMoved(true);
+    movingPiece->setMoved();
 }

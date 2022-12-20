@@ -4,6 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <vector>
+#include <set>
 
 #include "Square.hpp"
 
@@ -23,5 +24,8 @@ class Board : public sf::Drawable {
   protected:
     std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
     void removePieceFromSquare(const Position& coordinates);
-    std::vector<Position> generateAllValidMovesForPiece(const Position& current, const Piece *piece) const;
+    std::set<Position> generateAllValidMovesForPawn(const Position& current, const Piece *piece) const;
+    std::set<Position> generateAllValidMovesForPiece(const Position& current, const Piece *piece) const;
+
+    bool hasPieceAtPosition(const Position &pos, const bool targetColorIsWhite) const;
 };

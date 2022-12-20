@@ -33,20 +33,16 @@ bool Piece::isWhite() const {
     return this->white;
 }
 
-bool Piece::isBlack() const {
-    return !this->white;
-}
-
 bool Piece::hasMoved() const {
-    return this->has_self_moved;
+    return this->timesMoved != 0;
 }
 
 void Piece::setColor(sf::Color color) {
     this->piece.setFillColor(color);
 }
 
-void Piece::setMoved(bool hasMoved) {
-    this->has_self_moved = hasMoved;
+void Piece::setMoved() {
+    this->timesMoved += 1;
 }
 
 PieceType Piece::getType() const {
