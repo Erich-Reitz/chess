@@ -2,7 +2,7 @@
 
 
 
-Knight::Knight(bool white) : Piece(white, PieceType::knight) {};
+Knight::Knight(bool white) : Piece(white, PieceType::KNIGHT) {};
 
 Knight::~Knight() {};
 

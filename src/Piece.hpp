@@ -30,7 +30,7 @@ class Piece : public sf::Drawable {
     void setOriginalColor();
   private:
     size_t timesMoved = 0;
-    bool white;
+    PieceColor color;
     sf::CircleShape piece = sf::CircleShape() ;
     PieceType type;
 };

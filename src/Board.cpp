@@ -104,7 +104,7 @@ std::set<Position> Board::generateAllValidMovesForPawn(const Position& current, 
 }
 
 std::set<Position> Board::generateAllValidMovesForPiece(const Position& current, const Piece *piece) const {
-    if (piece->getType() == PieceType::pawn) {
+    if (piece->getType() == PieceType::PAWN) {
         return generateAllValidMovesForPawn(current, piece) ;
     }
     return {};
