@@ -22,16 +22,15 @@ class Piece : public sf::Drawable {
     void setColor(sf::Color color);
 
     bool isWhite() const;
-    bool isBlack() const;
 
     bool hasMoved() const;
-    void setMoved(bool hasMoved) ;
+    void setMoved() ;
     PieceType getType() const ;
 
     void setOriginalColor();
   private:
-    bool has_self_moved = false;
-    bool white;
+    size_t timesMoved = 0;
+    PieceColor color;
     sf::CircleShape piece = sf::CircleShape() ;
     PieceType type;
 };

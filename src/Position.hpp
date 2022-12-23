@@ -12,6 +12,7 @@ class Position {
         return stream;
     }
     ~Position();
+    bool operator<(const Position& rhs) const ;
     bool operator==(const Position& rhs) const ;
 
     int row{};

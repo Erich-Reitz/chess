@@ -15,6 +15,8 @@ Square::Square(bool white, int _row, int _col, float xPos, float yPos, float siz
         this->piece = _piece;
         this->piece.value()->setPosition(xPos, yPos) ;
         this->piece.value()->setRadius(size / 2.0);
+    } else {
+        this->piece = {};
     }
 }
 
@@ -47,5 +49,17 @@ Position Square::getPosition() const {
     return position;
 }
 
-// unused
-void Square::draw(sf::RenderTarget& target, sf::RenderStates states) const {}
+void Square::setColor(sf::Color color) {
+    this->shape.setFillColor(color) ;
+}
+
+void Square::setOriginalColor() {
+    if (white) {
+        this->shape.setFillColor(sf::Color::Yellow);
+    } else {
+        this->shape.setFillColor(sf::Color::Magenta);
+    }
+}
+
+void Square::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+}

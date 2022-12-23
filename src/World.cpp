@@ -8,51 +8,77 @@
 
 #include "chess_exceptions.cpp"
 
-World::World() {
-}
+World::World() = default;
 
 
-World::~World() {}
+World::~World() = default;
 
 
 
-void World::movePiece(Piece *piece, const Position &destination) {
-    if (gameBoard.canMove(previouslySelectedCoordinatesOfPiece.value(), destination)) {
+void World::moveSelectedPiece(const Position &destination) {
+    auto validMoves = this->selectedPieceInformation.placesCanMove.value();
+    if (validMoves.find(destination) != validMoves.end()) {
         try {
-            gameBoard.move(previouslySelectedCoordinatesOfPiece.value(), destination);
+            gameBoard.move(this->selectedPieceInformation.getCoordinates(), destination);
         } catch (CurrentSquareDoesNotContainPiece &e) {
             std::cerr << e.what() << std::endl;
         }
-        piece->setOriginalColor();
-        previouslySelectedCoordinatesOfPiece = {};
-        return;
+        this->selectedPieceInformation.reset();
+        this->gameBoard.resetAllSquaresColor();
     }
 }
 
+void World::handleUserReselectingPiece(const Position& pressedSquare) {
+    this->selectedPieceInformation.reset();
+    this->gameBoard.resetAllSquaresColor();
+    handleMouseDownWithNoSelectedPiece(pressedSquare) ;
+}
+
+void World::capturePiece(const Position& capturedPiecePosition) {
+    this->moveSelectedPiece(capturedPiecePosition);
+}
+
 void World::handleMouseDownWithSelectedPiece(const Position& pressedSquare) {
-    Piece  *previouslySelectedPiece = gameBoard.pieceAtPosition(this->previouslySelectedCoordinatesOfPiece.value()).value();
+    Piece  *previouslySelectedPiece = this->selectedPieceInformation.getPiece();
     if (gameBoard.hasPieceAtPosition(pressedSquare)) {
         if (gameBoard.pieceAtPosition(pressedSquare).value()->isWhite() == previouslySelectedPiece->isWhite()) {
-            previouslySelectedPiece->setOriginalColor();
-            handleMouseDownWithNoSelectedPiece(pressedSquare) ;
+            handleUserReselectingPiece(pressedSquare);
         } else {
-            this->movePiece(previouslySelectedPiece, pressedSquare);
+            capturePiece(pressedSquare);
         }
     } else {
-        this->movePiece(previouslySelectedPiece, pressedSquare);
+        this->moveSelectedPiece(pressedSquare);
     }
 }
+
+void World::displayValidMoves( ) {
+    auto validMoves = this->selectedPieceInformation.getPlacesCanMove();
+    for (auto &pos :validMoves) {
+        gameBoard.setSquareColor(pos, sf::Color::Green);
+    }
+}
+
+void World::displaySelectedPiece()  {
+    this->selectedPieceInformation.getPiece()->setColor(sf::Color::Red);
+}
+
+void World::handleDisplayOfNewPieceSelected() {
+    this->displayValidMoves();
+    this->displaySelectedPiece();
+}
+
 
 void World::handleMouseDownWithNoSelectedPiece(const Position& pressedSquare) {
     std::optional<Piece*>  piece = gameBoard.pieceAtPosition(pressedSquare) ;
     if (piece.has_value()) {
-        previouslySelectedCoordinatesOfPiece = pressedSquare;
-        piece.value()->setColor(sf::Color::Red);
+        auto placesCanMove = gameBoard.generateAllValidMovesForPiece(pressedSquare, piece.value());
+        this->selectedPieceInformation.setInformation(pressedSquare, piece.value(), placesCanMove);
+        this->handleDisplayOfNewPieceSelected();
     }
 }
 
 void World::handleMouseDownOnSquare(const Position& pressedSquare) {
-    if (havePreviouslySelectedCoordinates()) {
+    if (this->selectedPieceInformation.hasSelectedPiece()) {
         return handleMouseDownWithSelectedPiece(pressedSquare);
     }
     return handleMouseDownWithNoSelectedPiece(pressedSquare);
@@ -80,7 +106,4 @@ void World::Render(sf::RenderWindow& window) {
 void World::update(sf::Time deltaTime) {
 }
 
-bool World::havePreviouslySelectedCoordinates() const {
-    return this->previouslySelectedCoordinatesOfPiece.has_value();
-}
 

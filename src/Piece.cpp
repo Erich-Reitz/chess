@@ -6,7 +6,11 @@
 Piece::~Piece() = default;;
 
 Piece::Piece(bool _white, PieceType _type)  {
-    this->white = _white;
+    if (_white) {
+        this->color = PieceColor::WHITE;
+    } else {
+        this->color = PieceColor::BLACK;
+    }
     this->type = _type;
     if (_white) {
         piece.setFillColor(sf::Color::White);
@@ -30,23 +34,19 @@ void Piece::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 }
 
 bool Piece::isWhite() const {
-    return this->white;
-}
-
-bool Piece::isBlack() const {
-    return !this->white;
+    return this->color == PieceColor::WHITE;
 }
 
 bool Piece::hasMoved() const {
-    return this->has_self_moved;
+    return this->timesMoved != 0;
 }
 
 void Piece::setColor(sf::Color color) {
     this->piece.setFillColor(color);
 }
 
-void Piece::setMoved(bool hasMoved) {
-    this->has_self_moved = hasMoved;
+void Piece::setMoved() {
+    this->timesMoved += 1;
 }
 
 PieceType Piece::getType() const {

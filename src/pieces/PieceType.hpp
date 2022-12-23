@@ -1,2 +1,4 @@
 #pragma once
-enum PieceType { pawn = 0, rook = 1, knight = 2, bishop = 3, queen = 4, king = 5, unkown=6} ;
+enum PieceType { PAWN = 0, ROOK = 1, KNIGHT = 2, BISHOP = 3, QUEEN = 4, KING = 5} ;
+
+enum PieceColor {WHITE = 0, BLACK = 1};
