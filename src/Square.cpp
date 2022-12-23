@@ -15,6 +15,8 @@ Square::Square(bool white, int _row, int _col, float xPos, float yPos, float siz
         this->piece = _piece;
         this->piece.value()->setPosition(xPos, yPos) ;
         this->piece.value()->setRadius(size / 2.0);
+    } else {
+        this->piece = {};
     }
 }
 

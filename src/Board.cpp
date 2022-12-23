@@ -103,9 +103,41 @@ std::set<Position> Board::generateAllValidMovesForPawn(const Position& current, 
     return validMoves;
 }
 
+std::set<Position> Board::generateAllValidMovesForRook(const Position& current, const Piece *piece) const {
+    std::set<Position> validMoves;
+    bool pieceIsWhite = piece->isWhite();
+    bool oppositeColorOfPiece = !pieceIsWhite;
+    // moves down
+    for (int row = current.row+1; row < 8; row++) {
+        if (hasPieceAtPosition(row, current.col, oppositeColorOfPiece)) {
+            validMoves.insert(Position(row, current.col)) ;
+            break;
+        } else if (hasPieceAtPosition(row, current.col, pieceIsWhite)) {
+            break;
+        } else {
+            validMoves.insert(Position(row, current.col)) ;
+        }
+    }
+    // moves up
+    for (int row = current.row-1; row >= 0; row--) {
+        if (hasPieceAtPosition(row, current.col, oppositeColorOfPiece)) {
+            validMoves.insert(Position(row, current.col)) ;
+            break;
+        } else if (hasPieceAtPosition(row, current.col, pieceIsWhite)) {
+            break;
+        } else {
+            validMoves.insert(Position(row, current.col)) ;
+        }
+    }
+    return validMoves;
+}
+
 std::set<Position> Board::generateAllValidMovesForPiece(const Position& current, const Piece *piece) const {
     if (piece->getType() == PieceType::PAWN) {
         return generateAllValidMovesForPawn(current, piece) ;
+    }
+    if (piece->getType() == PieceType::ROOK) {
+        return generateAllValidMovesForRook(current, piece);
     }
     return {};
 }
@@ -130,7 +162,20 @@ bool Board::hasPieceAtPosition(const Position& pos) const {
 }
 
 bool Board::hasPieceAtPosition(const Position& pos, const bool targetColorIsWhite) const {
-    auto piece = this->board[pos.row][pos.col]->getPiece();
+    std::optional<Piece*> piece;
+    try {
+        piece = this->board.at(pos.row).at(pos.col)->getPiece();
+    } catch (const std::out_of_range& exp) {
+        return false;
+    }
+    if (! piece.has_value() ) {
+        return false;
+    }
+    return piece.value()->isWhite() == targetColorIsWhite;
+}
+
+bool Board::hasPieceAtPosition(const size_t row, const size_t col, const bool targetColorIsWhite) const {
+    auto piece = this->board[row][col]->getPiece();
     if (! piece.has_value() ) {
         return false;
     }

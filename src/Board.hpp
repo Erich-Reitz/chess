@@ -26,6 +26,9 @@ class Board : public sf::Drawable {
     void removePieceFromSquare(const Position& coordinates);
     std::set<Position> generateAllValidMovesForPawn(const Position& current, const Piece *piece) const;
     std::set<Position> generateAllValidMovesForPiece(const Position& current, const Piece *piece) const;
+    std::set<Position> generateAllValidMovesForRook(const Position& current, const Piece *piece) const;
 
     bool hasPieceAtPosition(const Position &pos, const bool targetColorIsWhite) const;
+
+    bool hasPieceAtPosition(const size_t row, const size_t col, const bool targetColorIsWhite) const;
 };
