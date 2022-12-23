@@ -49,5 +49,17 @@ Position Square::getPosition() const {
     return position;
 }
 
-// unused
-void Square::draw(sf::RenderTarget& target, sf::RenderStates states) const {}
+void Square::setColor(sf::Color color) {
+    this->shape.setFillColor(color) ;
+}
+
+void Square::setOriginalColor() {
+    if (white) {
+        this->shape.setFillColor(sf::Color::Yellow);
+    } else {
+        this->shape.setFillColor(sf::Color::Magenta);
+    }
+}
+
+void Square::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+}

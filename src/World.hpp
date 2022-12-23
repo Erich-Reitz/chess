@@ -6,6 +6,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Board.hpp"
+#include "selectedPieceInfo.hpp"
 
 class World  {
 
@@ -19,7 +20,6 @@ class World  {
     void HandleInput(sf::Vector2f mousePos, bool mouseDown, bool mouseUp);
 
   private:
-    bool havePreviouslySelectedCoordinates() const;
     void handleMouseDownWithSelectedPiece(const Position& pressedSquare);
     void handleMouseDownWithNoSelectedPiece(const Position& pressedSquare);
     void handleMouseDown(sf::Vector2f mousePos);
@@ -28,10 +28,18 @@ class World  {
     Board gameBoard;
     sf::Vector2f m_viewCenter;
     sf::Vector2f m_viewSize;
-    std::optional<Position> previouslySelectedCoordinatesOfPiece;
+    SelectedPieceInformation selectedPieceInformation;
 
 
-    void movePiece(const Position &current, const Position &destination);
+    void moveSelectedPiece(const Position &destination);
 
-    void movePiece(Piece *piece, const Position &destination);
+    void handleUserReselectingPiece(const Position &pressuredSquare);
+
+    void capturePiece(const Position &capturedPiecePosition);
+
+    void displayValidMoves();
+
+    void displaySelectedPiece();
+
+    void handleDisplayOfNewPieceSelected();
 };

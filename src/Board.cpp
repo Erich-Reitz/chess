@@ -129,6 +129,129 @@ std::set<Position> Board::generateAllValidMovesForRook(const Position& current, 
             validMoves.insert(Position(row, current.col)) ;
         }
     }
+    for (int col = current.col-1; col >= 0; col--) {
+        if (hasPieceAtPosition(current.row, col, oppositeColorOfPiece)) {
+            validMoves.insert(Position(current.row, col)) ;
+            break;
+        } else if (hasPieceAtPosition(current.row, col, pieceIsWhite)) {
+            break;
+        } else {
+            validMoves.insert(Position(current.row, col)) ;
+        }
+    }
+    for (int col = current.col+1; col < 8; col++) {
+        if (hasPieceAtPosition(current.row, col, oppositeColorOfPiece)) {
+            validMoves.insert(Position(current.row, col)) ;
+            break;
+        } else if (hasPieceAtPosition(current.row, col, pieceIsWhite)) {
+            break;
+        } else {
+            validMoves.insert(Position(current.row, col)) ;
+        }
+    }
+    return validMoves;
+}
+
+template <typename T>
+void add_sets(std::set<T> &result_set, const std::set<T> &first_set, const std::set<T> &second_set) {
+    result_set.insert(first_set.begin(), first_set.end());
+    result_set.insert(second_set.begin(), second_set.end());
+}
+
+template <typename T, typename... Sets>
+void add_sets(std::set<T> &result_set, const std::set<T> &first_set, const Sets&... sets) {
+    add_sets(result_set, sets...);
+    result_set.insert(first_set.begin(), first_set.end());
+}
+
+
+std::set<Position> Board::generateAllValidMovesForBishop(const Position& current, const Piece *piece) const {
+    std::set<Position> allValidMoves = {};
+    auto downAndLeft = generateValidMovesDownLeftDiagonal(current, piece->isWhite());
+    auto downRight = generateValidMovesDownRightDiagonal(current, piece->isWhite());
+    auto upAndRight = generateValidMovesUpRightDiagonal(current, piece->isWhite());
+    auto upAndLeft = generateValidMovesUpLeftDiagonal(current, piece->isWhite());
+    add_sets(allValidMoves, downAndLeft, downRight, upAndRight, upAndLeft);
+    return allValidMoves;
+}
+
+std::set<Position> Board::generateValidMovesUpLeftDiagonal(const Position& current, bool pieceIsWhite) const {
+    std::set<Position> validMoves;
+    bool oppositeColorOfPiece = !pieceIsWhite;
+    int row = current.row-1;
+    int col = current.col-1;
+    while (row >= 0 && col >= 0) {
+        if (hasPieceAtPosition(row, col, oppositeColorOfPiece)) {
+            validMoves.insert(Position(row, col)) ;
+            break;
+        } else if (hasPieceAtPosition(row, col, pieceIsWhite)) {
+            break;
+        } else {
+            validMoves.insert(Position(row, col)) ;
+        }
+        row -- ;
+        col -- ;
+    }
+    return validMoves;
+}
+
+std::set<Position> Board::generateValidMovesUpRightDiagonal(const Position& current, bool pieceIsWhite) const {
+    std::set<Position> validMoves;
+    bool oppositeColorOfPiece = !pieceIsWhite;
+    int row = current.row-1;
+    int col = current.col+1;
+    while (row >= 0 && col < 8) {
+        if (hasPieceAtPosition(row, col, oppositeColorOfPiece)) {
+            validMoves.insert(Position(row, col)) ;
+            break;
+        } else if (hasPieceAtPosition(row, col, pieceIsWhite)) {
+            break;
+        } else {
+            validMoves.insert(Position(row, col)) ;
+        }
+        row -- ;
+        col ++ ;
+    }
+    return validMoves;
+}
+
+std::set<Position> Board::generateValidMovesDownRightDiagonal(const Position& current, bool pieceIsWhite) const {
+    std::set<Position> validMoves;
+    bool oppositeColorOfPiece = !pieceIsWhite;
+    int row = current.row+1;
+    int col = current.col+1;
+    while (row < 8 && col < 8) {
+        if (hasPieceAtPosition(row, col, oppositeColorOfPiece)) {
+            validMoves.insert(Position(row, col)) ;
+            break;
+        } else if (hasPieceAtPosition(row, col, pieceIsWhite)) {
+            break;
+        } else {
+            validMoves.insert(Position(row, col)) ;
+        }
+        row ++ ;
+        col ++ ;
+    }
+    return validMoves;
+}
+
+std::set<Position> Board::generateValidMovesDownLeftDiagonal(const Position& current, bool pieceIsWhite) const {
+    std::set<Position> validMoves;
+    bool oppositeColorOfPiece = !pieceIsWhite;
+    int row = current.row+1;
+    int col = current.col-1;
+    while (row < 8 && col >= 0) {
+        if (hasPieceAtPosition(row, col, oppositeColorOfPiece)) {
+            validMoves.insert(Position(row, col)) ;
+            break;
+        } else if (hasPieceAtPosition(row, col, pieceIsWhite)) {
+            break;
+        } else {
+            validMoves.insert(Position(row, col)) ;
+        }
+        row ++ ;
+        col -- ;
+    }
     return validMoves;
 }
 
@@ -138,6 +261,9 @@ std::set<Position> Board::generateAllValidMovesForPiece(const Position& current,
     }
     if (piece->getType() == PieceType::ROOK) {
         return generateAllValidMovesForRook(current, piece);
+    }
+    if (piece->getType() == PieceType::BISHOP) {
+        return generateAllValidMovesForBishop(current, piece);
     }
     return {};
 }
@@ -154,17 +280,17 @@ bool Board::canMove(const Position& current, const Position& destination) const 
 }
 
 std::optional<Piece*> Board::pieceAtPosition(const Position& pos) const {
-    return this->board[pos.row][pos.col]->getPiece();
+    return this->squareAt(pos)->getPiece();
 }
 
 bool Board::hasPieceAtPosition(const Position& pos) const {
-    return this->board[pos.row][pos.col]->getPiece().has_value();
+    return this->squareAt(pos)->getPiece().has_value();
 }
 
 bool Board::hasPieceAtPosition(const Position& pos, const bool targetColorIsWhite) const {
     std::optional<Piece*> piece;
     try {
-        piece = this->board.at(pos.row).at(pos.col)->getPiece();
+        piece = this->squareAt(pos)->getPiece();
     } catch (const std::out_of_range& exp) {
         return false;
     }
@@ -184,7 +310,11 @@ bool Board::hasPieceAtPosition(const size_t row, const size_t col, const bool ta
 
 
 void Board::removePieceFromSquare(const Position& coordinates) {
-    this->board[coordinates.row][coordinates.col]->removePiece();
+    this->squareAt(coordinates)->removePiece();
+}
+
+Square* Board::squareAt(const Position& coord) const {
+    return this->board.at(coord.row).at(coord.col);
 }
 
 
@@ -195,6 +325,19 @@ void Board::move(const Position& current, const Position& destination) {
     }
     Piece *movingPiece = userSelectedPiece.value();
     removePieceFromSquare(current);
-    this->board[destination.row][destination.col]->setPiece(movingPiece);
+    this->squareAt(destination)->setPiece(movingPiece);
     movingPiece->setMoved();
 }
+
+void Board::setSquareColor(const Position &position, sf::Color color) {
+    this->squareAt(position)->setColor(color) ;
+}
+
+void Board::resetAllSquaresColor() {
+    for (auto &row : this->board) {
+        for(auto &square : row) {
+            square->setOriginalColor();
+        }
+    }
+}
+

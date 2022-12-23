@@ -14,21 +14,38 @@ class Board : public sf::Drawable {
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
-    std::optional<Piece*> pieceAtPosition(const Position& pos) const;
-    bool hasPieceAtPosition(const Position& pos) const ;
+    [[nodiscard]] std::optional<Piece*> pieceAtPosition(const Position& pos) const;
+    [[nodiscard]] bool hasPieceAtPosition(const Position& pos) const ;
 
-    bool canMove(const Position& current, const Position& destination) const;
+    [[nodiscard]] bool canMove(const Position& current, const Position& destination) const;
     void move(const Position& current, const Position& destination);
 
-    std::optional<Position> getRowAndColOfMouse(sf::Vector2f mousePos) const;
+    void setSquareColor(const Position& position, sf::Color color) ;
+
+    [[nodiscard]] std::optional<Position> getRowAndColOfMouse(sf::Vector2f mousePos) const;
+    [[nodiscard]] std::set<Position> generateAllValidMovesForPiece(const Position& current, const Piece *piece) const;
+
+    void resetAllSquaresColor();
+
   protected:
     std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
     void removePieceFromSquare(const Position& coordinates);
     std::set<Position> generateAllValidMovesForPawn(const Position& current, const Piece *piece) const;
-    std::set<Position> generateAllValidMovesForPiece(const Position& current, const Piece *piece) const;
+
     std::set<Position> generateAllValidMovesForRook(const Position& current, const Piece *piece) const;
+    std::set<Position> generateAllValidMovesForBishop(const Position& current, const Piece *piece) const;
+    std::set<Position> generateValidMovesUpLeftDiagonal(const Position& current, bool pieceIsWhite) const ;
 
-    bool hasPieceAtPosition(const Position &pos, const bool targetColorIsWhite) const;
 
-    bool hasPieceAtPosition(const size_t row, const size_t col, const bool targetColorIsWhite) const;
+    [[nodiscard]] bool hasPieceAtPosition(const Position &pos, bool targetColorIsWhite) const;
+
+    [[nodiscard]] bool hasPieceAtPosition(size_t row, size_t col, bool targetColorIsWhite) const;
+
+    std::set<Position> generateValidMovesUpRightDiagonal(const Position &current, bool pieceIsWhite) const;
+
+    std::set<Position> generateValidMovesDownRightDiagonal(const Position &current, bool pieceIsWhite) const;
+
+    std::set<Position> generateValidMovesDownLeftDiagonal(const Position &current, bool pieceIsWhite) const;
+
+    Square *squareAt(const Position &coord) const;
 };
