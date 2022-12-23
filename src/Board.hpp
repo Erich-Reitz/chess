@@ -17,7 +17,7 @@ class Board : public sf::Drawable {
     [[nodiscard]] std::optional<Piece*> pieceAtPosition(const Position& pos) const;
     [[nodiscard]] bool hasPieceAtPosition(const Position& pos) const ;
 
-    [[nodiscard]] bool canMove(const Position& current, const Position& destination) const;
+
     void move(const Position& current, const Position& destination);
 
     void setSquareColor(const Position& position, sf::Color color) ;
@@ -34,18 +34,18 @@ class Board : public sf::Drawable {
 
     std::set<Position> generateAllValidMovesForRook(const Position& current, const Piece *piece) const;
     std::set<Position> generateAllValidMovesForBishop(const Position& current, const Piece *piece) const;
-    std::set<Position> generateValidMovesUpLeftDiagonal(const Position& current, bool pieceIsWhite) const ;
+    [[nodiscard]] std::set<Position> generateValidMovesUpLeftDiagonal(const Position& current, bool pieceIsWhite) const ;
 
 
     [[nodiscard]] bool hasPieceAtPosition(const Position &pos, bool targetColorIsWhite) const;
 
     [[nodiscard]] bool hasPieceAtPosition(size_t row, size_t col, bool targetColorIsWhite) const;
 
-    std::set<Position> generateValidMovesUpRightDiagonal(const Position &current, bool pieceIsWhite) const;
+    [[nodiscard]] std::set<Position> generateValidMovesUpRightDiagonal(const Position &current, bool pieceIsWhite) const;
 
-    std::set<Position> generateValidMovesDownRightDiagonal(const Position &current, bool pieceIsWhite) const;
+    [[nodiscard]] std::set<Position> generateValidMovesDownRightDiagonal(const Position &current, bool pieceIsWhite) const;
 
-    std::set<Position> generateValidMovesDownLeftDiagonal(const Position &current, bool pieceIsWhite) const;
+    [[nodiscard]] std::set<Position> generateValidMovesDownLeftDiagonal(const Position &current, bool pieceIsWhite) const;
 
-    Square *squareAt(const Position &coord) const;
+    [[nodiscard]] Square *squareAt(const Position &coord) const;
 };

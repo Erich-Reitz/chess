@@ -268,16 +268,6 @@ std::set<Position> Board::generateAllValidMovesForPiece(const Position& current,
     return {};
 }
 
-bool Board::canMove(const Position& current, const Position& destination) const {
-    // check if it's possible for the piece
-    std::optional<Piece*> optPiece = pieceAtPosition(current);
-    if (!optPiece.has_value()) {
-        throw CurrentSquareDoesNotContainPiece();
-    }
-    Piece *piece = optPiece.value();
-    std::set<Position> allValidPositions = generateAllValidMovesForPiece(current, piece);
-    return allValidPositions.find(destination) != allValidPositions.end() ;
-}
 
 std::optional<Piece*> Board::pieceAtPosition(const Position& pos) const {
     return this->squareAt(pos)->getPiece();
