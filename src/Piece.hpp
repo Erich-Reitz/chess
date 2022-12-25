@@ -28,6 +28,7 @@ class Piece : public sf::Drawable {
     PieceType getType() const ;
 
     void setOriginalColor();
+    size_t getTimesMoved() const;
   private:
     size_t timesMoved = 0;
     PieceColor color;

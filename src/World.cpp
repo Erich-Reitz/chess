@@ -13,12 +13,24 @@ World::World() = default;
 
 World::~World() = default;
 
+std::optional<Move> setOfMovesContainsDestination(const std::set<Move>  &moveSet, const Position& destination) {
+    for (auto move : moveSet) {
+        if (move.moveTo == destination) {
+            return move;
+        }
+    }
+    return {};
+}
 
 
 void World::moveSelectedPiece(const Position &destination) {
     auto validMoves = this->selectedPieceInformation.placesCanMove.value();
-    if (validMoves.find(destination) != validMoves.end()) {
+    auto validMove = setOfMovesContainsDestination(validMoves, destination) ;
+    if (validMove.has_value()) {
         try {
+            if (validMove.value().isCapture()) {
+                gameBoard.removePieceFromSquare(validMove.value().captures.value()) ;
+            }
             gameBoard.move(this->selectedPieceInformation.getCoordinates(), destination);
         } catch (CurrentSquareDoesNotContainPiece &e) {
             std::cerr << e.what() << std::endl;
@@ -53,8 +65,8 @@ void World::handleMouseDownWithSelectedPiece(const Position& pressedSquare) {
 
 void World::displayValidMoves( ) {
     auto validMoves = this->selectedPieceInformation.getPlacesCanMove();
-    for (auto &pos :validMoves) {
-        gameBoard.setSquareColor(pos, sf::Color::Green);
+    for (auto &move : validMoves) {
+        gameBoard.setSquareColor(move.moveTo, sf::Color::Green);
     }
 }
 

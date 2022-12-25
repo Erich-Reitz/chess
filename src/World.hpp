@@ -6,7 +6,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Board.hpp"
-#include "selectedPieceInfo.hpp"
+#include "SelectedPieceInfo.hpp"
 
 class World  {
 

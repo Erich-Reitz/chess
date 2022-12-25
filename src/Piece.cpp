@@ -61,4 +61,9 @@ void Piece::setOriginalColor() {
     }
 }
 
+size_t Piece::getTimesMoved() const {
+    return this->timesMoved;
+}
+
+
 

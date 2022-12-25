@@ -4,5 +4,5 @@
 
 Knight::Knight(bool white) : Piece(white, PieceType::KNIGHT) {};
 
-Knight::~Knight() {};
+Knight::~Knight() = default;;
 
