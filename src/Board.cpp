@@ -1,6 +1,11 @@
 #include <functional>
 #include <optional>
 #include <set>
+#include <algorithm>
+#include <iostream>
+#include <vector>
+#include <iterator>
+#include <numeric>
 
 #include "Board.hpp"
 #include "Piece.hpp"
@@ -255,29 +260,38 @@ std::set<Position> Board::generateValidMovesDownLeftDiagonal(const Position& cur
     return validMoves;
 }
 
+bool positionInBoard(const Position&pos) {
+    return (pos.row >= 0 && pos.row < 8) && pos.col < 8 && pos.col >= 0;
+}
+
+
 std::set<Position> Board::generateAllValidMovesForPiece(const Position& current, const Piece *piece) const {
+    std::set<Position> moves;
     if (piece->getType() == PieceType::PAWN) {
-        return generateAllValidMovesForPawn(current, piece) ;
+        moves = generateAllValidMovesForPawn(current, piece) ;
     }
     if (piece->getType() == PieceType::ROOK) {
-        return generateAllValidMovesForRook(current, piece);
+        moves= generateAllValidMovesForRook(current, piece);
     }
     if (piece->getType() == PieceType::BISHOP) {
-        return generateAllValidMovesForBishop(current, piece);
+        moves = generateAllValidMovesForBishop(current, piece);
     }
-    return {};
+    std::set<Position> validMoves;
+    std::copy_if(moves.begin(), moves.end(), std::inserter(validMoves, validMoves.end()),  [](const Position & value) {
+        return positionInBoard(value ) ;
+    });
+    return validMoves;
 }
 
 
 std::optional<Piece*> Board::pieceAtPosition(const Position& pos) const {
+    if (!hasPieceAtPosition(pos)) {
+        return {};
+    }
     return this->squareAt(pos)->getPiece();
 }
 
 bool Board::hasPieceAtPosition(const Position& pos) const {
-    return this->squareAt(pos)->getPiece().has_value();
-}
-
-bool Board::hasPieceAtPosition(const Position& pos, const bool targetColorIsWhite) const {
     std::optional<Piece*> piece;
     try {
         piece = this->squareAt(pos)->getPiece();
@@ -287,11 +301,20 @@ bool Board::hasPieceAtPosition(const Position& pos, const bool targetColorIsWhit
     if (! piece.has_value() ) {
         return false;
     }
-    return piece.value()->isWhite() == targetColorIsWhite;
+    return true;
+}
+
+bool Board::hasPieceAtPosition(const Position& pos, const bool targetColorIsWhite) const {
+    return this->hasPieceAtPosition(pos.row, pos.col, targetColorIsWhite);
 }
 
 bool Board::hasPieceAtPosition(const size_t row, const size_t col, const bool targetColorIsWhite) const {
-    auto piece = this->board[row][col]->getPiece();
+    std::optional<Piece*> piece;
+    try {
+        piece = this->squareAt(row, col)->getPiece();
+    } catch (const std::out_of_range& exp) {
+        return false;
+    }
     if (! piece.has_value() ) {
         return false;
     }
@@ -304,9 +327,12 @@ void Board::removePieceFromSquare(const Position& coordinates) {
 }
 
 Square* Board::squareAt(const Position& coord) const {
-    return this->board.at(coord.row).at(coord.col);
+    return this->squareAt(coord.row, coord.col);
 }
 
+Square* Board::squareAt(size_t row, size_t col) const {
+    return this->board.at(row).at(col);
+}
 
 void Board::move(const Position& current, const Position& destination) {
     std::optional<Piece*> userSelectedPiece = pieceAtPosition(current);
@@ -330,4 +356,6 @@ void Board::resetAllSquaresColor() {
         }
     }
 }
+
+
 

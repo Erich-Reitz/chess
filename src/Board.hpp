@@ -48,4 +48,5 @@ class Board : public sf::Drawable {
     [[nodiscard]] std::set<Position> generateValidMovesDownLeftDiagonal(const Position &current, bool pieceIsWhite) const;
 
     [[nodiscard]] Square *squareAt(const Position &coord) const;
+    [[nodiscard]] Square *squareAt(size_t row, size_t col) const;
 };
