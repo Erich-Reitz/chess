@@ -28,6 +28,7 @@ class Board : public sf::Drawable {
 
     void resetAllSquaresColor();
     void removePieceFromSquare(const Position& coordinates);
+    void processMove(const Position &coordinates_of_piece_to_move, const Move &move) ;
   protected:
     std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
 
@@ -50,4 +51,6 @@ class Board : public sf::Drawable {
 
     [[nodiscard]] Square *squareAt(const Position &coord) const;
     [[nodiscard]] Square *squareAt(size_t row, size_t col) const;
+  private:
+    std::vector<Move> moveList;
 };

@@ -81,10 +81,13 @@ std::optional<Position> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) 
     return {};
 }
 
-bool pieceCanBeCapturedEnPassant(Piece *piece, Position position) {
+bool pieceCanBeCapturedEnPassant(Piece *piece, Position position, const std::vector<Move> moveList) {
     if (piece->getType() == PieceType::PAWN && piece->getTimesMoved() == 1) {
         if ((piece->isWhite() && position.row == 6) || (!piece->isWhite() && position.row==3)) {
-            return true;
+            if (moveList.back().moveTo == position) {
+                return true ;
+            }
+            return false;
         }
     }
     return false;
@@ -118,11 +121,11 @@ std::set<Move> Board::generateAllValidMovesForPawn(const Position& current, cons
     }
     // en passant
     auto pieceOnSquareToTheRight = pieceAtPosition(oneSpaceRight);
-    if (pieceOnSquareToTheRight.has_value() && pieceCanBeCapturedEnPassant(pieceOnSquareToTheRight.value(), oneSpaceRight)) {
+    if (pieceOnSquareToTheRight.has_value() && pieceCanBeCapturedEnPassant(pieceOnSquareToTheRight.value(), oneSpaceRight, this->moveList)) {
         validMoves.insert({oneSpaceForwardOneSpaceRight, oneSpaceRight}) ;
     }
     auto pieceOnSquareToTheLeft = pieceAtPosition(oneSpaceLeft);
-    if (pieceOnSquareToTheLeft.has_value() && pieceCanBeCapturedEnPassant(pieceOnSquareToTheLeft.value(), oneSpaceLeft)) {
+    if (pieceOnSquareToTheLeft.has_value() && pieceCanBeCapturedEnPassant(pieceOnSquareToTheLeft.value(), oneSpaceLeft, this->moveList)) {
         validMoves.insert({oneSpaceForwardOneSpaceLeft, oneSpaceLeft}) ;
     }
     return validMoves;
@@ -282,6 +285,14 @@ std::set<Move> Board::generateValidMovesDownLeftDiagonal(const Position& current
 bool positionInBoard(const Move &move) {
     auto pos = move.moveTo;
     return (pos.row >= 0 && pos.row < 8) && pos.col < 8 && pos.col >= 0;
+}
+
+void Board::processMove(const Position &coordinates_of_piece_to_move, const Move &requested_move) {
+    if (requested_move.isCapture()) {
+        removePieceFromSquare(requested_move.captures.value()) ;
+    }
+    this->move(coordinates_of_piece_to_move, requested_move.moveTo);
+    this->moveList.push_back(requested_move) ;
 }
 
 

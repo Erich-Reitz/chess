@@ -28,10 +28,7 @@ void World::moveSelectedPiece(const Position &destination) {
     auto validMove = setOfMovesContainsDestination(validMoves, destination) ;
     if (validMove.has_value()) {
         try {
-            if (validMove.value().isCapture()) {
-                gameBoard.removePieceFromSquare(validMove.value().captures.value()) ;
-            }
-            gameBoard.move(this->selectedPieceInformation.getCoordinates(), destination);
+            gameBoard.processMove(this->selectedPieceInformation.getCoordinates(), validMove.value()) ;
         } catch (CurrentSquareDoesNotContainPiece &e) {
             std::cerr << e.what() << std::endl;
         }
