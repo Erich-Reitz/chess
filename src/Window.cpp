@@ -40,23 +40,28 @@ void Window::Destroy() {
 void Window::Update() {
     lastMouseDownState = m_down;
     sf::Event event {};
+
     while (
         m_window.pollEvent(event)
     ) {
         if (event.type == sf::Event::Closed) {
             m_isDone = true;
         }
+
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Escape) {
                 m_isDone = true;
             }
         }
+
         if (!m_down && event.type == sf::Event::MouseButtonPressed) {
             m_down = true;
         }
+
         if (m_down && event.type == sf::Event::MouseButtonReleased) {
             m_down = false;
         }
+
         if (event.type == sf::Event::Resized) {
             m_view.setSize(event.size.width, event.size.height);
             m_window.setView(m_view);
@@ -137,6 +142,7 @@ bool Window::isMouseUp() {
     if (!m_down && lastMouseDownState) {
         return true;
     }
+
     return false;
 }
 
@@ -144,6 +150,7 @@ bool Window::isMouseDown() {
     if (m_down && !lastMouseDownState) {
         return true;
     }
+
     return false;
 }
 

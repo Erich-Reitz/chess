@@ -19,6 +19,7 @@ std::optional<Move> setOfMovesContainsDestination(const std::set<Move>  &moveSet
             return move;
         }
     }
+
     return {};
 }
 
@@ -26,12 +27,15 @@ std::optional<Move> setOfMovesContainsDestination(const std::set<Move>  &moveSet
 void World::moveSelectedPiece(const Position &destination) {
     auto validMoves = this->selectedPieceInformation.placesCanMove.value();
     auto validMove = setOfMovesContainsDestination(validMoves, destination) ;
+
     if (validMove.has_value()) {
         try {
-            gameBoard.processMove(this->selectedPieceInformation.getCoordinates(), validMove.value()) ;
+            gameBoard.processMove(validMove.value()) ;
+
         } catch (CurrentSquareDoesNotContainPiece &e) {
             std::cerr << e.what() << std::endl;
         }
+
         this->selectedPieceInformation.reset();
         this->gameBoard.resetAllSquaresColor();
     }
@@ -43,25 +47,32 @@ void World::handleUserReselectingPiece(const Position& pressedSquare) {
     handleMouseDownWithNoSelectedPiece(pressedSquare) ;
 }
 
-void World::capturePiece(const Position& capturedPiecePosition) {
-    this->moveSelectedPiece(capturedPiecePosition);
+
+
+bool sameColor(Piece *a, Piece *b) {
+    return a->isWhite() == b->isWhite();
 }
 
 void World::handleMouseDownWithSelectedPiece(const Position& pressedSquare) {
     Piece  *previouslySelectedPiece = this->selectedPieceInformation.getPiece();
-    if (gameBoard.hasPieceAtPosition(pressedSquare)) {
-        if (gameBoard.pieceAtPosition(pressedSquare).value()->isWhite() == previouslySelectedPiece->isWhite()) {
-            handleUserReselectingPiece(pressedSquare);
-        } else {
-            capturePiece(pressedSquare);
-        }
-    } else {
+    std::optional<Piece*> pieceAtPosition = gameBoard.pieceAtPosition(pressedSquare) ;
+
+    if (!pieceAtPosition.has_value()) {
         this->moveSelectedPiece(pressedSquare);
+        return;
     }
+
+    if (sameColor(pieceAtPosition.value(), previouslySelectedPiece)) {
+        handleUserReselectingPiece(pressedSquare);
+        return;
+    }
+
+    moveSelectedPiece(pressedSquare);
 }
 
 void World::displayValidMoves( ) {
     auto validMoves = this->selectedPieceInformation.getPlacesCanMove();
+
     for (auto &move : validMoves) {
         gameBoard.setSquareColor(move.moveTo, sf::Color::Green);
     }
@@ -79,7 +90,12 @@ void World::handleDisplayOfNewPieceSelected() {
 
 void World::handleMouseDownWithNoSelectedPiece(const Position& pressedSquare) {
     std::optional<Piece*>  piece = gameBoard.pieceAtPosition(pressedSquare) ;
-    if (piece.has_value()) {
+
+    if (!piece.has_value()) {
+        return;
+    }
+
+    if (piece.value()->isWhite() == this->gameBoard.whitetoMove()) {
         auto placesCanMove = gameBoard.generateAllValidMovesForPiece(pressedSquare, piece.value());
         this->selectedPieceInformation.setInformation(pressedSquare, piece.value(), placesCanMove);
         this->handleDisplayOfNewPieceSelected();
@@ -90,14 +106,17 @@ void World::handleMouseDownOnSquare(const Position& pressedSquare) {
     if (this->selectedPieceInformation.hasSelectedPiece()) {
         return handleMouseDownWithSelectedPiece(pressedSquare);
     }
+
     return handleMouseDownWithNoSelectedPiece(pressedSquare);
 }
 
 void World::handleMouseDown(sf::Vector2f mousePos) {
     std::optional<Position> pressedPosition  = gameBoard.getRowAndColOfMouse(mousePos);
+
     if (!pressedPosition.has_value()) {
         return;
     }
+
     handleMouseDownOnSquare(pressedPosition.value());
 }
 

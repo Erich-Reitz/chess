@@ -35,8 +35,6 @@ class World  {
 
     void handleUserReselectingPiece(const Position &pressuredSquare);
 
-    void capturePiece(const Position &capturedPiecePosition);
-
     void displayValidMoves();
 
     void displaySelectedPiece();

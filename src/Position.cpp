@@ -15,9 +15,11 @@ bool Position::operator<(const Position &rhs) const {
     if (this->row < rhs.row) {
         return true;
     }
+
     if (this->row > rhs.row) {
         return false;
     }
+
     return this->col < rhs.col;
 }
 

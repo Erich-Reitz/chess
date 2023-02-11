@@ -11,11 +11,15 @@
 #include "Piece.hpp"
 #include "Position.hpp"
 
+class Piece;
 
 class Square : public sf::Drawable {
   public:
     Square() {};
+
     Square(bool white, int row, int col, float xPos, float yPos, float size, std::optional<Piece*> piece);
+    Square(const Square& rhs);
+    Square& operator=(const Square& rhs);
     std::optional<Piece*> getPiece() const;
 
     void setPiece(Piece* _piece);

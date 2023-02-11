@@ -2,7 +2,9 @@
 #include "Position.hpp"
 
 struct Move {
+    Position moveFrom;
     Position moveTo;
+    bool whiteMove;
     std::optional<Position> captures = {};
 
     bool isCapture() const {

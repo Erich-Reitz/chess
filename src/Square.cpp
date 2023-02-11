@@ -6,22 +6,53 @@ Square::Square(bool white, int _row, int _col, float xPos, float yPos, float siz
     this->white = white;
     this->shape.setSize(sf::Vector2f(size, size));
     this->shape.setPosition(sf::Vector2f(xPos, yPos));
+
     if (white) {
         this->shape.setFillColor(sf::Color::Yellow);
+
     } else {
         this->shape.setFillColor(sf::Color::Magenta);
     }
+
     if (_piece.has_value()) {
         this->piece = _piece;
         this->piece.value()->setPosition(xPos, yPos) ;
         this->piece.value()->setRadius(size / 2.0);
+
     } else {
         this->piece = {};
     }
 }
 
+Square::Square(const Square& rhs) :  white(rhs.white), piece(rhs.piece), shape(rhs.shape), position(rhs.position) {
+    if (rhs.piece) {
+        piece = std::make_optional<Piece*>(new Piece(**rhs.piece));
+
+    } else {
+        piece = std::nullopt;
+    }
+}
+
+Square& Square::operator=(const Square& rhs) {
+    if (this != &rhs) {
+        white = rhs.white;
+        shape = rhs.shape;
+        position = rhs.position;
+
+        if (rhs.piece) {
+            piece = std::make_optional<Piece*>(new Piece(**rhs.piece));
+
+        } else {
+            piece = std::nullopt;
+        }
+    }
+
+    return *this;
+}
+
 void Square::draw(sf::RenderTarget& target) const {
     target.draw(shape);
+
     if (piece.has_value()) {
         target.draw(*piece.value() );
     }
@@ -56,6 +87,7 @@ void Square::setColor(sf::Color color) {
 void Square::setOriginalColor() {
     if (white) {
         this->shape.setFillColor(sf::Color::Yellow);
+
     } else {
         this->shape.setFillColor(sf::Color::Magenta);
     }
