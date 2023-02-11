@@ -4,7 +4,7 @@
 struct Move {
     Position moveFrom;
     Position moveTo;
-    bool whiteMove;
+    PieceColor colorMove;
     std::optional<Position> captures = {};
 
     bool isCapture() const {

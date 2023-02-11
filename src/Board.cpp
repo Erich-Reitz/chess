@@ -20,7 +20,9 @@
 #include "add_sets.cpp"
 #include "chess_exceptions.cpp"
 
-
+PieceColor opposite_color(PieceColor color) {
+    return color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE ;
+}
 
 std::optional<Piece*> initial_piece(int row, int col) {
     bool isWhitePiece = row == 6 || row == 7;
@@ -80,7 +82,7 @@ Board::Board(const Board& rhs) {
 }
 
 Board& Board::operator=(const Board& rhs) {
-    whiteToMove = rhs.whiteToMove;
+    this->colorToMove = rhs.colorToMove ;
     moveList = rhs.moveList;
     board.resize(8);
 
@@ -119,7 +121,8 @@ std::optional<Position> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) 
 
 bool isPawnAndHasMovedOnceTwoSquaresForward(Piece *piece, Position piece_pos) {
     if (piece->getType() == PieceType::PAWN && piece->getTimesMoved() == 1) {
-        return ((piece->isWhite() && piece_pos.row == 4) || (!piece->isWhite() && piece_pos.row==3)) ;
+        auto pieceIsWhite = piece->getColor() == PieceColor::WHITE;
+        return ((pieceIsWhite && piece_pos.row == 4) || (!pieceIsWhite && piece_pos.row==3)) ;
     }
 
     return false;
@@ -147,8 +150,8 @@ Position findOneSpaceLeft(const Position& current, bool isPieceWhite) {
 
 std::set<Move> Board::generateAllValidMovesForKing(const Position& currentPosition, const Piece *piece) const {
     std::set<Move> validMoves;
-    auto pieceColor = piece->isWhite() ;
-    auto oppositePieceColor = !pieceColor;
+    PieceColor pieceColor = piece->getColor() ;
+    PieceColor oppositePieceColor = opposite_color(pieceColor);
     const int row_difs[] = {1, 1, 0, -1, -1, -1, 0, 1} ;
     const int col_difs[] = {0, 1, 1,  1,  0, -1, -1, -1} ;
 
@@ -158,7 +161,7 @@ std::set<Move> Board::generateAllValidMovesForKing(const Position& currentPositi
         auto moveTo = Position(currentPosition.row + row_dif, currentPosition.col + col_dir) ;
 
         if (!hasPieceAtPosition(moveTo, pieceColor)) {
-            if (hasPieceAtPosition(moveTo, !oppositePieceColor)) {
+            if (hasPieceAtPosition(moveTo, oppositePieceColor)) {
                 validMoves.insert(Move{currentPosition, moveTo, pieceColor, moveTo}) ;
 
             } else {
@@ -173,16 +176,17 @@ std::set<Move> Board::generateAllValidMovesForKing(const Position& currentPositi
 
 std::set<Move> Board::generateAllValidMovesForPawn(const Position& currentPosition, const Piece *piece) const {
     std::set<Move> validMoves;
-    bool pieceColor = piece->isWhite();
-    bool oppositeColorOfPiece = !pieceColor;
-    Position oneSpaceForward = findOneSpaceForward(currentPosition, pieceColor) ;
-    Position oneSpaceRight = findOneSpaceRight(currentPosition, pieceColor);
-    Position oneSpaceLeft = findOneSpaceLeft(currentPosition, pieceColor) ;
-    Position oneSpaceForwardOneSpaceRight = Position(currentPosition.row +  (pieceColor ? - 1 : 1), currentPosition.col + (pieceColor ? 1 : -1)) ;
-    Position oneSpaceForwardOneSpaceLeft = Position(currentPosition.row +  (pieceColor ? - 1 : 1), currentPosition.col + (pieceColor ? -1 : 1)) ;
+    PieceColor pieceColor = piece->getColor();
+    PieceColor oppositeColorOfPiece = opposite_color(pieceColor) ;
+    bool pieceIsWhite = pieceColor == PieceColor::WHITE ;
+    Position oneSpaceForward = findOneSpaceForward(currentPosition, pieceIsWhite) ;
+    Position oneSpaceRight = findOneSpaceRight(currentPosition, pieceIsWhite);
+    Position oneSpaceLeft = findOneSpaceLeft(currentPosition, pieceIsWhite) ;
+    Position oneSpaceForwardOneSpaceRight = Position(currentPosition.row +  (pieceIsWhite ? - 1 : 1), currentPosition.col + (pieceIsWhite ? 1 : -1)) ;
+    Position oneSpaceForwardOneSpaceLeft = Position(currentPosition.row +  (pieceIsWhite ? - 1 : 1), currentPosition.col + (pieceIsWhite ? -1 : 1)) ;
 
     if (!piece->hasMoved()) {
-        Position twoSpacesForward = Position(currentPosition.row + (pieceColor ? - 2 : 2), currentPosition.col) ;
+        Position twoSpacesForward = Position(currentPosition.row + (pieceIsWhite ? - 2 : 2), currentPosition.col) ;
 
         if (!hasPieceAtPosition(oneSpaceForward) && !hasPieceAtPosition(twoSpacesForward) ) {
             validMoves.insert(Move{currentPosition, twoSpacesForward, pieceColor}) ;
@@ -220,14 +224,13 @@ std::set<Move> Board::generateAllValidMovesForPawn(const Position& currentPositi
 std::set<Move> Board::generateAllValidMovesForRook(const Position& current, const Piece *piece) const {
     const int row_difs[] = {-1, 1, 0, 0} ;
     const int col_difs[] = {0, 0, 1, -1} ;
-    auto pieceIsWhite = piece->isWhite();
-    return generateMovesInStraightLine(current, pieceIsWhite, row_difs, col_difs) ;
+    return generateMovesInStraightLine(current, piece->getColor(), row_difs, col_difs) ;
 }
 
 
 std::set<Move> Board::generateAllValidMovesForQueen(const Position& current, const Piece *piece) const {
     std::set<Move> allValidMoves = {};
-    auto allValidMovesForBishop = generateAllDiagonalMoves(current, piece->isWhite());
+    auto allValidMovesForBishop = generateAllDiagonalMoves(current, piece->getColor());
     auto allValidMovesForRook = generateAllValidMovesForRook(current, piece) ;
     add_sets(allValidMoves, allValidMovesForBishop, allValidMovesForRook) ;
     return allValidMoves;
@@ -235,13 +238,13 @@ std::set<Move> Board::generateAllValidMovesForQueen(const Position& current, con
 
 
 std::set<Move> Board::generateAllValidMovesForBishop(const Position& current, const Piece *piece) const {
-    return generateAllDiagonalMoves(current, piece->isWhite()) ;
+    return generateAllDiagonalMoves(current, piece->getColor()) ;
 }
 
 
-std::set<Move> Board::generateMovesInStraightLine(const Position& currentPosition, bool pieceColor, const int row_difs[], const int col_difs[]) const {
+std::set<Move> Board::generateMovesInStraightLine(const Position& currentPosition, PieceColor pieceColor, const int row_difs[], const int col_difs[]) const {
     std::set<Move> validMoves;
-    bool oppositePieceColor = !pieceColor;
+    PieceColor oppositePieceColor = opposite_color(pieceColor);
 
     for (int i = 0; i < 4; i++) {
         int row = currentPosition.row + row_difs[i] ;
@@ -271,17 +274,17 @@ std::set<Move> Board::generateMovesInStraightLine(const Position& currentPositio
     return validMoves;
 }
 
-std::set<Move> Board::generateAllDiagonalMoves(const Position& current, bool pieceIsWhite) const {
+std::set<Move> Board::generateAllDiagonalMoves(const Position& current, PieceColor color) const {
     const int row_difs[] = {-1, -1, 1, 1} ;
     const int col_difs[] = {-1, 1, 1, -1} ;
-    return generateMovesInStraightLine(current, pieceIsWhite, row_difs, col_difs) ;
+    return generateMovesInStraightLine(current, color, row_difs, col_difs) ;
 }
 
 bool positionInBoard(const Position &pos)  {
     return (pos.row >= 0 && pos.row < 8) && pos.col < 8 && pos.col >= 0;
 }
 
-std::set<std::pair<Position, Piece*>> Board::getAllPieces(bool coloredWhite) const {
+std::set<std::pair<Position, Piece*>> Board::getAllPieces(PieceColor searchColor) const {
     std::set<std::pair<Position, Piece*>> pieces;
 
     for (int i = 0; i < 8 ; i++) {
@@ -291,7 +294,7 @@ std::set<std::pair<Position, Piece*>> Board::getAllPieces(bool coloredWhite) con
                 auto pos = Position(i, j)  ;
                 auto pieceInfo = std::make_pair(pos, piece) ;
 
-                if (coloredWhite == piece->isWhite()) {
+                if (searchColor == piece->getColor()) {
                     pieces.insert(pieceInfo);
                 }
             }
@@ -301,7 +304,7 @@ std::set<std::pair<Position, Piece*>> Board::getAllPieces(bool coloredWhite) con
     return pieces;
 }
 
-std::pair<Position, Piece*> Board::getKing(bool white) const {
+std::pair<Position, Piece*> Board::getKing(PieceColor color) const {
     for (int i = 0; i < 8 ; i++) {
         for (int j = 0; j < 8; j++) {
             if (squareAt(i, j)->getPiece().has_value()) {
@@ -309,7 +312,7 @@ std::pair<Position, Piece*> Board::getKing(bool white) const {
                 auto pos = Position(i, j)  ;
                 auto pieceInfo = std::make_pair(pos, piece) ;
 
-                if (white == piece->isWhite() && piece->getType() == PieceType::KING) {
+                if (color == piece->getColor() && piece->getType() == PieceType::KING) {
                     return pieceInfo ;
                 }
             }
@@ -317,9 +320,11 @@ std::pair<Position, Piece*> Board::getKing(bool white) const {
     }
 }
 
-bool Board::king_is_attacked(bool colorKingWeAreConcernedAbout) const {
+
+
+bool Board::king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const {
     auto positionOfColorKingWeAreConcernedAbout = getKing(colorKingWeAreConcernedAbout).first ;
-    auto all_pieces = getAllPieces(!colorKingWeAreConcernedAbout) ;
+    auto all_pieces = getAllPieces(colorKingWeAreConcernedAbout) ;
 
     for (auto piece : all_pieces) {
         auto allValidMoves = generateAllValidMovesForPiece(piece.first, piece.second, false) ;
@@ -336,13 +341,12 @@ bool Board::king_is_attacked(bool colorKingWeAreConcernedAbout) const {
     return false;
 }
 
-bool Board::whitetoMove() const {
-    return this->whiteToMove;
+PieceColor Board::getColorToMove() const {
+    return this->colorToMove;
 }
 
 bool Board::move_places_king_in_check(const Move &move) const {
     // after we process move, no pieces should have a valid move to attack king
-    bool currentColorToMove = this->whiteToMove ;
     Board future_board = *this;
     // if white, we are processing white's move
     future_board.processMove(move) ;
@@ -350,7 +354,7 @@ bool Board::move_places_king_in_check(const Move &move) const {
     // know we want to see if black has a move to capture white's king
     // if it does, the previous move by white would place the king in check
     // and therefore be invalid
-    if (future_board.king_is_attacked(currentColorToMove)) {
+    if (future_board.king_is_attacked(this->colorToMove)) {
         return true ;
     }
 
@@ -372,13 +376,13 @@ void Board::processMove(const Move &requested_move) {
 
     this->move(requested_move.moveFrom, requested_move.moveTo);
     this->moveList.push_back(requested_move) ;
-    this->whiteToMove = !whiteToMove ;
+    this->colorToMove = opposite_color(this->colorToMove) ;
 }
 
 std::set<Move> Board::generateAllValidMovesForKnight(const Position& currentPosition, const Piece *piece) const {
     std::set<Move> validMoves ;
-    auto pieceColor = piece->isWhite();
-    auto oppositePieceColor = !pieceColor;
+    auto pieceColor = piece->getColor();
+    auto oppositePieceColor = opposite_color(pieceColor);
     const int row_difs[] = {1, 1, -1, -1, 2, 2, -2, -2} ;
     const int col_difs[] = {2, -2, 2, -2, 1, -1, 1, -1} ;
 
@@ -438,7 +442,7 @@ bool Board::hasPieceAtPosition(const Position& pos) const {
     return true;
 }
 
-bool Board::hasPieceAtPosition(const Position& pos, const bool targetColorIsWhite) const {
+bool Board::hasPieceAtPosition(const Position& pos, const PieceColor target_color) const {
     std::optional<Piece*> piece;
 
     try {
@@ -452,7 +456,7 @@ bool Board::hasPieceAtPosition(const Position& pos, const bool targetColorIsWhit
         return false;
     }
 
-    return piece.value()->isWhite() == targetColorIsWhite;
+    return piece.value()->getColor() == target_color;
 }
 
 

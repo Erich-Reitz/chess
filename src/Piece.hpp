@@ -29,7 +29,7 @@ class Piece : public sf::Drawable {
     void setRadius(float radius);
     void setColor(sf::Color color);
 
-    bool isWhite() const;
+    PieceColor getColor() const;
 
     bool hasMoved() const;
     void setMoved() ;

@@ -101,8 +101,8 @@ void Piece::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(piece);
 }
 
-bool Piece::isWhite() const {
-    return this->color == PieceColor::WHITE;
+PieceColor Piece::getColor() const {
+    return this->color ;
 }
 
 bool Piece::hasMoved() const {
@@ -122,7 +122,7 @@ PieceType Piece::getType() const {
 }
 
 void Piece::setOriginalColor() {
-    if (isWhite()) {
+    if (getColor() == PieceColor::WHITE) {
         setColor(sf::Color::White);
 
     } else {

@@ -50,7 +50,7 @@ void World::handleUserReselectingPiece(const Position& pressedSquare) {
 
 
 bool sameColor(Piece *a, Piece *b) {
-    return a->isWhite() == b->isWhite();
+    return a->getColor() == b->getColor();
 }
 
 void World::handleMouseDownWithSelectedPiece(const Position& pressedSquare) {
@@ -95,7 +95,7 @@ void World::handleMouseDownWithNoSelectedPiece(const Position& pressedSquare) {
         return;
     }
 
-    if (piece.value()->isWhite() == this->gameBoard.whitetoMove()) {
+    if (piece.value()->getColor() == this->gameBoard.getColorToMove()) {
         auto placesCanMove = gameBoard.generateAllValidMovesForPiece(pressedSquare, piece.value());
         this->selectedPieceInformation.setInformation(pressedSquare, piece.value(), placesCanMove);
         this->handleDisplayOfNewPieceSelected();
