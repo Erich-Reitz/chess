@@ -82,10 +82,7 @@ void World::displaySelectedPiece()  {
     this->selectedPieceInformation.getPiece()->setColor(sf::Color::Red);
 }
 
-void World::handleDisplayOfNewPieceSelected() {
-    this->displayValidMoves();
-    this->displaySelectedPiece();
-}
+
 
 
 void World::handleMouseDownWithNoSelectedPiece(const Position& pressedSquare) {
@@ -98,7 +95,8 @@ void World::handleMouseDownWithNoSelectedPiece(const Position& pressedSquare) {
     if (piece.value()->getColor() == this->gameBoard.getColorToMove()) {
         auto placesCanMove = gameBoard.generateAllValidMovesForPiece(pressedSquare, piece.value());
         this->selectedPieceInformation.setInformation(pressedSquare, piece.value(), placesCanMove);
-        this->handleDisplayOfNewPieceSelected();
+        this->displayValidMoves();
+        this->displaySelectedPiece();
     }
 }
 

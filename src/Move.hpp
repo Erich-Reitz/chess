@@ -6,6 +6,8 @@ struct Move {
     Position moveTo;
     PieceColor colorMove;
     std::optional<Position> captures = {};
+    std::optional<Position> alsoMoveFrom = {};
+    std::optional<Position> alsoMoveTo = {} ;
 
     bool isCapture() const {
         return captures.has_value();

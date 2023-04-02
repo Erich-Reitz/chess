@@ -33,12 +33,13 @@ class Board : public sf::Drawable {
     std::set<Move> generateAllValidMovesForKnight(const Position& current, const Piece *piece) const ;
     std::set<Move> generateAllValidMovesForPawn(const Position& current, const Piece *piece) const;
     PieceColor getColorToMove() const ;
+    bool unmovedRookAtPosition(const Position &pos) const;
   protected:
     std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
     std::vector<Move> moveList;
     bool king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const;
     std::set<Move> generateMovesInStraightLine(const Position& current, PieceColor color, const int row_difs[], const int col_difs[]) const;
-    bool move_places_king_in_check(const Move &move) const ;
+    bool moves_finishes_with_king_in_check(const Move &move) const ;
     bool legal_move(const Move &move, bool careIfPlacesKingInCheck) const ;
     bool hasPieceAtPosition(const Position &pos, PieceColor targetColor) const;
     std::set<Move> generateAllDiagonalMoves(const Position& current, PieceColor color) const ;

@@ -40,6 +40,7 @@ class Piece : public sf::Drawable {
     void setOriginalColor();
     size_t getTimesMoved() const;
 
+
     std::set<Move> generateAllValidMoves(const Position& current, const Board& board) const {
         return (board.*generateMovesFn)(current, this);
     }

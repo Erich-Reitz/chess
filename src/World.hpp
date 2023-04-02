@@ -38,6 +38,4 @@ class World  {
     void displayValidMoves();
 
     void displaySelectedPiece();
-
-    void handleDisplayOfNewPieceSelected();
 };

@@ -31,7 +31,7 @@ struct SelectedPieceInformation {
     }
 
 
-    Piece *getPiece()  {
+    [[nodiscard]] Piece *getPiece()  {
         return piece.value();
     }
 

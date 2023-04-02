@@ -170,23 +170,114 @@ std::set<Move> Board::generateAllValidMovesForKing(const Position& currentPositi
         }
     }
 
+    if (!piece->hasMoved()) {
+        if (pieceColor == PieceColor::WHITE) {
+            auto leftCorner = Position{7, 0};
+
+            if (unmovedRookAtPosition(leftCorner)) {
+                bool uninterruptedPathToLeftRook = true;
+
+                for (int i = currentPosition.col - 1; i > 0; i--) {
+                    if (hasPieceAtPosition(Position{7, i})) {
+                        uninterruptedPathToLeftRook = false;
+                        break;
+                    }
+                }
+
+                if (uninterruptedPathToLeftRook) {
+                    auto castleMoveKingDest = Position{7, 2};
+                    auto castleMoveRookDest = Position{7, 3};
+                    validMoves.insert(Move{currentPosition, castleMoveKingDest, pieceColor, {}, leftCorner, castleMoveRookDest});
+                }
+            }
+
+            auto rightCorner = Position{7, 7};
+
+            if (unmovedRookAtPosition(rightCorner)) {
+                bool uninterruptedPathToRightRook = true;
+
+                for (int i = currentPosition.col + 1; i < 7; i++) {
+                    if (hasPieceAtPosition(Position{7, i})) {
+                        uninterruptedPathToRightRook = false;
+                        break;
+                    }
+                }
+
+                if (uninterruptedPathToRightRook) {
+                    auto castleMoveKingDest = Position{7, 6};
+                    auto castleMoveRookDest = Position{7, 5};
+                    validMoves.insert(Move{currentPosition, castleMoveKingDest, pieceColor, {}, rightCorner, castleMoveRookDest});
+                }
+            }
+
+        } else if (pieceColor == PieceColor::BLACK) {
+            auto leftCorner = Position{0, 0};
+
+            if (unmovedRookAtPosition(leftCorner)) {
+                bool uninterruptedPathToLeftRook = true;
+
+                for (int i = currentPosition.col - 1; i > 0; i--) {
+                    if (hasPieceAtPosition(Position{0, i})) {
+                        uninterruptedPathToLeftRook = false;
+                        break;
+                    }
+                }
+
+                if (uninterruptedPathToLeftRook) {
+                    auto castleMoveKingDest = Position{0, 2};
+                    auto castleMoveRookDest = Position{0, 3};
+                    validMoves.insert(Move{currentPosition, castleMoveKingDest, pieceColor, {}, leftCorner, castleMoveRookDest});
+                }
+            }
+
+            auto rightCorner = Position{0, 7};
+
+            if (unmovedRookAtPosition(rightCorner)) {
+                bool uninterruptedPathToRightRook = true;
+
+                for (int i = currentPosition.col + 1; i < 7; i++) {
+                    if (hasPieceAtPosition(Position{0, i})) {
+                        uninterruptedPathToRightRook = false;
+                        break;
+                    }
+                }
+
+                if (uninterruptedPathToRightRook) {
+                    auto castleMoveKingDest = Position{0, 6};
+                    auto castleMoveRookDest = Position{0, 5};
+                    validMoves.insert(Move{currentPosition, castleMoveKingDest, pieceColor, {}, rightCorner, castleMoveRookDest});
+                }
+            }
+        }
+    }
+
     return validMoves ;
 }
 
+bool Board::unmovedRookAtPosition(const Position &pos) const {
+    const auto pieceAtSquare = pieceAtPosition(pos) ;
+
+    if (pieceAtSquare.has_value()) {
+        const auto piece = pieceAtSquare.value();
+        return piece->getType() == PieceType::ROOK && !piece->hasMoved();
+    }
+
+    return false;
+}
 
 std::set<Move> Board::generateAllValidMovesForPawn(const Position& currentPosition, const Piece *piece) const {
     std::set<Move> validMoves;
-    PieceColor pieceColor = piece->getColor();
-    PieceColor oppositeColorOfPiece = opposite_color(pieceColor) ;
-    bool pieceIsWhite = pieceColor == PieceColor::WHITE ;
-    Position oneSpaceForward = findOneSpaceForward(currentPosition, pieceIsWhite) ;
-    Position oneSpaceRight = findOneSpaceRight(currentPosition, pieceIsWhite);
-    Position oneSpaceLeft = findOneSpaceLeft(currentPosition, pieceIsWhite) ;
-    Position oneSpaceForwardOneSpaceRight = Position(currentPosition.row +  (pieceIsWhite ? - 1 : 1), currentPosition.col + (pieceIsWhite ? 1 : -1)) ;
-    Position oneSpaceForwardOneSpaceLeft = Position(currentPosition.row +  (pieceIsWhite ? - 1 : 1), currentPosition.col + (pieceIsWhite ? -1 : 1)) ;
+    const PieceColor pieceColor = piece->getColor();
+    const PieceColor oppositeColorOfPiece = opposite_color(pieceColor) ;
+    const bool pieceIsWhite = pieceColor == PieceColor::WHITE ;
+    const Position oneSpaceForward = findOneSpaceForward(currentPosition, pieceIsWhite) ;
+    const Position oneSpaceRight = findOneSpaceRight(currentPosition, pieceIsWhite);
+    const Position oneSpaceLeft = findOneSpaceLeft(currentPosition, pieceIsWhite) ;
+    const Position oneSpaceForwardOneSpaceRight = Position(currentPosition.row +  (pieceIsWhite ? - 1 : 1), currentPosition.col + (pieceIsWhite ? 1 : -1)) ;
+    const Position oneSpaceForwardOneSpaceLeft = Position(currentPosition.row +  (pieceIsWhite ? - 1 : 1), currentPosition.col + (pieceIsWhite ? -1 : 1)) ;
 
     if (!piece->hasMoved()) {
-        Position twoSpacesForward = Position(currentPosition.row + (pieceIsWhite ? - 2 : 2), currentPosition.col) ;
+        const Position twoSpacesForward = Position(currentPosition.row + (pieceIsWhite ? - 2 : 2), currentPosition.col) ;
 
         if (!hasPieceAtPosition(oneSpaceForward) && !hasPieceAtPosition(twoSpacesForward) ) {
             validMoves.insert(Move{currentPosition, twoSpacesForward, pieceColor}) ;
@@ -206,13 +297,13 @@ std::set<Move> Board::generateAllValidMovesForPawn(const Position& currentPositi
     }
 
     // en passant
-    auto pieceOnSquareToTheRight = pieceAtPosition(oneSpaceRight);
+    const auto pieceOnSquareToTheRight = pieceAtPosition(oneSpaceRight);
 
     if (pieceOnSquareToTheRight.has_value() && pieceCanBeCapturedEnPassant(pieceOnSquareToTheRight.value(), oneSpaceRight, this->moveList)) {
         validMoves.insert(Move{currentPosition, oneSpaceForwardOneSpaceRight, pieceColor, oneSpaceRight}) ;
     }
 
-    auto pieceOnSquareToTheLeft = pieceAtPosition(oneSpaceLeft);
+    const auto pieceOnSquareToTheLeft = pieceAtPosition(oneSpaceLeft);
 
     if (pieceOnSquareToTheLeft.has_value() && pieceCanBeCapturedEnPassant(pieceOnSquareToTheLeft.value(), oneSpaceLeft, this->moveList)) {
         validMoves.insert(Move{currentPosition, oneSpaceForwardOneSpaceLeft, pieceColor, oneSpaceLeft}) ;
@@ -323,8 +414,9 @@ std::pair<Position, Piece*> Board::getKing(PieceColor color) const {
 
 
 bool Board::king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const {
-    auto positionOfColorKingWeAreConcernedAbout = getKing(colorKingWeAreConcernedAbout).first ;
-    auto all_pieces = getAllPieces(colorKingWeAreConcernedAbout) ;
+    const auto positionOfColorKingWeAreConcernedAbout = getKing(colorKingWeAreConcernedAbout).first ;
+    const auto opposite_color_of_king_we_are_concerned_about = opposite_color(colorKingWeAreConcernedAbout) ;
+    const auto all_pieces = getAllPieces(opposite_color_of_king_we_are_concerned_about) ;
 
     for (auto piece : all_pieces) {
         auto allValidMoves = generateAllValidMovesForPiece(piece.first, piece.second, false) ;
@@ -345,25 +437,20 @@ PieceColor Board::getColorToMove() const {
     return this->colorToMove;
 }
 
-bool Board::move_places_king_in_check(const Move &move) const {
+bool Board::moves_finishes_with_king_in_check(const Move &move) const {
     // after we process move, no pieces should have a valid move to attack king
     Board future_board = *this;
     // if white, we are processing white's move
     future_board.processMove(move) ;
-
     // know we want to see if black has a move to capture white's king
     // if it does, the previous move by white would place the king in check
     // and therefore be invalid
-    if (future_board.king_is_attacked(this->colorToMove)) {
-        return true ;
-    }
-
-    return false;
+    return future_board.king_is_attacked(this->colorToMove) ;
 }
 
 bool Board::legal_move(const Move &move, bool careIfPlacesKingInCheck) const {
     if (careIfPlacesKingInCheck) {
-        return positionInBoard(move.moveTo) && !move_places_king_in_check(move) ;
+        return positionInBoard(move.moveTo) && !moves_finishes_with_king_in_check(move) ;
     }
 
     return positionInBoard(move.moveTo) ;
@@ -375,6 +462,15 @@ void Board::processMove(const Move &requested_move) {
     }
 
     this->move(requested_move.moveFrom, requested_move.moveTo);
+
+    if (requested_move.alsoMoveFrom.has_value()) {
+        if (!requested_move.alsoMoveTo.has_value()) {
+            throw RuntimeError();
+        }
+
+        this->move(requested_move.alsoMoveFrom.value(), requested_move.alsoMoveTo.value());
+    }
+
     this->moveList.push_back(requested_move) ;
     this->colorToMove = opposite_color(this->colorToMove) ;
 }
@@ -435,11 +531,7 @@ bool Board::hasPieceAtPosition(const Position& pos) const {
         return false;
     }
 
-    if (! piece.has_value() ) {
-        return false;
-    }
-
-    return true;
+    return piece.has_value();
 }
 
 bool Board::hasPieceAtPosition(const Position& pos, const PieceColor target_color) const {
@@ -461,7 +553,7 @@ bool Board::hasPieceAtPosition(const Position& pos, const PieceColor target_colo
 
 
 Square* Board::squareAt(const Position& coord) const {
-    return squareAt(coord.row, coord.col) ;
+    return this->board.at(coord.row).at(coord.col);
 }
 
 
