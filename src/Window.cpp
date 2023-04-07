@@ -69,28 +69,11 @@ void Window::Update() {
     }
 }
 
-void Window::Zoom(float l_zoom) {
-    historicalZoom += l_zoom;
-    m_view.zoom(1-l_zoom);
-    m_window.setView(m_view);
-}
-
-unsigned int Window::getMinimumViewSize() {
-    return minimumViewSize;
-}
-
-unsigned int Window::getMaximumViewSize() {
-    return maximumViewSize;
-}
 
 sf::View* Window::GetView() {
     return &m_view;
 }
 
-void Window::SetView(sf::View *l_view) {
-    m_view = *l_view;
-    m_window.setView(m_view);
-}
 
 void Window::ToggleFullscreen() {
     m_isFullscreen = !m_isFullscreen;
@@ -111,10 +94,6 @@ bool Window::IsDone() {
 bool Window::IsFullscreen() {
     return m_isFullscreen;
 }
-sf::Vector2u Window::GetWindowSize() {
-    return m_windowSize;
-}
-
 
 sf::RenderWindow* Window::GetRenderWindow() {
     return &m_window;
@@ -130,12 +109,6 @@ sf::Vector2f Window::convertToGameCoordinates(sf::Vector2i mousePos) {
     // convert it to world coordinates
     sf::Vector2f worldPos = m_window.mapPixelToCoords(mousePos);
     return worldPos;
-}
-
-sf::Vector2f Window::getScaleOfWindowSizeToView() {
-    sf::Vector2u windowSize = GetWindowSize();
-    sf::Vector2f viewSize = GetView()->getSize();
-    return sf::Vector2f(windowSize.x / viewSize.x, windowSize.y / viewSize.y);
 }
 
 bool Window::isMouseUp() {

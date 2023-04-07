@@ -13,18 +13,14 @@ class Window {
     void Update();
     bool IsDone();
     bool IsFullscreen();
-    sf::Vector2u GetWindowSize();
     sf::RenderWindow* GetRenderWindow();
     sf::View *GetView();
-    void SetView(sf::View *l_view);
     unsigned int getMinimumViewSize();
     unsigned int getMaximumViewSize();
     sf::Window *GetWindow();
     void ToggleFullscreen();
-    void Zoom(float l_zoom);
     sf::Vector2f convertToGameCoordinates(sf::Vector2i viewportCoordinates);
     sf::RenderWindow m_window;
-    sf::Vector2f getScaleOfWindowSizeToView();
     bool isMouseUp();
     bool isMouseDown();
   private:
@@ -38,10 +34,6 @@ class Window {
     std::string m_windowTitle;
     bool m_isDone;
     bool m_isFullscreen;
-
-    // these have to do with zoom, can't zoom out or in past these values.
-    int minimumViewSize = 100;
-    int maximumViewSize = 3000;
 
     bool m_down = false;
     bool lastMouseDownState = false;

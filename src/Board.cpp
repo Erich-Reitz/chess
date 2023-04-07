@@ -128,12 +128,10 @@ bool isPawnAndHasMovedOnceTwoSquaresForward(Piece *piece, Position piece_pos) {
     return false;
 }
 
-bool lastMoveWasToPos(const std::vector<Move> &moveList, Position pos) {
-    return moveList.back().moveTo == pos ;
-}
+
 
 bool pieceCanBeCapturedEnPassant(Piece *piece_to_be_captured, Position piece_pos, const std::vector<Move> &moveList) {
-    return (isPawnAndHasMovedOnceTwoSquaresForward(piece_to_be_captured, piece_pos) && lastMoveWasToPos(moveList, piece_pos)  ) ;
+    return (isPawnAndHasMovedOnceTwoSquaresForward(piece_to_be_captured, piece_pos) && moveList.back().moveTo == piece_pos) ;
 }
 
 Position findOneSpaceForward(const Position& current, bool isPieceWhite) {
