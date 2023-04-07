@@ -7,7 +7,7 @@
 #include <string>
 #include <cstdio>
 
-#include "pieces/PieceType.hpp"
+#include "PieceType.hpp"
 #include "Board.hpp"
 #include "Move.hpp"
 

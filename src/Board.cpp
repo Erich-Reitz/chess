@@ -8,12 +8,6 @@
 
 #include "Board.hpp"
 #include "Piece.hpp"
-#include "pieces/Rook.hpp"
-#include "pieces/Bishop.hpp"
-#include "pieces/Knight.hpp"
-#include "pieces/Queen.hpp"
-#include "pieces/King.hpp"
-#include "pieces/Pawn.hpp"
 #include "Position.hpp"
 
 
@@ -30,28 +24,28 @@ std::optional<Piece*> initial_piece(int row, int col) {
     if (row == 0 || row == 7) {
         switch (col) {
         case 0:
-            return new Rook(isWhitePiece) ;
+            return new Piece(isWhitePiece, PieceType::ROOK) ;
 
         case 1:
-            return new Knight(isWhitePiece) ;
+            return new Piece(isWhitePiece, PieceType::KNIGHT) ;
 
         case 2:
-            return new Bishop(isWhitePiece);
+            return new Piece(isWhitePiece, PieceType::BISHOP) ; 
 
         case 3:
-            return new Queen(isWhitePiece) ;
+            return new Piece(isWhitePiece, PieceType::QUEEN) ; 
 
         case 4:
-            return new King(isWhitePiece) ;
+            return new Piece(isWhitePiece, PieceType::KING) ; 
 
         case 5:
-            return new Bishop(isWhitePiece);
+            return new Piece(isWhitePiece, PieceType::BISHOP) ; 
 
         case 6:
-            return new Knight(isWhitePiece) ;
+            return new Piece(isWhitePiece, PieceType::KNIGHT) ;
 
         case 7:
-            return new Rook(isWhitePiece) ;
+            return new Piece(isWhitePiece, PieceType::ROOK) ;
 
         default:
             throw RuntimeError();
@@ -59,7 +53,7 @@ std::optional<Piece*> initial_piece(int row, int col) {
     }
 
     if (row == 1 || row == 6) {
-        return new Pawn(isWhitePiece);
+        return new Piece(isWhitePiece, PieceType::PAWN);
     }
 
     return {};

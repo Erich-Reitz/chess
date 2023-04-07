@@ -4,12 +4,6 @@
 
 #include "Board.hpp"
 #include "Piece.hpp"
-#include "pieces/Rook.hpp"
-#include "pieces/Bishop.hpp"
-#include "pieces/Knight.hpp"
-#include "pieces/Queen.hpp"
-#include "pieces/King.hpp"
-#include "pieces/Pawn.hpp"
 #include "Position.hpp"
 
 
