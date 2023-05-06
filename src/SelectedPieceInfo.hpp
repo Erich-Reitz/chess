@@ -6,7 +6,7 @@
 struct SelectedPieceInformation {
     std::optional<Position> coordinates;
     std::optional<Piece*> piece;
-    std::optional<std::set<Move>> placesCanMove;
+    std::optional<std::vector<Move>> placesCanMove;
 
     void setCoordinates(const std::optional<Position>& position) {
         this->coordinates = position;
@@ -16,13 +16,13 @@ struct SelectedPieceInformation {
         this->piece = _piece;
     }
 
-    void setInformation(const std::optional<Position>& _coordinates, Piece *_piece, const std::set<Move>& validMoves) {
+    void setInformation(const std::optional<Position>& _coordinates, Piece *_piece, const std::vector<Move>& validMoves) {
         this->setCoordinates(_coordinates) ;
         this->setPiece(_piece);
         this->placesCanMove = validMoves;
     }
 
-    [[nodiscard]] std::set<Move> getPlacesCanMove() const {
+    [[nodiscard]] std::vector<Move> getPlacesCanMove() const {
         return this->placesCanMove.value();
     }
 
@@ -40,17 +40,12 @@ struct SelectedPieceInformation {
     };
 
 
-    void zeroCoordinates() {
-        coordinates = {};
-    }
 
-    void zeroPiece() {
-        piece.value()->setOriginalColor();
-        piece = {};
-    }
+
     void reset() {
-        zeroCoordinates();
-        zeroPiece();
+        std::cout << "reset selected piece" << std::endl;
+        coordinates = {};
+        piece = {};
         this->placesCanMove = {};
     }
 };

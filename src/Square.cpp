@@ -4,19 +4,29 @@
 Square::Square(bool white, int _row, int _col, float xPos, float yPos, float size, std::optional<Piece*> _piece ) {
     this->position = Position(_row, _col);
     this->white = white;
-    this->shape.setSize(sf::Vector2f(size, size));
+    const auto scale_size_constant = .00125;
+    this->shape.setScale(sf::Vector2f(size * scale_size_constant, size * scale_size_constant));
     this->shape.setPosition(sf::Vector2f(xPos, yPos));
+    shape.setOrigin(shape.getLocalBounds().width/ 2, shape.getLocalBounds().height/ 2);
+    std::string texture_path;
 
     if (white) {
-        this->shape.setFillColor(sf::Color::Yellow);
+        texture_path = "assets/textures/board_squares/light.png" ;
 
     } else {
-        this->shape.setFillColor(sf::Color::Magenta);
+        texture_path = "assets/textures/board_squares/dark.png" ;
+    }
+
+    if (texture.loadFromFile(texture_path)) {
+        this->shape.setTexture(texture);
+
+    } else {
+        std::cout << "Error loading texture" << std::endl;
     }
 
     if (_piece.has_value()) {
         this->piece = _piece;
-        this->piece.value()->setPosition(xPos, yPos) ;
+        this->piece.value()->setPosition(xPos + size/2, yPos+ size/2) ;
         this->piece.value()->setRadius(size / 2.0);
 
     } else {
@@ -69,7 +79,8 @@ std::optional<Piece*> Square::getPiece() const {
 void Square::setPiece(Piece *_piece) {
     this->piece = {_piece};
     sf::Vector2f currentSquarePosition = this->shape.getPosition();
-    this->piece.value()->setPosition(currentSquarePosition.x, currentSquarePosition.y);
+    const auto square_position = this->shape.getPosition();
+    this->piece.value()->setPosition(square_position.x+25, square_position.y+25);
 }
 
 void Square::removePiece() {
@@ -78,19 +89,6 @@ void Square::removePiece() {
 
 Position Square::getPosition() const {
     return position;
-}
-
-void Square::setColor(sf::Color color) {
-    this->shape.setFillColor(color) ;
-}
-
-void Square::setOriginalColor() {
-    if (white) {
-        this->shape.setFillColor(sf::Color::Yellow);
-
-    } else {
-        this->shape.setFillColor(sf::Color::Magenta);
-    }
 }
 
 void Square::draw(sf::RenderTarget &target, sf::RenderStates states) const {

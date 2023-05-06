@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <cstdio>
+#include <vector>
 
 #include "PieceType.hpp"
 #include "Board.hpp"
@@ -15,9 +16,7 @@ class Board;
 
 class Piece : public sf::Drawable {
   public:
-    typedef std::set<Move> (Board::*GenerateMovesFn)(const Position&, const Piece*) const;
-
-
+    using MoveFuncPtr = std::vector<Move> (*)(const Board*, const Position&, const Piece*);
     Piece(bool _white, PieceType _type) ;
     Piece(const Piece& rhs) ;
     Piece& operator=(const Piece& rhs);
@@ -27,27 +26,21 @@ class Piece : public sf::Drawable {
 
     void setPosition(float x, float y);
     void setRadius(float radius);
-    void setColor(sf::Color color);
 
     PieceColor getColor() const;
 
     bool hasMoved() const;
     void setMoved() ;
     PieceType getType() const ;
-
-
-
-    void setOriginalColor();
     size_t getTimesMoved() const;
-
-
-    std::set<Move> generateAllValidMoves(const Position& current, const Board& board) const {
-        return (board.*generateMovesFn)(current, this);
+    std::vector<Move> generateAllMoves(const Board* board, const Position& current, const Piece* piece) const {
+        return m_moveFuncPtr(board, current, piece);
     }
   private:
     size_t timesMoved;
     PieceColor color;
-    sf::CircleShape piece = sf::CircleShape() ;
+    sf::Sprite piece;
     PieceType type;
-    GenerateMovesFn generateMovesFn;
+    sf::Texture texture;
+    MoveFuncPtr m_moveFuncPtr = nullptr;
 };

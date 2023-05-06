@@ -5,6 +5,8 @@
 #include "Board.hpp"
 #include "Piece.hpp"
 #include "Position.hpp"
+#include "chess_exceptions.hpp"
+#include "move_generation.hpp"
 
 
 
@@ -20,52 +22,64 @@ Piece::Piece(bool _white, PieceType _type)  {
     }
 
     this->type = _type;
+    std::string piece_color_string;
 
     if (_white) {
-        piece.setFillColor(sf::Color::White);
-
-        if (_type == PieceType::KING) {
-            piece.setFillColor(sf::Color::Blue) ;
-        }
+        piece_color_string = "w";
 
     } else {
-        piece.setFillColor(sf::Color::Black);
-
-        if (_type == PieceType::KING) {
-            piece.setFillColor(sf::Color::Blue) ;
-        }
+        piece_color_string = "b";
     }
+
+    std::string piece_name_string ;
 
     switch (_type) {
     case PieceType::ROOK:
-        generateMovesFn = &Board::generateAllValidMovesForRook;
+        m_moveFuncPtr = generateAllValidMovesForRook;
+        piece_name_string = "rook";
         break;
 
     case PieceType::BISHOP:
-        generateMovesFn = &Board::generateAllValidMovesForBishop;
+        m_moveFuncPtr = generateAllValidMovesForBishop;
+        piece_name_string = "bishop";
         break;
 
     case PieceType::QUEEN:
-        generateMovesFn = &Board::generateAllValidMovesForQueen;
+        m_moveFuncPtr = generateAllValidMovesForQueen;
+        piece_name_string = "queen";
         break;
 
     case PieceType::KING:
-        generateMovesFn = &Board::generateAllValidMovesForKing;
+        m_moveFuncPtr = generateAllValidMovesForKing;
+        piece_name_string = "king";
         break;
 
     case PieceType::KNIGHT:
-        generateMovesFn = &Board::generateAllValidMovesForKnight;
+        m_moveFuncPtr = generateAllValidMovesForKnight;
+        piece_name_string = "knight";
         break;
 
     case PieceType::PAWN:
-        generateMovesFn = &Board::generateAllValidMovesForPawn;
+        m_moveFuncPtr = *generateAllValidMovesForPawn;
+        piece_name_string = "pawn";
         break;
+
+    default:
+        throw PieceTypeSwitchFallthrough();
     }
 
     this->timesMoved = 0;
+    const std::string texture_path = "assets/textures/pieces/no_shadow/2x/" + piece_color_string + "_" + piece_name_string  +"_2x_ns.png";
+
+    if (texture.loadFromFile(texture_path)) {
+        this->piece.setTexture(texture);
+
+    } else {
+        std::cout << "Error loading texture" << std::endl;
+    }
 }
 
-Piece::Piece(const Piece &rhs) : color(rhs.color), piece(rhs.piece), type(rhs.type), generateMovesFn(rhs.generateMovesFn), timesMoved(rhs.timesMoved) {
+Piece::Piece(const Piece &rhs) : color(rhs.color), piece(rhs.piece), type(rhs.type), m_moveFuncPtr(rhs.m_moveFuncPtr), timesMoved(rhs.timesMoved) {
 }
 
 
@@ -74,7 +88,7 @@ Piece& Piece::operator=(const Piece& rhs) {
         color = rhs.color;
         piece = rhs.piece;
         type = rhs.type;
-        generateMovesFn = rhs.generateMovesFn;
+        m_moveFuncPtr = rhs.m_moveFuncPtr;
         timesMoved = rhs.timesMoved;
     }
 
@@ -84,10 +98,16 @@ Piece& Piece::operator=(const Piece& rhs) {
 
 void Piece::setPosition(float x, float y) {
     piece.setPosition(x, y);
+    piece.setOrigin(piece.getLocalBounds().width/ 2, piece.getLocalBounds().height/ 2);
 }
 
 void Piece::setRadius(float radius) {
-    piece.setRadius(radius);
+    if (this->type == PieceType::PAWN) {
+        piece.setScale(.065, .065);
+
+    } else {
+        piece.setScale(.06, .06);
+    }
 }
 
 
@@ -103,27 +123,12 @@ bool Piece::hasMoved() const {
     return this->timesMoved != 0;
 }
 
-void Piece::setColor(sf::Color color) {
-    this->piece.setFillColor(color);
-}
-
 void Piece::setMoved() {
     this->timesMoved += 1;
 }
-
 PieceType Piece::getType() const {
     return this->type;
 }
-
-void Piece::setOriginalColor() {
-    if (getColor() == PieceColor::WHITE) {
-        setColor(sf::Color::White);
-
-    } else {
-        setColor(sf::Color::Black);
-    }
-}
-
 size_t Piece::getTimesMoved() const {
     return this->timesMoved;
 }

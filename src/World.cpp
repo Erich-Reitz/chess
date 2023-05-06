@@ -6,16 +6,16 @@
 #include "Board.hpp"
 #include "Position.hpp"
 
-#include "chess_exceptions.cpp"
+#include "chess_exceptions.hpp"
 
 World::World() = default;
 
 
 World::~World() = default;
 
-std::optional<Move> setOfMovesContainsDestination(const std::set<Move>  &moveSet, const Position& destination) {
+std::optional<Move> setOfMovesContainsDestination(const std::vector<Move>  &moveSet, const Position& destination) {
     for (auto move : moveSet) {
-        if (move.moveTo == destination) {
+        if (move.move.second == destination) {
             return move;
         }
     }
@@ -29,8 +29,15 @@ void World::moveSelectedPiece(const Position &destination) {
     auto validMove = setOfMovesContainsDestination(validMoves, destination) ;
 
     if (validMove.has_value()) {
+        auto move_req = validMove.value();
+
+        if (move_req.isPawnPromotion()) {
+            // display pawn promotion dialog
+            std::cout << "pawn promotion" << std::endl;
+        }
+
         try {
-            gameBoard.processMove(validMove.value()) ;
+            gameBoard.processMove(move_req) ;
 
         } catch (CurrentSquareDoesNotContainPiece &e) {
             std::cerr << e.what() << std::endl;
@@ -57,12 +64,7 @@ void World::handleMouseDownWithSelectedPiece(const Position& pressedSquare) {
     Piece  *previouslySelectedPiece = this->selectedPieceInformation.getPiece();
     std::optional<Piece*> pieceAtPosition = gameBoard.pieceAtPosition(pressedSquare) ;
 
-    if (!pieceAtPosition.has_value()) {
-        this->moveSelectedPiece(pressedSquare);
-        return;
-    }
-
-    if (sameColor(pieceAtPosition.value(), previouslySelectedPiece)) {
+    if (pieceAtPosition.has_value() && sameColor(pieceAtPosition.value(), previouslySelectedPiece) ) {
         handleUserReselectingPiece(pressedSquare);
         return;
     }
@@ -74,12 +76,12 @@ void World::displayValidMoves( ) {
     auto validMoves = this->selectedPieceInformation.getPlacesCanMove();
 
     for (auto &move : validMoves) {
-        gameBoard.setSquareColor(move.moveTo, sf::Color::Green);
+        gameBoard.setSquareColor(move.move.second, sf::Color::Green);
     }
 }
 
 void World::displaySelectedPiece()  {
-    this->selectedPieceInformation.getPiece()->setColor(sf::Color::Red);
+    // todo
 }
 
 
@@ -95,6 +97,7 @@ void World::handleMouseDownWithNoSelectedPiece(const Position& pressedSquare) {
     if (piece.value()->getColor() == this->gameBoard.getColorToMove()) {
         auto placesCanMove = gameBoard.generateAllValidMovesForPiece(pressedSquare, piece.value());
         this->selectedPieceInformation.setInformation(pressedSquare, piece.value(), placesCanMove);
+        std::cout << this->selectedPieceInformation.placesCanMove.value().size() << std::endl;
         this->displayValidMoves();
         this->displaySelectedPiece();
     }

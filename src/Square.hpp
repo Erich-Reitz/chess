@@ -23,12 +23,10 @@ class Square : public sf::Drawable {
     std::optional<Piece*> getPiece() const;
 
     void setPiece(Piece* _piece);
-    void setColor(sf::Color color);
     void removePiece();
 
     void draw(sf::RenderTarget &window) const ;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    void setOriginalColor();
 
     sf::FloatRect getBoundaries() const;
     Position getPosition() const;
@@ -37,8 +35,8 @@ class Square : public sf::Drawable {
     bool white;
   private:
     std::optional<Piece*> piece;
-    sf::RectangleShape shape;
-
+    sf::Sprite shape;
+    sf::Texture texture;
     Position position;
 
 
