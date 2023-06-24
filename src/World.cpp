@@ -33,7 +33,13 @@ void World::moveSelectedPiece(const Position &destination) {
 
         if (move_req.isPawnPromotion()) {
             // display pawn promotion dialog
-            std::cout << "pawn promotion" << std::endl;
+            std::string selected_piece_type;
+            std::cout << "enter piece type: (q, r, b, k): ";
+            std::cin >> selected_piece_type ;
+
+            if (selected_piece_type == "q") {
+                move_req.promoteTo = PieceType::QUEEN;
+            }
         }
 
         try {

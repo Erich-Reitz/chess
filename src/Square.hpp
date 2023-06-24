@@ -22,14 +22,19 @@ class Square : public sf::Drawable {
     Square& operator=(const Square& rhs);
     std::optional<Piece*> getPiece() const;
 
+
     void setPiece(Piece* _piece);
     void removePiece();
 
     void draw(sf::RenderTarget &window) const ;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+
+
     sf::FloatRect getBoundaries() const;
     Position getPosition() const;
+
+    void setPieceSize();
 
   protected:
     bool white;
@@ -38,6 +43,8 @@ class Square : public sf::Drawable {
     sf::Sprite shape;
     sf::Texture texture;
     Position position;
+    float size;
+
 
 
 };

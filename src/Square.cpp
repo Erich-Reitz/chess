@@ -3,6 +3,7 @@
 
 Square::Square(bool white, int _row, int _col, float xPos, float yPos, float size, std::optional<Piece*> _piece ) {
     this->position = Position(_row, _col);
+    this->size = size;
     this->white = white;
     const auto scale_size_constant = .00125;
     this->shape.setScale(sf::Vector2f(size * scale_size_constant, size * scale_size_constant));
@@ -26,12 +27,19 @@ Square::Square(bool white, int _row, int _col, float xPos, float yPos, float siz
 
     if (_piece.has_value()) {
         this->piece = _piece;
-        this->piece.value()->setPosition(xPos + size/2, yPos+ size/2) ;
-        this->piece.value()->setRadius(size / 2.0);
+        this->setPieceSize() ;
 
     } else {
         this->piece = {};
     }
+}
+
+void Square::setPieceSize() {
+    auto xPos = this->shape.getPosition().x;
+    auto yPos = this->shape.getPosition().y;
+    auto size = this->size;
+    this->piece.value()->setPosition(xPos + size/2, yPos+ size/2) ;
+    this->piece.value()->setRadius(size / 2.0);
 }
 
 Square::Square(const Square& rhs) :  white(rhs.white), piece(rhs.piece), shape(rhs.shape), position(rhs.position) {
@@ -81,6 +89,7 @@ void Square::setPiece(Piece *_piece) {
     sf::Vector2f currentSquarePosition = this->shape.getPosition();
     const auto square_position = this->shape.getPosition();
     this->piece.value()->setPosition(square_position.x+25, square_position.y+25);
+    this->setPieceSize();
 }
 
 void Square::removePiece() {

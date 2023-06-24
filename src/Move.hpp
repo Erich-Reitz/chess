@@ -12,6 +12,8 @@ class Move {
     std::optional<Position> capturee = {};
     optional_move castlee = {};
     MoveType move_type = MoveType::NORMAL;
+    std::optional<PieceType> promoteTo;
+
 
     Move(std::pair<Position, Position> _move, PieceColor _colorMove) {
         this->move = _move;
@@ -50,6 +52,14 @@ class Move {
 
     bool isPawnPromotion() const {
         return move_type == MoveType::PAWN_PROMOTION;
+    }
+
+    Position getOriginalSquare() const {
+        return this->move.first;
+    }
+
+    Position getDestination() const {
+        return this->move.second;
     }
 
     bool operator<(const Move& rhs) const  {

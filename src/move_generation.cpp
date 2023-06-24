@@ -112,6 +112,15 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const Positio
         validMoves.push_back(Move(move, pieceColor, oneSpaceLeft)) ;
     }
 
+    for (auto &move : validMoves) {
+        if (move.getDestination().row == 0 and move.colorMove == PieceColor::WHITE) {
+            move.move_type = MoveType::PAWN_PROMOTION;
+
+        } else if (move.getDestination().row == 7 and move.colorMove == PieceColor::BLACK)  {
+            move.move_type = MoveType::PAWN_PROMOTION;
+        }
+    }
+
     return validMoves;
 }
 

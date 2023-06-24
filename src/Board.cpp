@@ -197,30 +197,35 @@ bool Board::moves_finishes_with_king_in_check(const Move &move) const {
     // now we want to see if black has a move to capture white's king
     // if it does, the previous move by white would place the king in check
     // and therefore be invalid
-    const auto future_king_is_attacked =  future_board.king_is_attacked(this->colorToMove) ;
-    return future_king_is_attacked;
+    return future_board.king_is_attacked(this->colorToMove) ;
 }
 
 
 
 
-void Board::processMove(const Move &requested_move) {
-    if (requested_move.isCapture()) {
-        this->squareAt(requested_move.capturee.value())->removePiece()  ;
+void Board::processMove(const Move &move) {
+    const auto currentColor = !this->colorToMove;
+
+    if (move.isCapture()) {
+        this->squareAt(move.capturee.value())->removePiece()  ;
     }
 
-    movePiece(requested_move.move.first, requested_move.move.second);
+    if (move.isPawnPromotion()) {
+        if (move.promoteTo == PieceType::QUEEN) {
+            Piece *piece = new Piece(currentColor, PieceType::QUEEN ) ;
+            removeAndSetPiece(piece, move.getOriginalSquare(), move.getDestination()) ;
+        }
 
-    if (requested_move.isCastle()) {
-        const auto current_pos = requested_move.castlee.value().first;
-        const auto dest = requested_move.castlee.value().second;
+    } else if (move.isCastle()) {
+        const auto current_pos = move.castlee.value().first;
+        const auto dest = move.castlee.value().second;
         movePiece(current_pos, dest);
+
+    } else {
+        movePiece(move.getOriginalSquare(), move.getDestination());
     }
 
-    if (requested_move.isPawnPromotion()) {
-    }
-
-    this->moveList.push_back(requested_move) ;
+    this->moveList.push_back(move) ;
     this->colorToMove = opposite_color(this->colorToMove) ;
 }
 
@@ -240,8 +245,6 @@ void Board::movePiece(const Position &currentPosition, const Position &destinati
     removeAndSetPiece(movingPiece, currentPosition, destination);
     movingPiece->setMoved();
 }
-
-
 
 
 std::vector<Move> Board::generateAllValidMovesForPiece(const Position& current, const Piece *piece, bool careIfPlacesKingInCheck) const {
