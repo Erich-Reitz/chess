@@ -59,7 +59,7 @@ Piece::Piece(bool _white, PieceType _type)  {
         break;
 
     case PieceType::PAWN:
-        m_moveFuncPtr = *generateAllValidMovesForPawn;
+        m_moveFuncPtr = generateAllValidMovesForPawn;
         piece_name_string = "pawn";
         break;
 
@@ -78,7 +78,7 @@ Piece::Piece(bool _white, PieceType _type)  {
     }
 }
 
-Piece::Piece(const Piece &rhs) : color(rhs.color), piece(rhs.piece), type(rhs.type), m_moveFuncPtr(rhs.m_moveFuncPtr), timesMoved(rhs.timesMoved) {
+Piece::Piece(const Piece &rhs) : timesMoved(rhs.timesMoved), color(rhs.color), piece(rhs.piece), type(rhs.type), m_moveFuncPtr(rhs.m_moveFuncPtr) {
 }
 
 

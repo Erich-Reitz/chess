@@ -43,7 +43,6 @@ struct SelectedPieceInformation {
 
 
     void reset() {
-        std::cout << "reset selected piece" << std::endl;
         coordinates = {};
         piece = {};
         this->placesCanMove = {};

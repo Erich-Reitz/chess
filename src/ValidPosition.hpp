@@ -17,7 +17,7 @@ class ValidPosition {
         stream << ValidPosition.r << " " << ValidPosition.c;
         return stream;
     }
-    ~ValidPosition() {} ;
+    ~ValidPosition() = default ;
     bool operator==(const ValidPosition& rhs) const {
         return this->r == rhs.r && this->c == rhs.c;
     }

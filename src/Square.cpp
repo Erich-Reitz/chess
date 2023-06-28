@@ -32,12 +32,10 @@ Square::Square(bool white, int _row, int _col, float xPos, float yPos, float siz
         std::cout << "Error loading texture" << std::endl;
     }
 
-    if (_piece.has_value()) {
-        this->piece = _piece;
-        this->setPieceSize() ;
+    this->piece = _piece;
 
-    } else {
-        this->piece = {};
+    if (this->piece.has_value()) {
+        this->setPieceSize() ;
     }
 }
 

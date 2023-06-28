@@ -21,12 +21,10 @@ PieceColor opposite_color(PieceColor color) {
 }
 
 
-
-
-
 bool pieceCanBeCapturedEnPassant(Piece *piece_to_be_captured, ValidPosition piece_pos, const std::vector<Move> &moveList) {
     return (isPawnAndHasMovedOnceTwoSquaresForward(piece_to_be_captured, piece_pos) && moveList.back().move.second == piece_pos) ;
 }
+
 
 std::optional<Move> moveOneSpaceForward(const Board *board, const ValidPosition& current, bool pieceIsWhite) {
     ValidPosition moveTo;
@@ -47,11 +45,6 @@ std::optional<Move> moveOneSpaceForward(const Board *board, const ValidPosition&
 }
 
 
-
-
-
-
-
 std::optional<ValidPosition>  findTwoSpacesForward(const ValidPosition& current, bool isPieceWhite) {
     try {
         auto pos =  ValidPosition(current.r + (isPieceWhite ? - 2 : 2), current.c) ;
@@ -62,6 +55,7 @@ std::optional<ValidPosition>  findTwoSpacesForward(const ValidPosition& current,
 
     return {};
 }
+
 
 std::optional<ValidPosition>  findOneSpaceForward(const ValidPosition& current, bool isPieceWhite) {
     try {
@@ -75,9 +69,6 @@ std::optional<ValidPosition>  findOneSpaceForward(const ValidPosition& current, 
 }
 
 
-
-
-
 bool Board::legal_move(const Move &move, bool careIfPlacesKingInCheck) const {
     if (careIfPlacesKingInCheck && moves_finishes_with_king_in_check(move)) {
         return false;
@@ -85,7 +76,6 @@ bool Board::legal_move(const Move &move, bool careIfPlacesKingInCheck) const {
 
     return true;
 }
-
 
 
 std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPosition& currentPosition, const Piece *piece) {
@@ -97,7 +87,7 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPo
 
     if (potentialOneSpaceForward.has_value() && !board->pieceAtPosition(potentialOneSpaceForward.value())) {
         const auto one_space_forward_move = std::make_pair(currentPosition, potentialOneSpaceForward.value()) ;
-        validMoves.push_back(Move(one_space_forward_move, pieceIsWhite)) ;
+        validMoves.emplace_back(one_space_forward_move, pieceIsWhite) ;
     }
 
     if (!piece->hasMoved()) {
@@ -105,7 +95,7 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPo
         const auto two_space_forward_move = std::make_pair(currentPosition, twoSpacesForward.value()) ;
 
         if (twoSpacesForward.has_value() && !board->hasPieceAtPosition(potentialOneSpaceForward.value()) && !board->hasPieceAtPosition(twoSpacesForward.value()) ) {
-            validMoves.push_back(Move(two_space_forward_move, pieceColor));
+            validMoves.emplace_back(two_space_forward_move, pieceColor);
         }
     }
 
@@ -115,14 +105,14 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPo
 
         if (board->hasPieceAtPosition(oneSpaceForwardOneSpaceRight, oppositeColorOfPiece)) {
             const auto move = std::make_pair(currentPosition, oneSpaceForwardOneSpaceRight) ;
-            validMoves.push_back(Move(move, pieceColor, oneSpaceForwardOneSpaceRight) );
+            validMoves.emplace_back(move, pieceColor, oneSpaceForwardOneSpaceRight );
         }
 
         const auto pieceOnSquareToTheRight = board->pieceAtPosition(squareToOneRight);
 
         if (pieceOnSquareToTheRight.has_value() && pieceCanBeCapturedEnPassant(pieceOnSquareToTheRight.value(), squareToOneRight, board->moveList)) {
             const auto move = std::make_pair(currentPosition, oneSpaceForwardOneSpaceRight) ;
-            validMoves.push_back(Move(move, pieceColor, squareToOneRight)) ;
+            validMoves.emplace_back(move, pieceColor, squareToOneRight) ;
         }
 
     } catch(BoundConstraintViolation &e) {
@@ -134,14 +124,14 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPo
 
         if (board->hasPieceAtPosition(oneSpaceForwardOneSpaceLeft, oppositeColorOfPiece)) {
             const auto move = std::make_pair(currentPosition, oneSpaceForwardOneSpaceLeft) ;
-            validMoves.push_back(Move(move, pieceColor, oneSpaceForwardOneSpaceLeft)) ;
+            validMoves.emplace_back(move, pieceColor, oneSpaceForwardOneSpaceLeft) ;
         }
 
         const auto pieceOnSquareToTheLeft = board->pieceAtPosition(squareToOneLeft);
 
         if (pieceOnSquareToTheLeft.has_value() && pieceCanBeCapturedEnPassant(pieceOnSquareToTheLeft.value(), squareToOneLeft, board->moveList)) {
             const auto move = std::make_pair(currentPosition, oneSpaceForwardOneSpaceLeft) ;
-            validMoves.push_back(Move(move, pieceColor, squareToOneLeft)) ;
+            validMoves.emplace_back(move, pieceColor, squareToOneLeft) ;
         }
 
     } catch(BoundConstraintViolation &e) {

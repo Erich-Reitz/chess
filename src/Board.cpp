@@ -57,8 +57,8 @@ std::optional<Piece*> initial_piece(int row, int col) {
 }
 
 Board::Board() {
-    int initial_x_offset = 720;
-    int initial_y_offset = 300;
+    float initial_x_offset = 720.0;
+    float initial_y_offset = 300.0;
 
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
@@ -169,7 +169,7 @@ bool Board::king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const {
     const auto opposite_color_of_king_we_are_concerned_about = opposite_color(colorKingWeAreConcernedAbout) ;
     const auto all_pieces = getAllPieces(opposite_color_of_king_we_are_concerned_about) ;
 
-    for (auto piece : all_pieces) {
+    for (const auto& piece : all_pieces) {
         auto allValidMoves = generateAllValidMovesForPiece(piece.first, piece.second, false) ;
 
         for (auto valid_move : allValidMoves) {
@@ -211,7 +211,7 @@ void Board::processMove(const Move &move) {
 
     if (move.isPawnPromotion()) {
         if (move.promoteTo == PieceType::QUEEN) {
-            Piece *piece = new Piece(currentColor, PieceType::QUEEN ) ;
+            auto *piece = new Piece(currentColor, PieceType::QUEEN ) ;
             removeAndSetPiece(piece, move.getOriginalSquare(), move.getDestination()) ;
         }
 
