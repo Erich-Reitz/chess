@@ -20,10 +20,10 @@ class World  {
     void HandleInput(sf::Vector2f mousePos, bool mouseDown, bool mouseUp);
 
   private:
-    void handleMouseDownWithSelectedPiece(const Position& pressedSquare);
-    void handleMouseDownWithNoSelectedPiece(const Position& pressedSquare);
+    void handleMouseDownWithSelectedPiece(const ValidPosition& pressedSquare);
+    void handleMouseDownWithNoSelectedPiece(const ValidPosition& pressedSquare);
     void handleMouseDown(sf::Vector2f mousePos);
-    void handleMouseDownOnSquare(const Position& pressedCoordinates);
+    void handleMouseDownOnSquare(const ValidPosition& pressedCoordinates);
     // updates
     Board gameBoard;
     sf::Vector2f m_viewCenter;
@@ -31,9 +31,9 @@ class World  {
     SelectedPieceInformation selectedPieceInformation;
 
 
-    void moveSelectedPiece(const Position &destination);
+    void moveSelectedPiece(const ValidPosition &destination);
 
-    void handleUserReselectingPiece(const Position &pressuredSquare);
+    void handleUserReselectingPiece(const ValidPosition &pressuredSquare);
 
     void displayValidMoves();
 

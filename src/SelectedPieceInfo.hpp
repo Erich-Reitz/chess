@@ -1,22 +1,22 @@
 #pragma once
 
 #include <optional>
-#include "Position.hpp"
+#include "ValidPosition.hpp"
 #include "Move.hpp"
 struct SelectedPieceInformation {
-    std::optional<Position> coordinates;
+    std::optional<ValidPosition> coordinates;
     std::optional<Piece*> piece;
     std::optional<std::vector<Move>> placesCanMove;
 
-    void setCoordinates(const std::optional<Position>& position) {
-        this->coordinates = position;
+    void setCoordinates(const std::optional<ValidPosition>& ValidPosition) {
+        this->coordinates = ValidPosition;
     }
 
     void setPiece(Piece *_piece) {
         this->piece = _piece;
     }
 
-    void setInformation(const std::optional<Position>& _coordinates, Piece *_piece, const std::vector<Move>& validMoves) {
+    void setInformation(const std::optional<ValidPosition>& _coordinates, Piece *_piece, const std::vector<Move>& validMoves) {
         this->setCoordinates(_coordinates) ;
         this->setPiece(_piece);
         this->placesCanMove = validMoves;
@@ -26,7 +26,7 @@ struct SelectedPieceInformation {
         return this->placesCanMove.value();
     }
 
-    [[nodiscard]] Position getCoordinates() const {
+    [[nodiscard]] ValidPosition getCoordinates() const {
         return coordinates.value();
     }
 

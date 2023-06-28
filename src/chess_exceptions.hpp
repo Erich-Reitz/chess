@@ -19,3 +19,9 @@ struct RuntimeError : public std::exception {
         return "Unexpected runtime error" ;
     }
 };
+
+struct BoundConstraintViolation : public std::exception {
+    [[nodiscard]] const char * what () const noexcept override {
+        return "Unexpected runtime error" ;
+    }
+};

@@ -16,7 +16,7 @@ class Board;
 
 class Piece : public sf::Drawable {
   public:
-    using MoveFuncPtr = std::vector<Move> (*)(const Board*, const Position&, const Piece*);
+    using MoveFuncPtr = std::vector<Move> (*)(const Board*, const ValidPosition&, const Piece*);
     Piece(bool _white, PieceType _type) ;
     Piece(const Piece& rhs) ;
     Piece& operator=(const Piece& rhs);
@@ -33,7 +33,7 @@ class Piece : public sf::Drawable {
     void setMoved() ;
     PieceType getType() const ;
     size_t getTimesMoved() const;
-    std::vector<Move> generateAllMoves(const Board* board, const Position& current, const Piece* piece) const {
+    std::vector<Move> generateAllMoves(const Board* board, const ValidPosition& current, const Piece* piece) const {
         return m_moveFuncPtr(board, current, piece);
     }
   private:

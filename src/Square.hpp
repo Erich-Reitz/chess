@@ -9,7 +9,6 @@
 
 
 #include "Piece.hpp"
-#include "Position.hpp"
 
 class Piece;
 
@@ -32,7 +31,7 @@ class Square : public sf::Drawable {
 
 
     sf::FloatRect getBoundaries() const;
-    Position getPosition() const;
+    ValidPosition getPosition() const;
 
     void setPieceSize();
 
@@ -42,7 +41,7 @@ class Square : public sf::Drawable {
     std::optional<Piece*> piece;
     sf::Sprite shape;
     sf::Texture texture;
-    Position position;
+    ValidPosition position;
     float size;
 
 

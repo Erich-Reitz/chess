@@ -8,6 +8,7 @@
 
 #include "Square.hpp"
 #include "Move.hpp"
+#include "ValidPosition.hpp"
 
 class Piece;
 class Square;
@@ -18,18 +19,18 @@ class Board : public sf::Drawable {
     Board(const Board& rhs);
     Board& operator=(const Board& rhs);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    std::optional<Piece*> pieceAtPosition(const Position& pos) const;
-    bool hasPieceAtPosition(const Position& pos) const ;
-    void movePiece(const Position &currentPosition, const Position &destination) ;
-    void removeAndSetPiece(Piece* piece, const Position &currentPosition, const Position &destination) ;
-    void setSquareColor(const Position& position, sf::Color color) ;
-    std::optional<Position> getRowAndColOfMouse(sf::Vector2f mousePos) const;
-    std::vector<Move> generateAllValidMovesForPiece(const Position& current, const Piece *piece, bool careIfPlacesKingInCheck=true) const;
+    std::optional<Piece*> pieceAtPosition(const ValidPosition& pos) const;
+    bool hasPieceAtPosition(const ValidPosition& pos) const ;
+    void movePiece(const ValidPosition &currentPosition, const ValidPosition &destination) ;
+    void removeAndSetPiece(Piece* piece, const ValidPosition &currentPosition, const ValidPosition &destination) ;
+    void setSquareColor(const ValidPosition& position, sf::Color color) ;
+    std::optional<ValidPosition> getRowAndColOfMouse(sf::Vector2f mousePos) const;
+    std::vector<Move> generateAllValidMovesForPiece(const ValidPosition& current, const Piece *piece, bool careIfPlacesKingInCheck=true) const;
     void resetAllSquaresColor();
     void processMove(const Move &move) ;
     PieceColor getColorToMove() const ;
-    bool unmovedRookAtPosition(const Position &pos) const;
-    bool hasPieceAtPosition(const Position &pos, PieceColor targetColor) const;
+    bool unmovedRookAtPosition(const ValidPosition &pos) const;
+    bool hasPieceAtPosition(const ValidPosition &pos, PieceColor targetColor) const;
     std::vector<Move> moveList;
   protected:
     std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
@@ -38,10 +39,10 @@ class Board : public sf::Drawable {
     bool moves_finishes_with_king_in_check(const Move &move) const ;
     bool legal_move(const Move &move, bool careIfPlacesKingInCheck) const ;
 
-    std::vector<Move> generateAllDiagonalMoves(const Position& current, PieceColor color) const ;
-    std::set<std::pair<Position, Piece*>> getAllPieces(PieceColor search_color) const ;
-    Square *squareAt(const Position &coord) const;
+    std::vector<Move> generateAllDiagonalMoves(const ValidPosition& current, PieceColor color) const ;
+    std::set<std::pair<ValidPosition, Piece*>> getAllPieces(PieceColor search_color) const ;
+    Square *squareAt(const ValidPosition &coord) const;
     Square* squareAt(int row, int col) const ;
-    std::pair<Position, Piece*> getKing(PieceColor color) const ;
+    std::pair<ValidPosition, Piece*> getKing(PieceColor color) const ;
     PieceColor colorToMove = PieceColor::WHITE ;
 };

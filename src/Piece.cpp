@@ -4,7 +4,6 @@
 
 #include "Board.hpp"
 #include "Piece.hpp"
-#include "Position.hpp"
 #include "chess_exceptions.hpp"
 #include "move_generation.hpp"
 

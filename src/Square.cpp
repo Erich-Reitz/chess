@@ -1,8 +1,15 @@
 #include "Square.hpp"
-#include "Position.hpp"
+
+#include "chess_exceptions.hpp"
 
 Square::Square(bool white, int _row, int _col, float xPos, float yPos, float size, std::optional<Piece*> _piece ) {
-    this->position = Position(_row, _col);
+    try {
+        this->position = ValidPosition(_row, _col);
+
+    } catch (BoundConstraintViolation &e) {
+        throw RuntimeError() ;
+    }
+
     this->size = size;
     this->white = white;
     const auto scale_size_constant = .00125;
@@ -96,7 +103,7 @@ void Square::removePiece() {
     this->piece = std::nullopt;
 }
 
-Position Square::getPosition() const {
+ValidPosition Square::getPosition() const {
     return position;
 }
 

@@ -1,39 +1,50 @@
 #pragma once
-#include "Position.hpp"
+#include "ValidPosition.hpp"
 #include "PieceType.hpp"
 #include <optional>
 
-using optional_move = std::optional<std::pair<Position, Position>> ;
+using optional_move = std::optional<std::pair<ValidPosition, ValidPosition>> ;
 
 class Move {
   public:
-    std::pair<Position, Position> move;
+    std::pair<ValidPosition, ValidPosition> move;
     PieceColor colorMove;
-    std::optional<Position> capturee = {};
+    std::optional<ValidPosition> capturee = {};
     optional_move castlee = {};
     MoveType move_type = MoveType::NORMAL;
     std::optional<PieceType> promoteTo;
 
 
-    Move(std::pair<Position, Position> _move, PieceColor _colorMove) {
+    Move(std::pair<ValidPosition, ValidPosition> _move, PieceColor _colorMove) {
         this->move = _move;
         this->colorMove = _colorMove;
     }
 
-    Move(std::pair<Position, Position> _move, PieceColor _colorMove, optional_move  _castlee) {
+    Move(std::pair<ValidPosition, ValidPosition> _move, bool pieceIsWhite) {
+        this->move = _move;
+
+        if (pieceIsWhite) {
+            this->colorMove = PieceColor::WHITE;
+
+        } else {
+            this->colorMove = PieceColor::BLACK;
+        }
+    }
+
+    Move(std::pair<ValidPosition, ValidPosition> _move, PieceColor _colorMove, optional_move  _castlee) {
         this->move = _move;
         this->colorMove = _colorMove;
         this->castlee = _castlee;
     }
 
 
-    Move(std::pair<Position, Position> _move, PieceColor _colorMove, std::optional<Position>  _capturee) {
+    Move(std::pair<ValidPosition, ValidPosition> _move, PieceColor _colorMove, std::optional<ValidPosition>  _capturee) {
         this->move = _move;
         this->colorMove = _colorMove;
         this->capturee = _capturee;
     }
 
-    Move(std::pair<Position, Position> _move, PieceColor _colorMove, std::optional<Position>  _capturee, optional_move _castlee, MoveType _move_type) {
+    Move(std::pair<ValidPosition, ValidPosition> _move, PieceColor _colorMove, std::optional<ValidPosition>  _capturee, optional_move _castlee, MoveType _move_type) {
         this->move = _move;
         this->colorMove = _colorMove;
         this->capturee = _capturee;
@@ -54,11 +65,11 @@ class Move {
         return move_type == MoveType::PAWN_PROMOTION;
     }
 
-    Position getOriginalSquare() const {
+    ValidPosition getOriginalSquare() const {
         return this->move.first;
     }
 
-    Position getDestination() const {
+    ValidPosition getDestination() const {
         return this->move.second;
     }
 
