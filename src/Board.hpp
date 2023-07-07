@@ -36,7 +36,6 @@ class Board : public sf::Drawable {
     std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
 
     bool king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const;
-    bool moves_finishes_with_king_in_check(const Move &move) const ;
     bool legal_move(const Move &move, bool careIfPlacesKingInCheck) const ;
 
     std::vector<Move> generateAllDiagonalMoves(const ValidPosition& current, PieceColor color) const ;

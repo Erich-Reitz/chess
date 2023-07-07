@@ -16,7 +16,7 @@ class Square : public sf::Drawable {
   public:
     Square() {};
 
-    Square(bool white, int row, int col, float xPos, float yPos, float size, std::optional<Piece*> piece);
+    Square(bool white, bounded_value<int, 0,  7>   row, bounded_value<int, 0,  7>   col, float xPos, float yPos, float size, std::optional<Piece*> piece);
     Square(const Square& rhs);
     Square& operator=(const Square& rhs);
     std::optional<Piece*> getPiece() const;

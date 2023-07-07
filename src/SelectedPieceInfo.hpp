@@ -40,8 +40,6 @@ struct SelectedPieceInformation {
     };
 
 
-
-
     void reset() {
         coordinates = {};
         piece = {};

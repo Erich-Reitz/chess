@@ -22,32 +22,13 @@ PieceColor opposite_color(PieceColor color) {
 
 
 bool pieceCanBeCapturedEnPassant(Piece *piece_to_be_captured, ValidPosition piece_pos, const std::vector<Move> &moveList) {
-    return (isPawnAndHasMovedOnceTwoSquaresForward(piece_to_be_captured, piece_pos) && moveList.back().move.second == piece_pos) ;
+    return (isPawnAndHasMovedOnceTwoSquaresForward(piece_to_be_captured, piece_pos) && moveList.back().getDestination() == piece_pos) ;
 }
 
 
-std::optional<Move> moveOneSpaceForward(const Board *board, const ValidPosition& current, bool pieceIsWhite) {
-    ValidPosition moveTo;
-
+std::optional<ValidPosition>  findXSpacesForward(const ValidPosition& current, bool isPieceWhite, int spacesForward) {
     try {
-        moveTo = ValidPosition(current.r +  (pieceIsWhite ? - 1 : 1), current.c) ;
-
-    } catch (BoundConstraintViolation &e) {
-        return {};
-    }
-
-    if (!board->hasPieceAtPosition(moveTo)) {
-        const auto move = std::make_pair(current, moveTo) ;
-        return Move(move, pieceIsWhite);
-    }
-
-    return {};
-}
-
-
-std::optional<ValidPosition>  findTwoSpacesForward(const ValidPosition& current, bool isPieceWhite) {
-    try {
-        auto pos =  ValidPosition(current.r + (isPieceWhite ? - 2 : 2), current.c) ;
+        auto pos =  ValidPosition(current.r + (isPieceWhite ? - spacesForward : spacesForward), current.c) ;
         return pos;
 
     } catch(BoundConstraintViolation &e) {
@@ -57,25 +38,6 @@ std::optional<ValidPosition>  findTwoSpacesForward(const ValidPosition& current,
 }
 
 
-std::optional<ValidPosition>  findOneSpaceForward(const ValidPosition& current, bool isPieceWhite) {
-    try {
-        auto pos =  ValidPosition(current.r + (isPieceWhite ? - 1 : 1), current.c) ;
-        return pos;
-
-    } catch(BoundConstraintViolation &e) {
-    }
-
-    return {};
-}
-
-
-bool Board::legal_move(const Move &move, bool careIfPlacesKingInCheck) const {
-    if (careIfPlacesKingInCheck && moves_finishes_with_king_in_check(move)) {
-        return false;
-    }
-
-    return true;
-}
 
 
 std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPosition& currentPosition, const Piece *piece) {
@@ -83,15 +45,15 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPo
     const PieceColor pieceColor = piece->getColor();
     const PieceColor oppositeColorOfPiece = opposite_color(pieceColor) ;
     const bool pieceIsWhite = pieceColor == PieceColor::WHITE ;
-    const std::optional<ValidPosition> potentialOneSpaceForward = findOneSpaceForward(currentPosition, pieceIsWhite) ;
+    const std::optional<ValidPosition> potentialOneSpaceForward = findXSpacesForward(currentPosition, pieceIsWhite, 1) ;
 
     if (potentialOneSpaceForward.has_value() && !board->pieceAtPosition(potentialOneSpaceForward.value())) {
         const auto one_space_forward_move = std::make_pair(currentPosition, potentialOneSpaceForward.value()) ;
-        validMoves.emplace_back(one_space_forward_move, pieceIsWhite) ;
+        validMoves.emplace_back(one_space_forward_move, pieceColor) ;
     }
 
     if (!piece->hasMoved()) {
-        const std::optional<ValidPosition>  twoSpacesForward = findTwoSpacesForward(currentPosition, pieceIsWhite) ;
+        const std::optional<ValidPosition>  twoSpacesForward = findXSpacesForward(currentPosition, pieceIsWhite, 2) ;
         const auto two_space_forward_move = std::make_pair(currentPosition, twoSpacesForward.value()) ;
 
         if (twoSpacesForward.has_value() && !board->hasPieceAtPosition(potentialOneSpaceForward.value()) && !board->hasPieceAtPosition(twoSpacesForward.value()) ) {

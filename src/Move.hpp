@@ -20,16 +20,6 @@ class Move {
         this->colorMove = _colorMove;
     }
 
-    Move(std::pair<ValidPosition, ValidPosition> _move, bool pieceIsWhite) {
-        this->move = _move;
-
-        if (pieceIsWhite) {
-            this->colorMove = PieceColor::WHITE;
-
-        } else {
-            this->colorMove = PieceColor::BLACK;
-        }
-    }
 
     Move(std::pair<ValidPosition, ValidPosition> _move, PieceColor _colorMove, optional_move  _castlee) {
         this->move = _move;

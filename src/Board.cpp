@@ -188,16 +188,6 @@ PieceColor Board::getColorToMove() const {
     return this->colorToMove;
 }
 
-bool Board::moves_finishes_with_king_in_check(const Move &move) const {
-    // after we process move, no pieces should have a valid move to attack king
-    Board future_board = *this;
-    // if white, we are processing white's move
-    future_board.processMove(move) ;
-    // now we want to see if black has a move to capture white's king
-    // if it does, the previous move by white would place the king in check
-    // and therefore be invalid
-    return future_board.king_is_attacked(this->colorToMove) ;
-}
 
 
 
@@ -255,17 +245,28 @@ std::vector<Move> Board::generateAllValidMovesForPiece(const ValidPosition& curr
     return validMoves;
 }
 
-
-std::optional<Piece*> Board::pieceAtPosition(const ValidPosition& pos) const {
-    if (!hasPieceAtPosition(pos)) {
-        return {};
+bool Board::legal_move(const Move &move, bool careIfPlacesKingInCheck) const {
+    if (!careIfPlacesKingInCheck) {
+        return true;
     }
 
+    // after we process move, no pieces should have a valid move to attack king
+    Board future_board = *this;
+    // if white, we are processing white's move
+    future_board.processMove(move) ;
+    // now we want to see if black has a move to capture white's king
+    // if it does, the previous move by white would place the king in check
+    // and therefore be invalid
+    return !future_board.king_is_attacked(this->colorToMove) ;
+}
+
+
+std::optional<Piece*> Board::pieceAtPosition(const ValidPosition& pos) const {
     return this->squareAt(pos)->getPiece();
 }
 
 bool Board::hasPieceAtPosition(const ValidPosition& pos) const {
-    return this->squareAt(pos)->getPiece().has_value();
+    return this->pieceAtPosition(pos).has_value();
 }
 
 bool Board::hasPieceAtPosition(const ValidPosition& pos, const PieceColor target_color) const {

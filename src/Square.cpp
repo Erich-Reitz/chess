@@ -2,7 +2,7 @@
 
 #include "chess_exceptions.hpp"
 
-Square::Square(bool white, int _row, int _col, float xPos, float yPos, float size, std::optional<Piece*> _piece ) {
+Square::Square(bool white, bounded_value<int, 0,  7>  _row, bounded_value<int, 0,  7>  _col, float xPos, float yPos, float size, std::optional<Piece*> _piece ) {
     try {
         this->position = ValidPosition(_row, _col);
 
