@@ -117,7 +117,7 @@ bool Board::unmovedRookAtPosition(const ValidPosition &pos) const {
 
     if (pieceAtSquare.has_value()) {
         const auto piece = pieceAtSquare.value();
-        return piece->getType() == PieceType::ROOK && !piece->hasMoved();
+        return piece->type == PieceType::ROOK && !piece->hasMoved();
     }
 
     return false;
@@ -136,7 +136,7 @@ std::set<std::pair<ValidPosition, Piece*>> Board::getAllPieces(PieceColor search
                 auto pos = ValidPosition(i, j)  ;
                 auto pieceInfo = std::make_pair(pos, piece) ;
 
-                if (searchColor == piece->getColor()) {
+                if (searchColor == piece->color) {
                     pieces.insert(pieceInfo);
                 }
             }
@@ -154,7 +154,7 @@ std::pair<ValidPosition, Piece*> Board::getKing(PieceColor color) const {
                 auto pos = ValidPosition(i, j)  ;
                 auto pieceInfo = std::make_pair(pos, piece) ;
 
-                if (color == piece->getColor() && piece->getType() == PieceType::KING) {
+                if (color == piece->color && piece->type == PieceType::KING) {
                     return pieceInfo ;
                 }
             }
@@ -183,12 +183,6 @@ bool Board::king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const {
 
     return false;
 }
-
-PieceColor Board::getColorToMove() const {
-    return this->colorToMove;
-}
-
-
 
 
 
@@ -232,7 +226,7 @@ void Board::movePiece(const ValidPosition &currentPosition, const ValidPosition 
 
     Piece *movingPiece = userSelectedPiece.value();
     removeAndSetPiece(movingPiece, currentPosition, destination);
-    movingPiece->setMoved();
+    movingPiece->timesMoved += 1;
 }
 
 
@@ -283,7 +277,7 @@ bool Board::hasPieceAtPosition(const ValidPosition& pos, const PieceColor target
         return false;
     }
 
-    return piece.value()->getColor() == target_color;
+    return piece.value()->color == target_color;
 }
 
 

@@ -4,15 +4,11 @@
 
 #include "World.hpp"
 #include "Board.hpp"
-
+#include <cassert>
 
 #include "chess_exceptions.hpp"
 
-World::World() {
-    this->pawnPromotionDialog = sf::RectangleShape(sf::Vector2f(200, 200));
-    this->pawnPromotionDialog.setFillColor(sf::Color::Red) ;
-    this->pawnPromotionDialog.setOrigin(sf::Vector2f(100, 100));
-}
+World::World() = default;
 
 World::~World() = default;
 
@@ -31,6 +27,8 @@ void World::displayPawnPromotionDialog() {
     this->worldState = WORLD_STATE::PAWN_PROMOTION_DIALOG;
 }
 
+void handleMouseDownOnPawnPromotionDialog(sf::Vector2f mousePos)  {
+}
 
 void World::moveSelectedPiece(const ValidPosition &destination) {
     auto validMoves = this->selectedPieceInformation.placesCanMove.value();
@@ -71,12 +69,13 @@ void World::handleUserReselectingPiece(const ValidPosition& pressedSquare) {
 
 
 
-bool sameColor(Piece *a, Piece *b) {
-    return a->getColor() == b->getColor();
+bool sameColor(const Piece *a, const Piece *b) {
+    return a->color == b->color;
 }
 
 void World::handleMouseDownOnBoardWithSelectedPiece(const ValidPosition& pressedSquare) {
-    Piece  *previouslySelectedPiece = this->selectedPieceInformation.getPiece();
+    assert(this->selectedPieceInformation.piece.has_value()) ;
+    Piece  *previouslySelectedPiece = this->selectedPieceInformation.piece.value() ;
     std::optional<Piece*> pieceAtValidPosition = gameBoard.pieceAtPosition(pressedSquare) ;
 
     if (pieceAtValidPosition.has_value() && sameColor(pieceAtValidPosition.value(), previouslySelectedPiece) ) {
@@ -87,20 +86,6 @@ void World::handleMouseDownOnBoardWithSelectedPiece(const ValidPosition& pressed
     moveSelectedPiece(pressedSquare);
 }
 
-void World::displayValidMoves( ) {
-    auto validMoves = this->selectedPieceInformation.getPlacesCanMove();
-
-    for (auto &move : validMoves) {
-        gameBoard.setSquareColor(move.getDestination(), sf::Color::Green);
-    }
-}
-
-void World::displaySelectedPiece()  {
-    // todo
-}
-
-
-
 
 void World::handleMouseDownOnBoardWithNoSelectedPiece(const ValidPosition& pressedSquare) {
     std::optional<Piece*>  piece = gameBoard.pieceAtPosition(pressedSquare) ;
@@ -109,11 +94,9 @@ void World::handleMouseDownOnBoardWithNoSelectedPiece(const ValidPosition& press
         return;
     }
 
-    if (piece.value()->getColor() == this->gameBoard.getColorToMove()) {
+    if (piece.value()->color == this->gameBoard.colorToMove) {
         auto placesCanMove = gameBoard.generateAllValidMovesForPiece(pressedSquare, piece.value());
         this->selectedPieceInformation.setInformation(pressedSquare, piece.value(), placesCanMove);
-        this->displayValidMoves();
-        this->displaySelectedPiece();
     }
 }
 
@@ -142,7 +125,7 @@ void World::handleMouseDown(sf::Vector2f mousePos) {
         break;
 
     case WORLD_STATE::PAWN_PROMOTION_DIALOG:
-        this->handleMouseDownOnPawnPromotionDialog(mousePos) ;
+        // this->handleMouseDownOnPawnPromotionDialog(mousePos) ;
         break;
 
     default:

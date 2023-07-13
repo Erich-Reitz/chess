@@ -114,23 +114,13 @@ void Piece::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(piece);
 }
 
-PieceColor Piece::getColor() const {
-    return this->color ;
-}
 
 bool Piece::hasMoved() const {
     return this->timesMoved != 0;
 }
 
-void Piece::setMoved() {
-    this->timesMoved += 1;
-}
-PieceType Piece::getType() const {
-    return this->type;
-}
-size_t Piece::getTimesMoved() const {
-    return this->timesMoved;
-}
+
+
 
 
 

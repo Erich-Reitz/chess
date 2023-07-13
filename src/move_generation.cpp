@@ -10,11 +10,7 @@
 
 #include "Board.hpp"
 #include "Piece.hpp"
-#include "both.hpp"
-
-
 #include "add_sets.cpp"
-
 #include "chess_exceptions.hpp"
 
 PieceColor opposite_color(PieceColor color) {

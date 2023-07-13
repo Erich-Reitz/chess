@@ -18,20 +18,28 @@ class Board : public sf::Drawable {
     Board();
     Board(const Board& rhs);
     Board& operator=(const Board& rhs);
+
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    std::optional<Piece*> pieceAtPosition(const ValidPosition& pos) const;
-    bool hasPieceAtPosition(const ValidPosition& pos) const ;
+
+    void processMove(const Move &move) ;
+
     void movePiece(const ValidPosition &currentPosition, const ValidPosition &destination) ;
     void removeAndSetPiece(Piece* piece, const ValidPosition &currentPosition, const ValidPosition &destination) ;
     void setSquareColor(const ValidPosition& position, sf::Color color) ;
-    std::optional<ValidPosition> getRowAndColOfMouse(sf::Vector2f mousePos) const;
-    std::vector<Move> generateAllValidMovesForPiece(const ValidPosition& current, const Piece *piece, bool careIfPlacesKingInCheck=true) const;
     void resetAllSquaresColor();
-    void processMove(const Move &move) ;
-    PieceColor getColorToMove() const ;
+
+
+    // getters
+    std::optional<Piece*> pieceAtPosition(const ValidPosition& pos) const;
+    bool hasPieceAtPosition(const ValidPosition& pos) const ;
+    std::vector<Move> generateAllValidMovesForPiece(const ValidPosition& current, const Piece *piece, bool careIfPlacesKingInCheck=true) const;
+    std::optional<ValidPosition> getRowAndColOfMouse(sf::Vector2f mousePos) const;
     bool unmovedRookAtPosition(const ValidPosition &pos) const;
     bool hasPieceAtPosition(const ValidPosition &pos, PieceColor targetColor) const;
+
     std::vector<Move> moveList;
+    PieceColor colorToMove = PieceColor::WHITE ;
+
   protected:
     std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
 
@@ -43,5 +51,5 @@ class Board : public sf::Drawable {
     Square *squareAt(const ValidPosition &coord) const;
     Square* squareAt(int row, int col) const ;
     std::pair<ValidPosition, Piece*> getKing(PieceColor color) const ;
-    PieceColor colorToMove = PieceColor::WHITE ;
+
 };

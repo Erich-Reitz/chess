@@ -8,6 +8,8 @@
 #include "Board.hpp"
 #include "SelectedPieceInfo.hpp"
 
+#include "PawnPromotionDialog.hpp"
+
 enum WORLD_STATE {
     BOARD,
     PAWN_PROMOTION_DIALOG
@@ -40,16 +42,12 @@ class World  {
     sf::Vector2f m_viewCenter;
     sf::Vector2f m_viewSize;
     SelectedPieceInformation selectedPieceInformation;
-    sf::RectangleShape pawnPromotionDialog ;
+    PawnPromotionDialog pawnPromotionDialog;
     WORLD_STATE worldState = BOARD;
 
     void moveSelectedPiece(const ValidPosition &destination);
 
     void handleUserReselectingPiece(const ValidPosition &pressedSquare);
-
-    void displayValidMoves();
-
-    void displaySelectedPiece();
 
     void clearSelectedPieceInformation();
 };

@@ -27,20 +27,18 @@ class Piece : public sf::Drawable {
     void setPosition(float x, float y);
     void setRadius(float radius);
 
-    PieceColor getColor() const;
 
     bool hasMoved() const;
-    void setMoved() ;
-    PieceType getType() const ;
-    size_t getTimesMoved() const;
     std::vector<Move> generateAllMoves(const Board* board, const ValidPosition& current, const Piece* piece) const {
         return m_moveFuncPtr(board, current, piece);
     }
-  private:
     size_t timesMoved;
-    PieceColor color;
-    sf::Sprite piece;
     PieceType type;
+    PieceColor color;
+  private:
+
+
+    sf::Sprite piece;
     sf::Texture texture;
     MoveFuncPtr m_moveFuncPtr = nullptr;
 };
