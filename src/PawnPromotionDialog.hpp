@@ -8,14 +8,14 @@ class PawnPromotionDialog : public sf::Drawable {
         this->pawnPromotionDialog.setFillColor(sf::Color::Red) ;
         this->pawnPromotionDialog.setOrigin(sf::Vector2f(100, 100));
     }
-    ~PawnPromotionDialog() = default; 
+    ~PawnPromotionDialog() = default;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
-      target.draw(this->pawnPromotionDialog) ; 
+        target.draw(this->pawnPromotionDialog) ;
     }
 
     void setPosition(sf::Vector2f view_center) {
-      this->pawnPromotionDialog.setPosition(view_center) ; 
+        this->pawnPromotionDialog.setPosition(view_center) ;
     }
 
   private:
