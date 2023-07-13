@@ -10,6 +10,7 @@
 
 #include "Board.hpp"
 #include "Piece.hpp"
+#include "both.hpp"
 
 
 #include "add_sets.cpp"
@@ -42,7 +43,7 @@ std::optional<ValidPosition>  findXSpacesForward(const ValidPosition& current, b
 
 std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPosition& currentPosition, const Piece *piece) {
     std::vector<Move> validMoves;
-    const PieceColor pieceColor = piece->getColor();
+    const PieceColor pieceColor = piece->color;
     const PieceColor oppositeColorOfPiece = opposite_color(pieceColor) ;
     const bool pieceIsWhite = pieceColor == PieceColor::WHITE ;
     const std::optional<ValidPosition> potentialOneSpaceForward = findXSpacesForward(currentPosition, pieceIsWhite, 1) ;
@@ -114,14 +115,14 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPo
 std::vector<Move> generateAllValidMovesForRook(const Board *board, const ValidPosition& current, const Piece *piece)  {
     const int row_difs[] = {-1, 1, 0, 0} ;
     const int col_difs[] = {0, 0, 1, -1} ;
-    return generateMovesInStraightLine(board, current, piece->getColor(), row_difs, col_difs) ;
+    return generateMovesInStraightLine(board, current, piece->color, row_difs, col_difs) ;
 }
 
 
 
 std::vector<Move> generateAllValidMovesForQueen(const Board *board, const ValidPosition& current, const Piece *piece)  {
     std::vector<Move> allValidMoves = {};
-    auto allValidMovesForBishop = generateAllDiagonalMoves(board, current, piece->getColor());
+    auto allValidMovesForBishop = generateAllDiagonalMoves(board, current, piece->color);
     auto allValidMovesForRook = generateAllValidMovesForRook(board, current, piece) ;
     add_sets(allValidMoves, allValidMovesForBishop, allValidMovesForRook) ;
     return allValidMoves;
@@ -129,7 +130,7 @@ std::vector<Move> generateAllValidMovesForQueen(const Board *board, const ValidP
 
 
 std::vector<Move> generateAllValidMovesForBishop(const Board *board, const ValidPosition& current, const Piece *piece)  {
-    return generateAllDiagonalMoves(board, current, piece->getColor()) ;
+    return generateAllDiagonalMoves(board, current, piece->color) ;
 }
 
 
@@ -175,7 +176,7 @@ std::vector<Move> generateAllDiagonalMoves(const Board *board, const ValidPositi
 
 std::vector<Move> generateAllValidMovesForKing(const Board *board, const ValidPosition& currentPosition, const Piece *piece)  {
     std::vector<Move> validMoves;
-    PieceColor pieceColor = piece->getColor() ;
+    PieceColor pieceColor = piece->color ;
     PieceColor oppositePieceColor = opposite_color(pieceColor);
     const int row_difs[] = {1, 1, 0, -1, -1, -1, 0, 1} ;
     const int col_difs[] = {0, 1, 1,  1,  0, -1, -1, -1} ;
@@ -218,9 +219,8 @@ std::vector<Move> generateAllValidMovesForKing(const Board *board, const ValidPo
                 if (uninterruptedPathToLeftRook) {
                     auto castleMoveKingDest = ValidPosition{7, 2};
                     auto castleMoveRookDest = ValidPosition{7, 3};
-                    const auto king_move = std::make_pair(currentPosition, castleMoveKingDest);
-                    const auto rook_move = std::make_pair(leftCorner, castleMoveRookDest);
-                    validMoves.push_back(Move(king_move, pieceColor, rook_move));
+                    const auto move = constructCastleMove(currentPosition, leftCorner, castleMoveKingDest, castleMoveRookDest, pieceColor) ;
+                    validMoves.push_back(move) ;
                 }
             }
 
@@ -239,9 +239,8 @@ std::vector<Move> generateAllValidMovesForKing(const Board *board, const ValidPo
                 if (uninterruptedPathToRightRook) {
                     auto castleMoveKingDest = ValidPosition{7, 6};
                     auto castleMoveRookDest = ValidPosition{7, 5};
-                    const auto king_move = std::make_pair(currentPosition, castleMoveKingDest);
-                    const auto rook_move = std::make_pair(rightCorner, castleMoveRookDest);
-                    validMoves.push_back(Move(king_move, pieceColor, rook_move));
+                    const auto move = constructCastleMove(currentPosition, rightCorner, castleMoveKingDest, castleMoveRookDest, pieceColor) ;
+                    validMoves.push_back(move) ;
                 }
             }
 
@@ -261,9 +260,8 @@ std::vector<Move> generateAllValidMovesForKing(const Board *board, const ValidPo
                 if (uninterruptedPathToLeftRook) {
                     auto castleMoveKingDest = ValidPosition{0, 2};
                     auto castleMoveRookDest = ValidPosition{0, 3};
-                    const auto king_move = std::make_pair(currentPosition, castleMoveKingDest);
-                    const auto rook_move = std::make_pair(leftCorner, castleMoveRookDest);
-                    validMoves.push_back(Move(king_move, pieceColor,  rook_move));
+                    const auto move = constructCastleMove(currentPosition, leftCorner, castleMoveKingDest, castleMoveRookDest, pieceColor) ;
+                    validMoves.push_back(move) ;
                 }
             }
 
@@ -282,9 +280,8 @@ std::vector<Move> generateAllValidMovesForKing(const Board *board, const ValidPo
                 if (uninterruptedPathToRightRook) {
                     auto castleMoveKingDest = ValidPosition{0, 6};
                     auto castleMoveRookDest = ValidPosition{0, 5};
-                    const auto king_move = std::make_pair(currentPosition, castleMoveKingDest);
-                    const auto rook_move = std::make_pair(rightCorner, castleMoveRookDest);
-                    validMoves.push_back(Move(king_move, pieceColor, rook_move));
+                    const auto move = constructCastleMove(currentPosition, rightCorner, castleMoveKingDest, castleMoveRookDest, pieceColor) ;
+                    validMoves.push_back(move) ;
                 }
             }
         }
@@ -293,9 +290,15 @@ std::vector<Move> generateAllValidMovesForKing(const Board *board, const ValidPo
     return validMoves ;
 }
 
+Move constructCastleMove(ValidPosition kingPosition, ValidPosition rookPosition, ValidPosition kingDest, ValidPosition rookDest, PieceColor pieceColor) {
+    const auto king_move = std::make_pair(kingPosition, kingDest);
+    const auto rook_move = std::make_pair(rookPosition, rookDest);
+    return Move(king_move, pieceColor, rook_move) ;
+}
+
 bool isPawnAndHasMovedOnceTwoSquaresForward(Piece *piece, ValidPosition piece_pos) {
-    if (piece->getType() == PieceType::PAWN && piece->getTimesMoved() == 1) {
-        auto pieceIsWhite = piece->getColor() == PieceColor::WHITE;
+    if (piece->type == PieceType::PAWN && piece->timesMoved == 1) {
+        auto pieceIsWhite = piece->color == PieceColor::WHITE;
         return ((pieceIsWhite && piece_pos.r == 4) || (!pieceIsWhite && piece_pos.c==3)) ;
     }
 
@@ -304,7 +307,7 @@ bool isPawnAndHasMovedOnceTwoSquaresForward(Piece *piece, ValidPosition piece_po
 
 std::vector<Move> generateAllValidMovesForKnight(const Board *board, const ValidPosition& currentPosition, const Piece *piece)  {
     std::vector<Move> validMoves ;
-    auto pieceColor = piece->getColor();
+    auto pieceColor = piece->color;
     auto oppositePieceColor = opposite_color(pieceColor);
     const int row_difs[] = {1, 1, -1, -1, 2, 2, -2, -2} ;
     const int col_difs[] = {2, -2, 2, -2, 1, -1, 1, -1} ;

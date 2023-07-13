@@ -8,6 +8,8 @@ std::vector<Move> generateMovesInStraightLine(const Board *board, const ValidPos
 
 PieceColor opposite_color(PieceColor color);
 
+Move constructCastleMove(ValidPosition kingPosition, ValidPosition rookPosition, ValidPosition kingDest, ValidPosition rookDest, PieceColor pieceColor) ;
+
 
 std::vector<Move> generateAllDiagonalMoves(const Board *board, const ValidPosition& current, PieceColor color);
 
