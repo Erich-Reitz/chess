@@ -193,28 +193,33 @@ void Board::processMove(const Move &move) {
         this->squareAt(move.capturee.value())->removePiece()  ;
     }
 
-    if (move.isPawnPromotion()) {
+    switch (move.move_type) {
+    case MoveType::PAWN_PROMOTION: {
         if (move.promoteTo == PieceType::QUEEN) {
             auto *piece = new Piece(currentColor, PieceType::QUEEN ) ;
-            removeAndSetPiece(piece, move.getOriginalSquare(), move.getDestination()) ;
+            movePiece(move.getOriginalSquare(), move.getDestination()) ;
         }
 
-    } else if (move.isCastle()) {
+        break;
+    }
+
+    case MoveType::CASTLE: {
         const auto current_pos = move.castlee.value().first;
         const auto dest = move.castlee.value().second;
         movePiece(current_pos, dest);
+        break;
+    }
 
-    } else {
+    case MoveType::NORMAL:
         movePiece(move.getOriginalSquare(), move.getDestination());
+        break;
+
+    default:
+        throw RuntimeError() ;
     }
 
     this->moveList.push_back(move) ;
     this->colorToMove = opposite_color(this->colorToMove) ;
-}
-
-void Board::removeAndSetPiece(Piece* piece, const ValidPosition &currentPosition, const ValidPosition &destination) {
-    this->squareAt(currentPosition)->removePiece();
-    this->squareAt(destination)->setPiece(piece);
 }
 
 void Board::movePiece(const ValidPosition &currentPosition, const ValidPosition &destination) {
@@ -225,7 +230,8 @@ void Board::movePiece(const ValidPosition &currentPosition, const ValidPosition 
     }
 
     Piece *movingPiece = userSelectedPiece.value();
-    removeAndSetPiece(movingPiece, currentPosition, destination);
+    this->squareAt(currentPosition)->removePiece();
+    this->squareAt(destination)->setPiece(movingPiece);
     movingPiece->timesMoved += 1;
 }
 

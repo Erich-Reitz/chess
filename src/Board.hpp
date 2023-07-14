@@ -24,12 +24,10 @@ class Board : public sf::Drawable {
     void processMove(const Move &move) ;
 
     void movePiece(const ValidPosition &currentPosition, const ValidPosition &destination) ;
-    void removeAndSetPiece(Piece* piece, const ValidPosition &currentPosition, const ValidPosition &destination) ;
     void setSquareColor(const ValidPosition& position, sf::Color color) ;
     void resetAllSquaresColor();
 
 
-    // getters
     std::optional<Piece*> pieceAtPosition(const ValidPosition& pos) const;
     bool hasPieceAtPosition(const ValidPosition& pos) const ;
     std::vector<Move> generateAllValidMovesForPiece(const ValidPosition& current, const Piece *piece, bool careIfPlacesKingInCheck=true) const;

@@ -42,7 +42,7 @@ void World::moveSelectedPiece(const ValidPosition &destination) {
 
     auto move_req = validMove.value();
 
-    if (move_req.isPawnPromotion()) {
+    if (move_req.move_type == MoveType::PAWN_PROMOTION) {
         // display pawn promotion dialog
         this->displayPawnPromotionDialog();
     }
