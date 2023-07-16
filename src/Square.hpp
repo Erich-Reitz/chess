@@ -9,8 +9,7 @@
 
 
 #include "Piece.hpp"
-
-class Piece;
+#include "ValidPosition.hpp"
 
 class Square : public sf::Drawable {
   public:
@@ -22,7 +21,7 @@ class Square : public sf::Drawable {
     std::optional<Piece*> getPiece() const;
 
 
-    void setPiece(Piece* _piece);
+    void setPiece(Piece* piece);
     void removePiece();
 
     void draw(sf::RenderTarget &window) const ;

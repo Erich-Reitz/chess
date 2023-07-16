@@ -9,14 +9,11 @@
 #include <vector>
 
 #include "PieceType.hpp"
-#include "Board.hpp"
 #include "Move.hpp"
 
-class Board;
 
 class Piece : public sf::Drawable {
   public:
-    using MoveFuncPtr = std::vector<Move> (*)(const Board*, const ValidPosition&, const Piece*);
     Piece(bool _white, PieceType _type) ;
     Piece(const Piece& rhs) ;
     Piece& operator=(const Piece& rhs);
@@ -29,16 +26,10 @@ class Piece : public sf::Drawable {
 
 
     bool hasMoved() const;
-    std::vector<Move> generateAllMoves(const Board* board, const ValidPosition& current, const Piece* piece) const {
-        return m_moveFuncPtr(board, current, piece);
-    }
     size_t timesMoved;
     PieceType type;
     PieceColor color;
   private:
-
-
     sf::Sprite piece;
     sf::Texture texture;
-    MoveFuncPtr m_moveFuncPtr = nullptr;
 };

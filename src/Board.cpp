@@ -15,57 +15,8 @@
 #include "chess_exceptions.hpp"
 #include "bounded.hpp"
 
-std::optional<Piece*> initial_piece(int row, int col) {
-    bool isWhitePiece = row == 6 || row == 7;
-
-    if (row == 0 || row == 7) {
-        switch (col) {
-        case 0:
-            return new Piece(isWhitePiece, PieceType::ROOK) ;
-
-        case 1:
-            return new Piece(isWhitePiece, PieceType::KNIGHT) ;
-
-        case 2:
-            return new Piece(isWhitePiece, PieceType::BISHOP) ;
-
-        case 3:
-            return new Piece(isWhitePiece, PieceType::QUEEN) ;
-
-        case 4:
-            return new Piece(isWhitePiece, PieceType::KING) ;
-
-        case 5:
-            return new Piece(isWhitePiece, PieceType::BISHOP) ;
-
-        case 6:
-            return new Piece(isWhitePiece, PieceType::KNIGHT) ;
-
-        case 7:
-            return new Piece(isWhitePiece, PieceType::ROOK) ;
-
-        default:
-            throw RuntimeError();
-        }
-    }
-
-    if (row == 1 || row == 6) {
-        return new Piece(isWhitePiece, PieceType::PAWN);
-    }
-
-    return {};
-}
 
 Board::Board() {
-    float initial_x_offset = 720.0;
-    float initial_y_offset = 300.0;
-
-    for (int row = 0; row < 8; row++) {
-        for (int col = 0; col < 8; col++) {
-            bool isWhite = (row + col) % 2 == 0;
-            board[row][col] = new Square(isWhite, row, col, initial_x_offset + col * 50, initial_y_offset + row * 50, 50.f, initial_piece(row, col));
-        }
-    }
 }
 
 Board::Board(const Board& rhs) {
@@ -74,42 +25,20 @@ Board::Board(const Board& rhs) {
 
 Board& Board::operator=(const Board& rhs) {
     this->colorToMove = rhs.colorToMove ;
-    moveList = rhs.moveList;
-    board.resize(8);
-
-    for (int i = 0; i < 8; i++) {
-        board[i].resize(8);
-
-        for (int j = 0; j < 8; j++) {
-            board[i][j] = new Square(*rhs.board[i][j]);
-        }
-    }
-
+    this->moveList = rhs.moveList;
+    this->board = rhs.board;
     return *this ;
 }
 
 void Board::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    for (const auto &row : board) {
-        for (const auto &square : row) {
-            square->draw(target);
-        }
-    }
+    this->board.draw(target, states);
 }
 
 
 
 std::optional<ValidPosition> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) const {
-    for (const auto &row : board) {
-        for (const auto &square : row) {
-            if (square->getBoundaries().contains(mousePos)) {
-                return square->getPosition();
-            }
-        }
-    }
-
-    return {};
+    return board.getRowAndColOfMouse(mousePos);
 }
-
 
 
 bool Board::unmovedRookAtPosition(const ValidPosition &pos) const {
@@ -170,7 +99,7 @@ bool Board::king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const {
     const auto all_pieces = getAllPieces(opposite_color_of_king_we_are_concerned_about) ;
 
     for (const auto& piece : all_pieces) {
-        auto allValidMoves = generateAllValidMovesForPiece(piece.first, piece.second, false) ;
+        auto allValidMoves = generateAllValidMovesForPiece(piece.first, false) ;
 
         for (auto valid_move : allValidMoves) {
             if (valid_move.capturee.has_value() ) {
@@ -235,9 +164,35 @@ void Board::movePiece(const ValidPosition &currentPosition, const ValidPosition 
     movingPiece->timesMoved += 1;
 }
 
+using move_function = std::function<std::vector<Move> (const Board *, const ValidPosition &, const Piece *)> ;
 
-std::vector<Move> Board::generateAllValidMovesForPiece(const ValidPosition& current, const Piece *piece, bool careIfPlacesKingInCheck) const {
-    std::vector<Move> moves = piece->generateAllMoves(this, current, piece) ;
+move_function move_gen_function(PieceType type) {
+    static const std::unordered_map<PieceType, move_function> moveGeneratorMap = {
+        {PieceType::ROOK, generateAllValidMovesForRook},
+        {PieceType::BISHOP, generateAllValidMovesForBishop},
+        {PieceType::QUEEN, generateAllValidMovesForQueen},
+        {PieceType::KING, generateAllValidMovesForKing},
+        {PieceType::KNIGHT, generateAllValidMovesForKnight},
+        {PieceType::PAWN, generateAllValidMovesForPawn}
+    };
+    auto it = moveGeneratorMap.find(type);
+
+    if (it != moveGeneratorMap.end())
+        return it->second;
+
+    throw PieceTypeSwitchFallthrough();
+}
+
+
+std::vector<Move> Board::generateAllValidMovesForPiece(const ValidPosition& current,  bool careIfPlacesKingInCheck) const {
+    const auto piece = pieceAtPosition(current) ;
+
+    if (!piece.has_value()) {
+        return {};
+    }
+
+    move_function generate_moves = move_gen_function(piece.value()->type);
+    std::vector<Move> moves = generate_moves(this, current, piece.value());
     std::vector<Move> validMoves;
     std::copy_if(moves.begin(), moves.end(), std::inserter(validMoves, validMoves.end()),  [&](const Move & move) {
         return  legal_move(move, careIfPlacesKingInCheck) ;
@@ -288,17 +243,13 @@ bool Board::hasPieceAtPosition(const ValidPosition& pos, const PieceColor target
 
 
 Square* Board::squareAt(const ValidPosition& coord) const {
-    return this->board.at(coord.r).at(coord.c);
+    return this->board.squareAt(coord);
 }
 
-
-Square* Board::squareAt(int row, int col) const {
-    return this->board.at(row).at(col);
+Square* Board::squareAt(int i, int j) const {
+    ValidPosition pos = ValidPosition(i, j) ;
+    return this->board.squareAt(pos);
 }
-
-
-
-
 
 void Board::setSquareColor(const ValidPosition &position, sf::Color color) {
     // this->squareAt(position)->shape.set

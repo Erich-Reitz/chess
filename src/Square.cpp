@@ -89,8 +89,8 @@ std::optional<Piece*> Square::getPiece() const {
     return this->piece;
 }
 
-void Square::setPiece(Piece *_piece) {
-    this->piece = {_piece};
+void Square::setPiece(Piece *piece) {
+    this->piece = {piece};
     sf::Vector2f currentSquarePosition = this->shape.getPosition();
     const auto square_position = this->shape.getPosition();
     this->piece.value()->setPosition(square_position.x+25, square_position.y+25);

@@ -31,6 +31,10 @@ void handleMouseDownOnPawnPromotionDialog(sf::Vector2f mousePos)  {
 }
 
 void World::moveSelectedPiece(const ValidPosition &destination) {
+    if (debug) {
+        std::cout << "moveSelectedPiece to " << destination << std::endl;
+    }
+
     auto validMoves = this->selectedPieceInformation.placesCanMove.value();
     auto validMove = setOfMovesContainsDestination(validMoves, destination) ;
 
@@ -95,12 +99,20 @@ void World::handleMouseDownOnBoardWithNoSelectedPiece(const ValidPosition& press
     }
 
     if (piece.value()->color == this->gameBoard.colorToMove) {
-        auto placesCanMove = gameBoard.generateAllValidMovesForPiece(pressedSquare, piece.value());
+        auto placesCanMove = gameBoard.generateAllValidMovesForPiece(pressedSquare);
         this->selectedPieceInformation.setInformation(pressedSquare, piece.value(), placesCanMove);
+    }
+
+    if (debug) {
+        std::cout << "finished generating valid moves " << pressedSquare << std::endl;
     }
 }
 
 void World::handleMouseDownOnSquare(const ValidPosition& pressedSquare) {
+    if (debug) {
+        std::cout << "mouseDownOnSquare " << pressedSquare << std::endl;
+    }
+
     if (this->selectedPieceInformation.hasSelectedPiece()) {
         return handleMouseDownOnBoardWithSelectedPiece(pressedSquare);
     }

@@ -34,32 +34,26 @@ Piece::Piece(bool _white, PieceType _type)  {
 
     switch (_type) {
     case PieceType::ROOK:
-        m_moveFuncPtr = generateAllValidMovesForRook;
         piece_name_string = "rook";
         break;
 
     case PieceType::BISHOP:
-        m_moveFuncPtr = generateAllValidMovesForBishop;
         piece_name_string = "bishop";
         break;
 
     case PieceType::QUEEN:
-        m_moveFuncPtr = generateAllValidMovesForQueen;
         piece_name_string = "queen";
         break;
 
     case PieceType::KING:
-        m_moveFuncPtr = generateAllValidMovesForKing;
         piece_name_string = "king";
         break;
 
     case PieceType::KNIGHT:
-        m_moveFuncPtr = generateAllValidMovesForKnight;
         piece_name_string = "knight";
         break;
 
     case PieceType::PAWN:
-        m_moveFuncPtr = generateAllValidMovesForPawn;
         piece_name_string = "pawn";
         break;
 
@@ -78,7 +72,7 @@ Piece::Piece(bool _white, PieceType _type)  {
     }
 }
 
-Piece::Piece(const Piece &rhs) : timesMoved(rhs.timesMoved), color(rhs.color), piece(rhs.piece), type(rhs.type), m_moveFuncPtr(rhs.m_moveFuncPtr) {
+Piece::Piece(const Piece &rhs) : timesMoved(rhs.timesMoved), color(rhs.color), piece(rhs.piece), type(rhs.type) {
 }
 
 
@@ -87,7 +81,6 @@ Piece& Piece::operator=(const Piece& rhs) {
         color = rhs.color;
         piece = rhs.piece;
         type = rhs.type;
-        m_moveFuncPtr = rhs.m_moveFuncPtr;
         timesMoved = rhs.timesMoved;
     }
 

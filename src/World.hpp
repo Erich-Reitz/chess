@@ -44,6 +44,7 @@ class World  {
     SelectedPieceInformation selectedPieceInformation;
     PawnPromotionDialog pawnPromotionDialog;
     WORLD_STATE worldState = BOARD;
+    int debug = 1;
 
     void moveSelectedPiece(const ValidPosition &destination);
 

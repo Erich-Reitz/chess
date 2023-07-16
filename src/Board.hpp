@@ -9,9 +9,9 @@
 #include "Square.hpp"
 #include "Move.hpp"
 #include "ValidPosition.hpp"
+#include "BoardStructure.hpp"
+#include "Piece.hpp"
 
-class Piece;
-class Square;
 
 class Board : public sf::Drawable {
   public:
@@ -30,7 +30,7 @@ class Board : public sf::Drawable {
 
     std::optional<Piece*> pieceAtPosition(const ValidPosition& pos) const;
     bool hasPieceAtPosition(const ValidPosition& pos) const ;
-    std::vector<Move> generateAllValidMovesForPiece(const ValidPosition& current, const Piece *piece, bool careIfPlacesKingInCheck=true) const;
+    std::vector<Move> generateAllValidMovesForPiece(const ValidPosition& current, bool careIfPlacesKingInCheck=true) const;
     std::optional<ValidPosition> getRowAndColOfMouse(sf::Vector2f mousePos) const;
     bool unmovedRookAtPosition(const ValidPosition &pos) const;
     bool hasPieceAtPosition(const ValidPosition &pos, PieceColor targetColor) const;
@@ -39,8 +39,7 @@ class Board : public sf::Drawable {
     PieceColor colorToMove = PieceColor::WHITE ;
 
   protected:
-    std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
-
+    BoardStructure board;
     bool king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const;
     bool legal_move(const Move &move, bool careIfPlacesKingInCheck) const ;
 
