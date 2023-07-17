@@ -9,6 +9,7 @@
 
 
 Game::Game(): m_window( std::string("CHESS GAME"), sf::Vector2u(1920, 1080) ) {
+    this->m_world = World(this->m_res_manager.get_textures()) ; 
 }
 void Game::HandleInput() {
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window.GetWindow());

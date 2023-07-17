@@ -2,70 +2,22 @@
 
 #include "chess_exceptions.hpp"
 
-std::optional<Piece*> initial_piece(ValidPosition position, float squareXPos, float squareYPos) {
-    auto row = position.r;
-    auto col = position.c;
-    bool isWhitePiece = row == 6 || row == 7;
-
-    if (row == 0 || row == 7) {
-        switch (col) {
-        case 0:
-            return new Piece(isWhitePiece, PieceType::ROOK, squareXPos, squareYPos) ;
-
-        case 1:
-            return new Piece(isWhitePiece, PieceType::KNIGHT, squareXPos, squareYPos) ;
-
-        case 2:
-            return new Piece(isWhitePiece, PieceType::BISHOP, squareXPos, squareYPos) ;
-
-        case 3:
-            return new Piece(isWhitePiece, PieceType::QUEEN, squareXPos, squareYPos) ;
-
-        case 4:
-            return new Piece(isWhitePiece, PieceType::KING, squareXPos, squareYPos) ;
-
-        case 5:
-            return new Piece(isWhitePiece, PieceType::BISHOP, squareXPos, squareYPos) ;
-
-        case 6:
-            return new Piece(isWhitePiece, PieceType::KNIGHT, squareXPos, squareYPos) ;
-
-        case 7:
-            return new Piece(isWhitePiece, PieceType::ROOK, squareXPos, squareYPos) ;
-
-        default:
-            throw RuntimeError();
-        }
+std::optional<Piece*> initial_piece(ValidPosition position, float squareXPos, float squareYPos, std::optional<PieceType> pieceType,  std::optional<sf::Texture*> piece_texture) {
+    if (!pieceType) {
+        return {};
     }
 
-    if (row == 1 || row == 6) {
-        return new Piece(isWhitePiece, PieceType::PAWN,  squareXPos, squareYPos);
-    }
-
-    return {};
+    bool isWhitePiece = position.r == 6 || position.r == 7;
+    return new Piece(isWhitePiece, *pieceType, squareXPos, squareYPos, piece_texture.value());
 }
 
-Square::Square(bool white, ValidPosition position, float xPos, float yPos,  float size ) : GameObject(xPos, yPos, size) {
+
+
+Square::Square(bool white, ValidPosition position, float xPos, float yPos,  float size, std::optional<PieceType> pieceType, sf::Texture* m_texture, std::optional<sf::Texture*> piece_texture) : GameObject(xPos, yPos, size, m_texture) {
     this->position = position;
     this->white = white;
-    std::string texture_path;
-
-    if (white) {
-        texture_path = "assets/textures/board_squares/light.png" ;
-
-    } else {
-        texture_path = "assets/textures/board_squares/dark.png" ;
-    }
-
-    if (texture.loadFromFile(texture_path)) {
-        this->sprite.setTexture(texture);
-
-    } else {
-        std::cout << "Error loading texture" << std::endl;
-    }
-
-    this->piece = initial_piece(position, xPos+25, yPos+25);
-
+    this->piece = initial_piece(position, xPos+25, yPos+25, pieceType, piece_texture);
+    
     if (this->piece.has_value()) {
         this->setPiece(this->piece.value()) ;
     }
@@ -75,7 +27,7 @@ void Square::setPieceSize() {
     this->piece.value()->setRadius(size / 2.0);
 }
 
-Square::Square(const Square& rhs) :  white(rhs.white), piece(rhs.piece), position(rhs.position) {
+Square::Square(const Square& rhs) : GameObject(rhs),  white(rhs.white), piece(rhs.piece), position(rhs.position) {
     if (rhs.piece) {
         piece = std::make_optional<Piece*>(new Piece(**rhs.piece));
 
@@ -84,10 +36,9 @@ Square::Square(const Square& rhs) :  white(rhs.white), piece(rhs.piece), positio
     }
 }
 
-Square& Square::operator=(const Square& rhs) {
+Square& Square::operator=(const Square& rhs){
     if (this != &rhs) {
         white = rhs.white;
-        sprite = rhs.sprite;
         position = rhs.position;
 
         if (rhs.piece) {

@@ -10,10 +10,13 @@ GameObject::GameObject(sf::Vector2f starting_pos) {
 }
 
 
-GameObject::GameObject(float starting_x, float starting_y, float scale) {
+GameObject::GameObject(float starting_x, float starting_y, float scale, sf::Texture *n_texture) {
     sprite.setPosition(starting_x, starting_y);
     sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
     this->scale(scale, scale);
+    this->texture = *n_texture;
+    sprite.setTexture(texture);
+    this->size = scale;
 }
 
 
@@ -40,6 +43,11 @@ GameObject::GameObject(const GameObject &other) : sprite(other.sprite), texture(
 
 void GameObject::setPosition(float x, float y) {
     sprite.setPosition(x, y);
+}
+
+void GameObject::setTexture(sf::Texture *texture) {
+    this->texture = *texture; 
+    this->sprite.setTexture(this->texture) ; 
 }
 
 void GameObject::move(float x, float y) {

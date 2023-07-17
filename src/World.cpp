@@ -8,7 +8,10 @@
 
 #include "chess_exceptions.hpp"
 
-World::World() = default;
+World::World(std::unordered_map<std::string, sf::Texture*> l_textures) {
+    this->m_textures = l_textures; 
+    this->gameBoard = Board(this->m_textures); 
+}
 
 World::~World() = default;
 

@@ -18,7 +18,7 @@ class Board;
 class Piece : public GameObject {
   public:
     using MoveFuncPtr = std::vector<Move> (*)(const Board*, const ValidPosition&, const Piece*);
-    Piece(bool _white, PieceType _type, float squareXPos, float squareYPos) ;
+    Piece(bool _white, PieceType _type, float squareXPos, float squareYPos, sf::Texture* texture) ;
     Piece(const Piece& rhs) ;
     Piece& operator=(const Piece& rhs);
     ~Piece() override;
@@ -37,6 +37,5 @@ class Piece : public GameObject {
     PieceType type;
     PieceColor color;
   private:
-    sf::Texture texture;
     MoveFuncPtr m_moveFuncPtr = nullptr;
 };

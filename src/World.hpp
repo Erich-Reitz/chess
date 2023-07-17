@@ -18,7 +18,8 @@ enum WORLD_STATE {
 class World  {
 
   public:
-    World();
+    World() = default; 
+    World(std::unordered_map<std::string, sf::Texture*> l_textures);
     ~World();
 
     void update(sf::Time deltaTime);
@@ -38,6 +39,7 @@ class World  {
 
 
     // updates
+    std::unordered_map<std::string, sf::Texture*> m_textures; 
     Board gameBoard;
     sf::Vector2f m_viewCenter;
     sf::Vector2f m_viewSize;

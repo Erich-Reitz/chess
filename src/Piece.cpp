@@ -12,7 +12,7 @@
 
 Piece::~Piece() = default;;
 
-Piece::Piece(bool _white, PieceType _type, float squareXPos, float squareYPos) : GameObject(squareXPos, squareYPos, .0625)  {
+Piece::Piece(bool _white, PieceType _type, float squareXPos, float squareYPos, sf::Texture * texture  ) : GameObject(squareXPos, squareYPos, .0625, texture)  {
     if (_white) {
         this->color = PieceColor::WHITE;
 
@@ -69,20 +69,13 @@ Piece::Piece(bool _white, PieceType _type, float squareXPos, float squareYPos) :
 
     this->timesMoved = 0;
     const std::string texture_path = "assets/textures/pieces/no_shadow/2x/" + piece_color_string + "_" + piece_name_string  +"_2x_ns.png";
-
-    if (texture.loadFromFile(texture_path)) {
-        this->sprite.setTexture(texture);
-
-    } else {
-        std::cout << "Error loading texture" << std::endl;
-    }
 }
 
 Piece::Piece(const Piece &rhs) : GameObject(rhs), timesMoved(rhs.timesMoved), color(rhs.color), type(rhs.type), m_moveFuncPtr(rhs.m_moveFuncPtr) {
 }
 
 
-Piece& Piece::operator=(const Piece& rhs) {
+Piece& Piece::operator=(const Piece& rhs){
     if (this != &rhs) {
         color = rhs.color;
         type = rhs.type;

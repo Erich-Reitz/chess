@@ -3,6 +3,7 @@
 #include <SFML/System/Vector2.hpp>
 #include "Window.hpp"
 #include "World.hpp"
+#include "res_manager.hpp"
 
 class Game {
   public:
@@ -21,4 +22,5 @@ class Game {
     sf::Time m_elapsed = sf::Time(sf::seconds(1/60.f));
     World m_world;
     sf::Shader m_blur;
+    Resource_Manager m_res_manager = Resource_Manager();
 };

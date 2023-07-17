@@ -15,7 +15,8 @@ class Square;
 
 class Board : public sf::Drawable {
   public:
-    Board();
+    Board() = default; 
+    Board(std::unordered_map<std::string, sf::Texture*> l_textures);
     Board(const Board& rhs);
     Board& operator=(const Board& rhs);
 
@@ -39,6 +40,7 @@ class Board : public sf::Drawable {
     PieceColor colorToMove = PieceColor::WHITE ;
 
   protected:
+  std::unordered_map<std::string, sf::Texture*> m_textures ; 
     std::vector<std::vector<Square*>> board = std::vector<std::vector<Square*>> (8, std::vector<Square*>(8));
 
     bool king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const;

@@ -15,7 +15,7 @@ class Piece;
 class Square : public GameObject {
   public:
     Square() = default;
-    Square(bool white, ValidPosition position, float xPos, float yPos,  float size);
+    Square(bool white, ValidPosition position, float xPos, float yPos,  float size, std::optional<PieceType> pieceType, sf::Texture* m_texture, std::optional<sf::Texture*> piece_texture);
     Square(const Square& rhs);
     Square& operator=(const Square& rhs);
     std::optional<Piece*> getPiece() const;
@@ -38,9 +38,8 @@ class Square : public GameObject {
     bool white;
   private:
     std::optional<Piece*> piece;
-    sf::Texture texture;
+    std::unordered_map<std::string, sf::Texture*> m_textures; 
     ValidPosition position;
-    float size;
 
 
 };

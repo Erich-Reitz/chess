@@ -8,14 +8,16 @@ class GameObject : public sf::Drawable {
     // constructors
     GameObject();
     GameObject(sf::Vector2f starting_pos);
-    GameObject(float starting_x, float starting_y, float scale);
+    GameObject(float starting_x, float starting_y, float scale, sf::Texture *n_texture);
     GameObject(float starting_x, float starting_y, sf::Texture *texture);
     GameObject(const GameObject &other);
+    
     GameObject &operator=(const GameObject &other);
     // methods
 
 
     virtual void setPosition(float x, float y);
+    void setTexture(sf::Texture *texture); 
 
 
     void move(float x, float y);
@@ -32,4 +34,5 @@ class GameObject : public sf::Drawable {
   protected:
     sf::Sprite sprite;
     sf::Texture texture;
+    float size; 
 };
