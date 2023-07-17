@@ -12,7 +12,7 @@
 
 Piece::~Piece() = default;;
 
-Piece::Piece(bool _white, PieceType _type)  {
+Piece::Piece(bool _white, PieceType _type, float squareXPos, float squareYPos) : GameObject(squareXPos, squareYPos, .0625)  {
     if (_white) {
         this->color = PieceColor::WHITE;
 
@@ -71,21 +71,20 @@ Piece::Piece(bool _white, PieceType _type)  {
     const std::string texture_path = "assets/textures/pieces/no_shadow/2x/" + piece_color_string + "_" + piece_name_string  +"_2x_ns.png";
 
     if (texture.loadFromFile(texture_path)) {
-        this->piece.setTexture(texture);
+        this->sprite.setTexture(texture);
 
     } else {
         std::cout << "Error loading texture" << std::endl;
     }
 }
 
-Piece::Piece(const Piece &rhs) : timesMoved(rhs.timesMoved), color(rhs.color), piece(rhs.piece), type(rhs.type), m_moveFuncPtr(rhs.m_moveFuncPtr) {
+Piece::Piece(const Piece &rhs) : GameObject(rhs), timesMoved(rhs.timesMoved), color(rhs.color), type(rhs.type), m_moveFuncPtr(rhs.m_moveFuncPtr) {
 }
 
 
 Piece& Piece::operator=(const Piece& rhs) {
     if (this != &rhs) {
         color = rhs.color;
-        piece = rhs.piece;
         type = rhs.type;
         m_moveFuncPtr = rhs.m_moveFuncPtr;
         timesMoved = rhs.timesMoved;
@@ -96,22 +95,22 @@ Piece& Piece::operator=(const Piece& rhs) {
 
 
 void Piece::setPosition(float x, float y) {
-    piece.setPosition(x, y);
-    piece.setOrigin(piece.getLocalBounds().width/ 2, piece.getLocalBounds().height/ 2);
+    sprite.setPosition(x, y);
+    sprite.setOrigin(sprite.getLocalBounds().width/ 2, sprite.getLocalBounds().height/ 2);
 }
 
 void Piece::setRadius(float radius) {
     if (this->type == PieceType::PAWN) {
-        piece.setScale(.065, .065);
+        sprite.setScale(.065, .065);
 
     } else {
-        piece.setScale(.06, .06);
+        sprite.setScale(.06, .06);
     }
 }
 
 
 void Piece::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    target.draw(piece);
+    target.draw(sprite);
 }
 
 

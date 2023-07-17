@@ -11,13 +11,14 @@
 #include "PieceType.hpp"
 #include "Board.hpp"
 #include "Move.hpp"
+#include "GameObject.hpp"
 
 class Board;
 
-class Piece : public sf::Drawable {
+class Piece : public GameObject {
   public:
     using MoveFuncPtr = std::vector<Move> (*)(const Board*, const ValidPosition&, const Piece*);
-    Piece(bool _white, PieceType _type) ;
+    Piece(bool _white, PieceType _type, float squareXPos, float squareYPos) ;
     Piece(const Piece& rhs) ;
     Piece& operator=(const Piece& rhs);
     ~Piece() override;
@@ -36,9 +37,6 @@ class Piece : public sf::Drawable {
     PieceType type;
     PieceColor color;
   private:
-
-
-    sf::Sprite piece;
     sf::Texture texture;
     MoveFuncPtr m_moveFuncPtr = nullptr;
 };

@@ -15,46 +15,7 @@
 #include "chess_exceptions.hpp"
 #include "bounded.hpp"
 
-std::optional<Piece*> initial_piece(int row, int col) {
-    bool isWhitePiece = row == 6 || row == 7;
 
-    if (row == 0 || row == 7) {
-        switch (col) {
-        case 0:
-            return new Piece(isWhitePiece, PieceType::ROOK) ;
-
-        case 1:
-            return new Piece(isWhitePiece, PieceType::KNIGHT) ;
-
-        case 2:
-            return new Piece(isWhitePiece, PieceType::BISHOP) ;
-
-        case 3:
-            return new Piece(isWhitePiece, PieceType::QUEEN) ;
-
-        case 4:
-            return new Piece(isWhitePiece, PieceType::KING) ;
-
-        case 5:
-            return new Piece(isWhitePiece, PieceType::BISHOP) ;
-
-        case 6:
-            return new Piece(isWhitePiece, PieceType::KNIGHT) ;
-
-        case 7:
-            return new Piece(isWhitePiece, PieceType::ROOK) ;
-
-        default:
-            throw RuntimeError();
-        }
-    }
-
-    if (row == 1 || row == 6) {
-        return new Piece(isWhitePiece, PieceType::PAWN);
-    }
-
-    return {};
-}
 
 Board::Board() {
     float initial_x_offset = 720.0;
@@ -63,7 +24,8 @@ Board::Board() {
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
             bool isWhite = (row + col) % 2 == 0;
-            board[row][col] = new Square(isWhite, row, col, initial_x_offset + col * 50, initial_y_offset + row * 50, 50.f, initial_piece(row, col));
+            ValidPosition pos  = ValidPosition(row, col);
+            board[row][col] = new Square(isWhite, pos, initial_x_offset + col * 50, initial_y_offset + row * 50,  .0625);
         }
     }
 }
@@ -196,7 +158,8 @@ void Board::processMove(const Move &move) {
     switch (move.move_type) {
     case MoveType::PAWN_PROMOTION: {
         if (move.promoteTo == PieceType::QUEEN) {
-            auto *piece = new Piece(currentColor, PieceType::QUEEN ) ;
+            // auto squarePosition = this->squareAt(move)
+            // auto *piece = new Piece(currentColor, PieceType::QUEEN, ) ;
             movePiece(move.getOriginalSquare(), move.getDestination()) ;
         }
 
