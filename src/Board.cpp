@@ -16,7 +16,12 @@
 #include "bounded.hpp"
 
 
-Board::Board() {
+
+
+
+
+Board::Board(std::unordered_map<std::string, sf::Texture*> l_textures) {
+    this->board = BoardStructure(l_textures); 
 }
 
 Board::Board(const Board& rhs) {
@@ -125,7 +130,8 @@ void Board::processMove(const Move &move) {
     switch (move.move_type) {
     case MoveType::PAWN_PROMOTION: {
         if (move.promoteTo == PieceType::QUEEN) {
-            auto *piece = new Piece(currentColor, PieceType::QUEEN ) ;
+            // auto squarePosition = this->squareAt(move)
+            // auto *piece = new Piece(currentColor, PieceType::QUEEN, ) ;
             movePiece(move.getOriginalSquare(), move.getDestination()) ;
         }
 

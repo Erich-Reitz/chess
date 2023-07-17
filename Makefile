@@ -1,5 +1,5 @@
 CXX := g++ 
-CXXFLAGS := -Wall -Wextra -pedantic-errors -Wno-unused-parameter  -g -std=c++17
+CXXFLAGS := -Wall -Wextra -pedantic-errors -Wno-unused-parameter  -g -std=c++17 
 SRC_DIR = ./src
 OBJ_DIR := ./obj
 SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard ${SRC_DIR}/pieces/*.cpp)  

@@ -9,34 +9,68 @@
 #include "BoardStructure.hpp"
 #include "Piece.hpp"
 
-std::optional<Piece*> initial_piece(int row, int col) {
+
+std::string getTextureNameFromPieceType(bool isWhite, PieceType _type) {
+    std::string piece_color_string = isWhite ? "w" : "b";
+    std::string piece_name_string;
+
+    switch (_type) {
+        case PieceType::ROOK:
+            piece_name_string = "rook";
+            break;
+        case PieceType::BISHOP:
+            piece_name_string = "bishop";
+            break;
+        case PieceType::QUEEN:
+            piece_name_string = "queen";
+            break;
+        case PieceType::KING:
+            piece_name_string = "king";
+            break;
+        case PieceType::KNIGHT:
+            piece_name_string = "knight";
+            break;
+        case PieceType::PAWN:
+            piece_name_string = "pawn";
+            break;
+        default:
+            throw std::invalid_argument("Invalid Piece Type");
+    }
+
+    std::string texture_path = piece_color_string + "_" + piece_name_string + "_2x_ns.png";
+    return texture_path;
+}
+
+
+std::optional<PieceType> initial_piece_type(ValidPosition position) {
+    auto row = position.r;
+    auto col = position.c;
     bool isWhitePiece = row == 6 || row == 7;
 
     if (row == 0 || row == 7) {
         switch (col) {
         case 0:
-            return new Piece(isWhitePiece, PieceType::ROOK) ;
+            return PieceType::ROOK; 
 
         case 1:
-            return new Piece(isWhitePiece, PieceType::KNIGHT) ;
-
+            return  PieceType::KNIGHT; 
         case 2:
-            return new Piece(isWhitePiece, PieceType::BISHOP) ;
+            return  PieceType::BISHOP ; 
 
         case 3:
-            return new Piece(isWhitePiece, PieceType::QUEEN) ;
+            return  PieceType::QUEEN;
 
         case 4:
-            return new Piece(isWhitePiece, PieceType::KING) ;
+            return  PieceType::KING; 
 
         case 5:
-            return new Piece(isWhitePiece, PieceType::BISHOP) ;
+            return  PieceType::BISHOP; 
 
         case 6:
-            return new Piece(isWhitePiece, PieceType::KNIGHT) ;
+            return  PieceType::KNIGHT ; 
 
         case 7:
-            return new Piece(isWhitePiece, PieceType::ROOK) ;
+            return  PieceType::ROOK ; 
 
         default:
             throw RuntimeError();
@@ -44,20 +78,34 @@ std::optional<Piece*> initial_piece(int row, int col) {
     }
 
     if (row == 1 || row == 6) {
-        return new Piece(isWhitePiece, PieceType::PAWN);
+        return  PieceType::PAWN;
     }
 
     return {};
 }
 
-BoardStructure::BoardStructure() {
+
+BoardStructure::BoardStructure(std::unordered_map<std::string, sf::Texture*> l_textures) {
+    this->m_textures = l_textures; 
+
     float initial_x_offset = 720.0;
     float initial_y_offset = 300.0;
 
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
-            bool isWhite = (row + col) % 2 == 0;
-            board[row][col] = new Square(isWhite, row, col, initial_x_offset + col * 50, initial_y_offset + row * 50, 50.f, initial_piece(row, col));
+            bool isSquareWhite = (row + col) % 2 == 0;
+            
+            std::string texture_name = isSquareWhite ? "light.png" : "dark.png"; 
+            ValidPosition pos = ValidPosition(row, col) ; 
+            auto pieceType = initial_piece_type(pos) ; 
+            std::optional<sf::Texture*> pieceTexture = {}; 
+            bool isWhitePiece = row == 6 || row == 7;
+            if (pieceType.has_value()) {
+                std::string pieceTextureName = getTextureNameFromPieceType(isWhitePiece, pieceType.value()) ; 
+                pieceTexture = m_textures[pieceTextureName] ; 
+            }
+            
+            board[row][col] = new Square(isSquareWhite, pos, initial_x_offset + col * 50, initial_y_offset + row * 50, 0.0625, pieceType, m_textures[texture_name], pieceTexture);
         }
     }
 }

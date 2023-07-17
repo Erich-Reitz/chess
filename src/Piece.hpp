@@ -10,11 +10,12 @@
 
 #include "PieceType.hpp"
 #include "Move.hpp"
+#include "GameObject.hpp"
 
 
-class Piece : public sf::Drawable {
+class Piece : public GameObject {
   public:
-    Piece(bool _white, PieceType _type) ;
+    Piece(bool _white, PieceType _type, float squareXPos, float squareYPos, sf::Texture* texture) ;
     Piece(const Piece& rhs) ;
     Piece& operator=(const Piece& rhs);
     ~Piece() override;
@@ -30,6 +31,4 @@ class Piece : public sf::Drawable {
     PieceType type;
     PieceColor color;
   private:
-    sf::Sprite piece;
-    sf::Texture texture;
 };

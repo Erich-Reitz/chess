@@ -15,7 +15,8 @@
 
 class Board : public sf::Drawable {
   public:
-    Board();
+    Board() = default; 
+    Board(std::unordered_map<std::string, sf::Texture*> l_textures);
     Board(const Board& rhs);
     Board& operator=(const Board& rhs);
 

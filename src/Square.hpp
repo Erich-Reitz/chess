@@ -6,16 +6,15 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
-
+#include "GameObject.hpp"
 
 #include "Piece.hpp"
 #include "ValidPosition.hpp"
 
-class Square : public sf::Drawable {
+class Square : public GameObject {
   public:
-    Square() {};
-
-    Square(bool white, bounded_value<int, 0,  7>   row, bounded_value<int, 0,  7>   col, float xPos, float yPos, float size, std::optional<Piece*> piece);
+    Square() = default;
+    Square(bool white, ValidPosition position, float xPos, float yPos,  float size, std::optional<PieceType> pieceType, sf::Texture* m_texture, std::optional<sf::Texture*> piece_texture);
     Square(const Square& rhs);
     Square& operator=(const Square& rhs);
     std::optional<Piece*> getPiece() const;
@@ -38,11 +37,8 @@ class Square : public sf::Drawable {
     bool white;
   private:
     std::optional<Piece*> piece;
-    sf::Sprite shape;
-    sf::Texture texture;
+    std::unordered_map<std::string, sf::Texture*> m_textures; 
     ValidPosition position;
-    float size;
-
 
 
 };
