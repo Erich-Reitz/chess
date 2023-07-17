@@ -30,7 +30,7 @@ check:
 	cppcheck --enable=all src/ 2> err.txt
 
 format:
-	-astyle --style=google --break-blocks=all ${SRC_DIR}/*.*pp ${SRC_DIR}/pieces/*.*pp -xe 
+	astyle --style=google  --mode=c --attach-return-type --align-pointer=name  --indent=spaces=2 --max-code-length=140 --break-after-logical  ${SRC_DIR}/*.*pp ${SRC_DIR}/pieces/*.*pp -xe  
 	
 	rm -f ${SRC_DIR}/*.orig ${SRC_DIR}/pieces/*.orig
 
