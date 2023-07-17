@@ -3,25 +3,25 @@
 #include <exception>
 
 struct CurrentSquareDoesNotContainPiece : public std::exception {
-    [[nodiscard]] const char * what () const noexcept override {
-        return "The current square does not contain a piece to move";
-    }
+  [[nodiscard]] const char *what () const noexcept override {
+    return "The current square does not contain a piece to move";
+  }
 };
 
 struct PieceTypeSwitchFallthrough : public std::exception {
-    [[nodiscard]] const char * what () const noexcept override {
-        return "Unknown PieceType";
-    }
+  [[nodiscard]] const char *what () const noexcept override {
+    return "Unknown PieceType";
+  }
 };
 
 struct RuntimeError : public std::exception {
-    [[nodiscard]] const char * what () const noexcept override {
-        return "Unexpected runtime error" ;
-    }
+  [[nodiscard]] const char *what () const noexcept override {
+    return "Unexpected runtime error" ;
+  }
 };
 
 struct BoundConstraintViolation : public std::exception {
-    [[nodiscard]] const char * what () const noexcept override {
-        return "Unexpected runtime error" ;
-    }
+  [[nodiscard]] const char *what () const noexcept override {
+    return "Unexpected runtime error" ;
+  }
 };

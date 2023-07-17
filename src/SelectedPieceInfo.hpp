@@ -4,24 +4,24 @@
 #include "ValidPosition.hpp"
 #include "Move.hpp"
 struct SelectedPieceInformation {
-    std::optional<ValidPosition> coordinates;
-    std::optional<Piece*> piece;
-    std::optional<std::vector<Move>> placesCanMove;
+  std::optional<ValidPosition> coordinates;
+  std::optional<Piece *> piece;
+  std::optional<std::vector<Move>> placesCanMove;
 
-    void setInformation(const std::optional<ValidPosition>& _coordinates, Piece *_piece, const std::vector<Move>& validMoves) {
-        this->coordinates = _coordinates;
-        this->piece = _piece;
-        this->placesCanMove = validMoves;
-    }
+  void setInformation(const std::optional<ValidPosition> &_coordinates, Piece *_piece, const std::vector<Move> &validMoves) {
+    this->coordinates = _coordinates;
+    this->piece = _piece;
+    this->placesCanMove = validMoves;
+  }
 
-    [[nodiscard]] bool hasSelectedPiece() const {
-        return coordinates.has_value();
-    };
+  [[nodiscard]] bool hasSelectedPiece() const {
+    return coordinates.has_value();
+  };
 
 
-    void reset() {
-        coordinates = {};
-        piece = {};
-        this->placesCanMove = {};
-    }
+  void reset() {
+    coordinates = {};
+    piece = {};
+    this->placesCanMove = {};
+  }
 };

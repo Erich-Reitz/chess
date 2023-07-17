@@ -6,21 +6,21 @@
 #include "res_manager.hpp"
 
 class Game {
-  public:
-    Game();
-    ~Game();
-    void HandleInput();
-    void Update();
-    void Render();
-    Window* GetWindow();
-    sf::Time GetElapsed();
+ public:
+  Game();
+  ~Game();
+  void HandleInput();
+  void Update();
+  void Render();
+  Window *GetWindow();
+  sf::Time GetElapsed();
 
-    void RestartClock();
-  private:
-    Window m_window;
-    sf::Clock m_clock;
-    sf::Time m_elapsed = sf::Time(sf::seconds(1/60.f));
-    World m_world;
-    sf::Shader m_blur;
-    Resource_Manager m_res_manager = Resource_Manager();
+  void RestartClock();
+ private:
+  Window m_window;
+  sf::Clock m_clock;
+  sf::Time m_elapsed = sf::Time(sf::seconds(1/60.f));
+  World m_world;
+  sf::Shader m_blur;
+  Resource_Manager m_res_manager = Resource_Manager();
 };
