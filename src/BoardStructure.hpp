@@ -29,7 +29,6 @@ class BoardStructure : public sf::Drawable {
   Square *squareAt(const ValidPosition &coord) const;
 
   bool unmovedRookAtPosition(const ValidPosition &pos) const;
-  bool kingIsAttacked(PieceColor colorKingWeAreConcernedAbout) const ;
   ValidPosition getKing(PieceColor color) const ;
 
  private:
