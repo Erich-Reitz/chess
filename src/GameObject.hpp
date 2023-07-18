@@ -11,6 +11,7 @@ class GameObject : public sf::Drawable {
   GameObject(float starting_x, float starting_y, float scale, sf::Texture *n_texture);
   GameObject(float starting_x, float starting_y, sf::Texture *texture);
   GameObject(const GameObject &other);
+  ~GameObject() = default ;
 
   GameObject &operator=(const GameObject &other);
   // methods
@@ -33,6 +34,6 @@ class GameObject : public sf::Drawable {
   sf::Vector2f getPosition() const;
  protected:
   sf::Sprite sprite;
-  sf::Texture texture;
+  sf::Texture *texture;
   float size;
 };

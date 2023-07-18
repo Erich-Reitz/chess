@@ -6,7 +6,7 @@
 #include <vector>
 #include <set>
 
-#include "Square.hpp"
+#include "DrawableSquare.hpp"
 #include "ValidPosition.hpp"
 #include "PieceType.hpp"
 
@@ -25,14 +25,14 @@ class BoardStructure : public sf::Drawable {
 
   std::optional<ValidPosition> getRowAndColOfMouse(const sf::Vector2f mousePos) const;
 
-  std::optional<Piece *> pieceAtPosition(const ValidPosition &pos) const;
-  Square *squareAt(const ValidPosition &coord) const;
+  std::optional<DrawablePiece *> pieceAtPosition(const ValidPosition &pos) const;
+  DrawableSquare *squareAt(const ValidPosition &coord) const;
 
   bool unmovedRookAtPosition(const ValidPosition &pos) const;
   ValidPosition getKing(PieceColor color) const ;
 
  private:
   std::unordered_map<std::string, sf::Texture *> m_textures ;
-  std::vector<std::vector<Square *>> board = std::vector<std::vector<Square *>> (8, std::vector<Square *>(8));
-  Square *squareAt(int i, int j) const;
+  std::vector<std::vector<std::unique_ptr<DrawableSquare>>> board; 
+  DrawableSquare *squareAt(int i, int j) const;
 };

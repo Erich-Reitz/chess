@@ -9,16 +9,15 @@
 #include "move_generation.hpp"
 
 #include "Board.hpp"
-#include "Piece.hpp"
+#include "DrawablePiece.hpp"
 #include "add_sets.cpp"
 #include "chess_exceptions.hpp"
-
-PieceColor opposite_color(PieceColor color) {
-  return color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE ;
-}
+#include "oppositeColor.hpp"
 
 
-bool pieceCanBeCapturedEnPassant(Piece *piece_to_be_captured, ValidPosition piece_pos, const std::vector<Move> &moveList) {
+
+
+bool pieceCanBeCapturedEnPassant(DrawablePiece *piece_to_be_captured, ValidPosition piece_pos, const std::vector<Move> &moveList) {
   return (isPawnAndHasMovedOnceTwoSquaresForward(piece_to_be_captured, piece_pos) && moveList.back().getDestination() == piece_pos) ;
 }
 
@@ -35,7 +34,7 @@ std::optional<ValidPosition>  findXSpacesForward(const ValidPosition &current, b
 
 
 
-std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPosition &currentPosition, const Piece *piece) {
+std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPosition &currentPosition, const DrawablePiece *piece) {
   std::vector<Move> validMoves;
   const PieceColor pieceColor = piece->color;
   const PieceColor oppositeColorOfPiece = opposite_color(pieceColor) ;
@@ -63,7 +62,7 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPo
     }
     const auto pieceOnSquareToTheRight = board->pieceAtPosition(squareToOneRight);
     if (pieceOnSquareToTheRight.has_value() &&
-        pieceCanBeCapturedEnPassant(pieceOnSquareToTheRight.value(), squareToOneRight, board->moveList)) {
+        pieceCanBeCapturedEnPassant(pieceOnSquareToTheRight.value(), squareToOneRight, board->getMoveList())) {
       const auto move = std::make_pair(currentPosition, oneSpaceForwardOneSpaceRight) ;
       validMoves.emplace_back(move, pieceColor, squareToOneRight) ;
     }
@@ -78,7 +77,8 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPo
       validMoves.emplace_back(move, pieceColor, oneSpaceForwardOneSpaceLeft) ;
     }
     const auto pieceOnSquareToTheLeft = board->pieceAtPosition(squareToOneLeft);
-    if (pieceOnSquareToTheLeft.has_value() && pieceCanBeCapturedEnPassant(pieceOnSquareToTheLeft.value(), squareToOneLeft, board->moveList)) {
+    if (pieceOnSquareToTheLeft.has_value() &&
+        pieceCanBeCapturedEnPassant(pieceOnSquareToTheLeft.value(), squareToOneLeft, board->getMoveList())) {
       const auto move = std::make_pair(currentPosition, oneSpaceForwardOneSpaceLeft) ;
       validMoves.emplace_back(move, pieceColor, squareToOneLeft) ;
     }
@@ -94,7 +94,7 @@ std::vector<Move> generateAllValidMovesForPawn(const Board *board, const ValidPo
   return validMoves;
 }
 
-std::vector<Move> generateAllValidMovesForRook(const Board *board, const ValidPosition &current, const Piece *piece)  {
+std::vector<Move> generateAllValidMovesForRook(const Board *board, const ValidPosition &current, const DrawablePiece *piece)  {
   const int row_difs[] = {-1, 1, 0, 0} ;
   const int col_difs[] = {0, 0, 1, -1} ;
   return generateMovesInStraightLine(board, current, piece->color, row_difs, col_difs) ;
@@ -102,7 +102,7 @@ std::vector<Move> generateAllValidMovesForRook(const Board *board, const ValidPo
 
 
 
-std::vector<Move> generateAllValidMovesForQueen(const Board *board, const ValidPosition &current, const Piece *piece)  {
+std::vector<Move> generateAllValidMovesForQueen(const Board *board, const ValidPosition &current, const DrawablePiece *piece)  {
   std::vector<Move> allValidMoves = {};
   auto allValidMovesForBishop = generateAllDiagonalMoves(board, current, piece->color);
   auto allValidMovesForRook = generateAllValidMovesForRook(board, current, piece) ;
@@ -111,7 +111,7 @@ std::vector<Move> generateAllValidMovesForQueen(const Board *board, const ValidP
 }
 
 
-std::vector<Move> generateAllValidMovesForBishop(const Board *board, const ValidPosition &current, const Piece *piece)  {
+std::vector<Move> generateAllValidMovesForBishop(const Board *board, const ValidPosition &current, const DrawablePiece *piece)  {
   return generateAllDiagonalMoves(board, current, piece->color) ;
 }
 
@@ -151,7 +151,7 @@ std::vector<Move> generateAllDiagonalMoves(const Board *board, const ValidPositi
 
 
 
-std::vector<Move> generateAllValidMovesForKing(const Board *board, const ValidPosition &currentPosition, const Piece *piece)  {
+std::vector<Move> generateAllValidMovesForKing(const Board *board, const ValidPosition &currentPosition, const DrawablePiece *piece)  {
   std::vector<Move> validMoves;
   PieceColor pieceColor = piece->color ;
   PieceColor oppositePieceColor = opposite_color(pieceColor);
@@ -252,7 +252,7 @@ Move constructCastleMove(ValidPosition kingPosition, ValidPosition rookPosition,
   return Move(king_move, pieceColor, rook_move) ;
 }
 
-bool isPawnAndHasMovedOnceTwoSquaresForward(Piece *piece, ValidPosition piece_pos) {
+bool isPawnAndHasMovedOnceTwoSquaresForward(DrawablePiece *piece, ValidPosition piece_pos) {
   if (piece->type == PieceType::PAWN && piece->timesMoved == 1) {
     auto pieceIsWhite = piece->color == PieceColor::WHITE;
     return ((pieceIsWhite && piece_pos.r == 4) || (!pieceIsWhite && piece_pos.c==3)) ;
@@ -260,7 +260,7 @@ bool isPawnAndHasMovedOnceTwoSquaresForward(Piece *piece, ValidPosition piece_po
   return false;
 }
 
-std::vector<Move> generateAllValidMovesForKnight(const Board *board, const ValidPosition &currentPosition, const Piece *piece)  {
+std::vector<Move> generateAllValidMovesForKnight(const Board *board, const ValidPosition &currentPosition, const DrawablePiece *piece)  {
   std::vector<Move> validMoves ;
   auto pieceColor = piece->color;
   auto oppositePieceColor = opposite_color(pieceColor);

@@ -13,12 +13,12 @@
 #include "GameObject.hpp"
 
 
-class Piece : public GameObject {
+class DrawablePiece : public GameObject {
  public:
-  Piece(bool _white, PieceType _type, float squareXPos, float squareYPos, sf::Texture *texture) ;
-  Piece(const Piece &rhs) ;
-  Piece &operator=(const Piece &rhs);
-  ~Piece() override;
+  DrawablePiece(bool _white, PieceType _type, float squareXPos, float squareYPos, sf::Texture *texture) ;
+  DrawablePiece(const DrawablePiece &rhs) ;
+  DrawablePiece &operator=(const DrawablePiece &rhs);
+  ~DrawablePiece() override;
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 

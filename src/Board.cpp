@@ -7,21 +7,21 @@
 #include <numeric>
 
 #include "Board.hpp"
-#include "Piece.hpp"
+#include "DrawablePiece.hpp"
 
 
 #include "add_sets.cpp"
 #include "move_generation.hpp"
 #include "chess_exceptions.hpp"
 #include "bounded.hpp"
-
+#include "oppositeColor.hpp"
 
 
 
 
 
 Board::Board(std::unordered_map<std::string, sf::Texture *> l_textures) {
-  this->board = BoardStructure(l_textures);
+  this->mBoard = BoardStructure(l_textures);
 }
 
 Board::Board(const Board &rhs) {
@@ -29,30 +29,25 @@ Board::Board(const Board &rhs) {
 }
 
 Board &Board::operator=(const Board &rhs) {
-  this->colorToMove = rhs.colorToMove ;
-  this->moveList = rhs.moveList;
-  this->board = rhs.board;
+  this->mBoardState = rhs.mBoardState;
+  this->mBoard = rhs.mBoard;
   return *this ;
 }
 
 void Board::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-  this->board.draw(target, states);
+  this->mBoard.draw(target, states);
 }
 
 
 
 std::optional<ValidPosition> Board::getRowAndColOfMouse(const sf::Vector2f mousePos) const {
-  return board.getRowAndColOfMouse(mousePos);
+  return mBoard.getRowAndColOfMouse(mousePos);
 }
 
 
 bool Board::unmovedRookAtPosition(const ValidPosition &pos) const {
-  return board.unmovedRookAtPosition(pos);
+  return mBoard.unmovedRookAtPosition(pos);
 }
-
-
-
-
 
 
 std::vector<ValidPosition> generateAllValidPositions() {
@@ -73,7 +68,7 @@ bool moveCapturesPosition(const Move &move, const ValidPosition &pos) {
 }
 
 bool Board::king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const {
-  const auto positionOfColorKingWeAreConcernedAbout = board.getKing(colorKingWeAreConcernedAbout);
+  const auto positionOfColorKingWeAreConcernedAbout = mBoard.getKing(colorKingWeAreConcernedAbout);
   const auto opposite_color_of_king_we_are_concerned_about = opposite_color(colorKingWeAreConcernedAbout) ;
   for (const auto &position : generateAllValidPositions()) {
     auto allValidMoves = generateAllValidMovesForPieceAtPosition(position, false) ;
@@ -89,7 +84,7 @@ bool Board::king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const {
 
 
 void Board::processMove(const Move &move) {
-  const auto currentColor = !this->colorToMove;
+  const auto currentColor = !this->mBoardState.colorToMove;
   if (move.isCapture()) {
     this->squareAt(move.capturee.value())->removePiece()  ;
   }
@@ -97,30 +92,29 @@ void Board::processMove(const Move &move) {
   case MoveType::PAWN_PROMOTION: {
     if (move.promoteTo == PieceType::QUEEN) {
       // auto squarePosition = this->squareAt(move)
-      // auto *piece = new Piece(currentColor, PieceType::QUEEN, ) ;
-      board.movePiece(move.getOriginalSquare(), move.getDestination()) ;
+      // auto *piece = new DrawablePiece(currentColor, PieceType::QUEEN, ) ;
+      mBoard.movePiece(move.getOriginalSquare(), move.getDestination()) ;
     }
     break;
   }
   case MoveType::CASTLE: {
     const auto current_pos = move.castlee.value().first;
     const auto dest = move.castlee.value().second;
-    board.movePiece(current_pos, dest);
+    mBoard.movePiece(current_pos, dest);
     break;
   }
   case MoveType::NORMAL:
-    board.movePiece(move.getOriginalSquare(), move.getDestination());
+    mBoard.movePiece(move.getOriginalSquare(), move.getDestination());
     break;
   default:
     throw RuntimeError() ;
   }
-  this->moveList.push_back(move) ;
-  this->colorToMove = opposite_color(this->colorToMove) ;
+  this->mBoardState.processMove(move) ;
 }
 
 
 
-using move_function = std::function<std::vector<Move> (const Board *, const ValidPosition &, const Piece *)> ;
+using move_function = std::function<std::vector<Move> (const Board *, const ValidPosition &, const DrawablePiece *)> ;
 
 move_function move_gen_function(PieceType type) {
   static const std::unordered_map<PieceType, move_function> moveGeneratorMap = {
@@ -163,12 +157,12 @@ bool Board::legal_move(const Move &move, bool careIfPlacesKingInCheck) const {
   // now we want to see if black has a move to capture white's king
   // if it does, the previous move by white would place the king in check
   // and therefore be invalid
-  return !future_board.king_is_attacked(this->colorToMove) ;
+  return !future_board.king_is_attacked(this->mBoardState.colorToMove) ;
 }
 
 
-std::optional<Piece *> Board::pieceAtPosition(const ValidPosition &pos) const {
-  return this->board.pieceAtPosition(pos);
+std::optional<DrawablePiece *> Board::pieceAtPosition(const ValidPosition &pos) const {
+  return this->mBoard.pieceAtPosition(pos);
 }
 
 bool Board::hasPieceAtPosition(const ValidPosition &pos) const {
@@ -182,13 +176,20 @@ bool Board::hasPieceAtPosition(const ValidPosition &pos, const PieceColor target
   return false;
 }
 
-
-Square *Board::squareAt(const ValidPosition &coord) const {
-  return this->board.squareAt(coord);
+std::vector<Move> Board::getMoveList() const {
+  return this->mBoardState.moveList;
+}
+PieceColor Board::getColorToMove() const {
+  return this->mBoardState.colorToMove;
 }
 
-Square *Board::squareAt(int i, int j) const {
-  return this->board.squareAt(ValidPosition(i, j) );
+
+DrawableSquare *Board::squareAt(const ValidPosition &coord) const {
+  return this->mBoard.squareAt(coord);
+}
+
+DrawableSquare *Board::squareAt(int i, int j) const {
+  return this->mBoard.squareAt(ValidPosition(i, j) );
 }
 
 

@@ -8,20 +8,22 @@
 #include <SFML/System/Vector2.hpp>
 #include "GameObject.hpp"
 
-#include "Piece.hpp"
+#include "DrawablePiece.hpp"
 #include "ValidPosition.hpp"
 
-class Square : public GameObject {
+class DrawableSquare : public GameObject {
  public:
-  Square() = default;
-  Square(bool white, ValidPosition position, float xPos, float yPos,  float size, std::optional<PieceType> pieceType, sf::Texture *m_texture,
-         std::optional<sf::Texture *> piece_texture);
-  Square(const Square &rhs);
-  Square &operator=(const Square &rhs);
-  std::optional<Piece *> getPiece() const;
+  DrawableSquare() = default;
+  DrawableSquare(bool white, ValidPosition position, float xPos, float yPos, float size, std::optional<PieceType> pieceType,
+                 sf::Texture *m_texture,
+                 std::optional<sf::Texture *> piece_texture);
+  DrawableSquare(const DrawableSquare &rhs);
+  DrawableSquare &operator=(const DrawableSquare &rhs);
+  ~DrawableSquare();
+  std::optional<DrawablePiece *> getPiece() const;
 
 
-  void setPiece(Piece *piece);
+  void setPiece(DrawablePiece *piece);
   void removePiece();
 
   void draw(sf::RenderTarget &window) const ;
@@ -37,7 +39,7 @@ class Square : public GameObject {
  protected:
   bool white;
  private:
-  std::optional<Piece *> piece;
+  std::optional<DrawablePiece *> m_piece;
   std::unordered_map<std::string, sf::Texture *> m_textures;
   ValidPosition position;
 

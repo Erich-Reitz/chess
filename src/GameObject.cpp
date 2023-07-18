@@ -4,6 +4,8 @@
 GameObject::GameObject() {
 }
 
+
+
 GameObject::GameObject(sf::Vector2f starting_pos) {
   sprite.setPosition(starting_pos) ;
   sprite.setOrigin(sprite.getLocalBounds().width/ 2, sprite.getLocalBounds().height/ 2);
@@ -14,15 +16,15 @@ GameObject::GameObject(float starting_x, float starting_y, float scale, sf::Text
   sprite.setPosition(starting_x, starting_y);
   sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
   this->scale(scale, scale);
-  this->texture = *n_texture;
-  sprite.setTexture(texture);
+  this->texture = n_texture;
+  sprite.setTexture(*texture);
   this->size = scale;
 }
 
 
 GameObject::GameObject(float starting_x, float starting_y, sf::Texture *n_texture) {
-  this->texture = *n_texture;
-  sprite.setTexture(texture);
+  this->texture = n_texture;
+  sprite.setTexture(*texture);
   sprite.setPosition(starting_x, starting_y);
   sprite.setOrigin(sprite.getLocalBounds().width / 2, (sprite.getLocalBounds().height / 2));
 }
@@ -35,8 +37,9 @@ GameObject &GameObject::operator=(const GameObject &other) {
   return *this;
 }
 
+
 GameObject::GameObject(const GameObject &other) : sprite(other.sprite), texture(other.texture) {
-  sprite.setTexture(texture);
+  sprite.setTexture(*texture);
   sprite.setPosition(other.sprite.getPosition());
 }
 
@@ -45,8 +48,8 @@ void GameObject::setPosition(float x, float y) {
 }
 
 void GameObject::setTexture(sf::Texture *texture) {
-  this->texture = *texture;
-  this->sprite.setTexture(this->texture) ;
+  this->texture = texture;
+  this->sprite.setTexture(*texture) ;
 }
 
 void GameObject::move(float x, float y) {

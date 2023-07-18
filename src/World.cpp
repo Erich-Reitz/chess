@@ -62,32 +62,28 @@ void World::handleUserReselectingPiece(const ValidPosition &pressedSquare) {
   handleMouseDownOnBoardWithNoSelectedPiece(pressedSquare) ;
 }
 
-
-
-bool sameColor(const Piece *a, const Piece *b) {
-  return a->color == b->color;
+void World::handleMouseDownOnPawnPromotionDialog(sf::Vector2f mousePos)  {
 }
+
 
 void World::handleMouseDownOnBoardWithSelectedPiece(const ValidPosition &pressedSquare) {
   assert(this->selectedPieceInformation.piece.has_value()) ;
-  Piece  *previouslySelectedPiece = this->selectedPieceInformation.piece.value() ;
-  std::optional<Piece *> pieceAtValidPosition = gameBoard.pieceAtPosition(pressedSquare) ;
-  if (pieceAtValidPosition.has_value() && sameColor(pieceAtValidPosition.value(), previouslySelectedPiece) ) {
-    handleUserReselectingPiece(pressedSquare);
-    return;
+  DrawablePiece  *previouslySelectedPiece = this->selectedPieceInformation.piece.value() ;
+  if (const auto pieceAtPressedSquare = gameBoard.pieceAtPosition(pressedSquare).value_or(nullptr)) {
+    if (pieceAtPressedSquare->color ==  previouslySelectedPiece->color)  {
+      handleUserReselectingPiece(pressedSquare);
+      return;
+    }
   }
   moveSelectedPiece(pressedSquare);
 }
 
-
 void World::handleMouseDownOnBoardWithNoSelectedPiece(const ValidPosition &pressedSquare) {
-  std::optional<Piece *>  piece = gameBoard.pieceAtPosition(pressedSquare) ;
-  if (!piece.has_value()) {
-    return;
-  }
-  if (piece.value()->color == this->gameBoard.colorToMove) {
-    auto placesCanMove = gameBoard.generateAllValidMovesForPieceAtPosition(pressedSquare);
-    this->selectedPieceInformation.setInformation(pressedSquare, piece.value(), placesCanMove);
+  if (const auto piece = gameBoard.pieceAtPosition(pressedSquare).value_or(nullptr)) {
+    if (piece->color == this->gameBoard.getColorToMove()) {
+      auto placesCanMove = gameBoard.generateAllValidMovesForPieceAtPosition(pressedSquare);
+      this->selectedPieceInformation.setInformation(pressedSquare, piece, placesCanMove);
+    }
   }
 }
 
@@ -97,7 +93,6 @@ void World::handleMouseDownOnSquare(const ValidPosition &pressedSquare) {
   }
   return handleMouseDownOnBoardWithNoSelectedPiece(pressedSquare);
 }
-
 void World::handleMouseDownOnBoard(sf::Vector2f mousePos) {
   std::optional<ValidPosition> pressedValidPosition  = gameBoard.getRowAndColOfMouse(mousePos);
   if (!pressedValidPosition.has_value()) {
@@ -105,27 +100,23 @@ void World::handleMouseDownOnBoard(sf::Vector2f mousePos) {
   }
   handleMouseDownOnSquare(pressedValidPosition.value());
 }
-
 void World::handleMouseDown(sf::Vector2f mousePos) {
   switch(this->worldState) {
   case WORLD_STATE::BOARD:
     this->handleMouseDownOnBoard(mousePos) ;
     break;
   case WORLD_STATE::PAWN_PROMOTION_DIALOG:
-    // this->handleMouseDownOnPawnPromotionDialog(mousePos) ;
+    this->handleMouseDownOnPawnPromotionDialog(mousePos) ;
     break;
   default:
     throw RuntimeError() ;
   }
 }
-
 void World::HandleInput(sf::Vector2f mousePos, bool mouseDown, bool mouseUp) {
   if (mouseDown) {
     handleMouseDown(mousePos) ;
   }
 }
-
-
 void World::Render(sf::RenderWindow &window) {
   this->m_viewCenter = window.getView().getCenter();
   this->m_viewSize = window.getView().getSize() ;
@@ -134,8 +125,5 @@ void World::Render(sf::RenderWindow &window) {
     window.draw(this->pawnPromotionDialog) ;
   }
 }
-
 void World::update(sf::Time deltaTime) {
 }
-
-

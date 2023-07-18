@@ -7,7 +7,7 @@
 #include <numeric>
 
 #include "BoardStructure.hpp"
-#include "Piece.hpp"
+#include "DrawablePiece.hpp"
 
 
 std::map<PieceType, std::string> piece_type_to_string = {
@@ -66,7 +66,9 @@ BoardStructure::BoardStructure(std::unordered_map<std::string, sf::Texture *> l_
   this->m_textures = l_textures;
   float initial_x_offset = 720.0;
   float initial_y_offset = 300.0;
+  this->board.resize(8); 
   for (int row = 0; row < 8; row++) {
+    this->board[row].resize(8); 
     for (int col = 0; col < 8; col++) {
       bool isSquareWhite = (row + col) % 2 == 0;
       std::string texture_name = isSquareWhite ? "light.png" : "dark.png";
@@ -78,8 +80,8 @@ BoardStructure::BoardStructure(std::unordered_map<std::string, sf::Texture *> l_
         std::string pieceTextureName = getTextureNameFromPieceType(isWhitePiece, pieceType.value()) ;
         pieceTexture = m_textures[pieceTextureName] ;
       }
-      board[row][col] = new Square(isSquareWhite, pos, initial_x_offset + col * 50, initial_y_offset + row * 50, 0.0625, pieceType,
-                                   m_textures[texture_name], pieceTexture);
+      board[row][col] = std::make_unique<DrawableSquare>(isSquareWhite, pos, initial_x_offset + col * 50, initial_y_offset + row * 50, 0.0625, pieceType,
+                                           m_textures[texture_name], pieceTexture);
     }
   }
 }
@@ -90,14 +92,17 @@ BoardStructure::BoardStructure(const BoardStructure &rhs) {
 
 
 BoardStructure &BoardStructure::operator=(const BoardStructure &rhs) {
-  board.resize(8);
-  for (int i = 0; i < 8; i++) {
-    board[i].resize(8);
-    for (int j = 0; j < 8; j++) {
-      board[i][j] = new Square(*rhs.board[i][j]);
+    if (this != &rhs) {  // prevent self-assignment
+        // Ensure the sizes are equal before deleting and reassigning
+        board.resize(rhs.board.size());
+        for (int i = 0; i < board.size(); i++) {
+            board[i].resize(rhs.board[i].size());
+            for (int j = 0; j < board[i].size(); j++) {
+                board[i][j] = std::make_unique<DrawableSquare>(*rhs.board[i][j]);  // assign new object
+            }
+        }
     }
-  }
-  return *this ;
+    return *this;
 }
 
 void BoardStructure::draw(sf::RenderTarget &target, sf::RenderStates states) const {
@@ -129,12 +134,12 @@ std::optional<ValidPosition> BoardStructure::getRowAndColOfMouse(const sf::Vecto
   return {};
 }
 
-Square *BoardStructure::squareAt(const ValidPosition &coord) const {
-  return this->board.at(coord.r).at(coord.c);
+DrawableSquare *BoardStructure::squareAt(const ValidPosition &coord) const {
+  return this->board.at(coord.r).at(coord.c).get(); 
 }
 
-Square *BoardStructure::squareAt(int i, int j) const {
-  return this->board.at(i).at(j);
+DrawableSquare *BoardStructure::squareAt(int i, int j) const {
+  return this->board.at(i).at(j).get(); 
 }
 
 bool BoardStructure::unmovedRookAtPosition(const ValidPosition &pos) const {
@@ -146,7 +151,7 @@ bool BoardStructure::unmovedRookAtPosition(const ValidPosition &pos) const {
   return false;
 }
 
-std::optional<Piece *> BoardStructure::pieceAtPosition(const ValidPosition &pos) const {
+std::optional<DrawablePiece *> BoardStructure::pieceAtPosition(const ValidPosition &pos) const {
   return this->squareAt(pos)->getPiece();
 }
 

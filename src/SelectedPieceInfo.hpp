@@ -5,10 +5,10 @@
 #include "Move.hpp"
 struct SelectedPieceInformation {
   std::optional<ValidPosition> coordinates;
-  std::optional<Piece *> piece;
+  std::optional<DrawablePiece *> piece;
   std::optional<std::vector<Move>> placesCanMove;
 
-  void setInformation(const std::optional<ValidPosition> &_coordinates, Piece *_piece, const std::vector<Move> &validMoves) {
+  void setInformation(const std::optional<ValidPosition> &_coordinates, DrawablePiece *_piece, const std::vector<Move> &validMoves) {
     this->coordinates = _coordinates;
     this->piece = _piece;
     this->placesCanMove = validMoves;
