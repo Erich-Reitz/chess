@@ -55,7 +55,6 @@ void World::moveSelectedPiece(const ValidPosition &destination) {
 
 void World::clearSelectedPieceInformation() {
   this->selectedPieceInformation.reset();
-  this->gameBoard.resetAllSquaresColor();
 }
 
 void World::handleUserReselectingPiece(const ValidPosition &pressedSquare) {

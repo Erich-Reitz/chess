@@ -28,8 +28,6 @@ class BoardStructure : public sf::Drawable {
   std::optional<Piece *> pieceAtPosition(const ValidPosition &pos) const;
   Square *squareAt(const ValidPosition &coord) const;
 
-
-
   bool unmovedRookAtPosition(const ValidPosition &pos) const;
   bool kingIsAttacked(PieceColor colorKingWeAreConcernedAbout) const ;
   ValidPosition getKing(PieceColor color) const ;

@@ -133,6 +133,9 @@ Square *BoardStructure::squareAt(const ValidPosition &coord) const {
   return this->board.at(coord.r).at(coord.c);
 }
 
+Square *BoardStructure::squareAt(int i, int j) const {
+  return this->board.at(i).at(j);
+}
 
 bool BoardStructure::unmovedRookAtPosition(const ValidPosition &pos) const {
   const auto pieceAtSquare = pieceAtPosition(pos) ;
@@ -145,5 +148,17 @@ bool BoardStructure::unmovedRookAtPosition(const ValidPosition &pos) const {
 
 std::optional<Piece *> BoardStructure::pieceAtPosition(const ValidPosition &pos) const {
   return this->squareAt(pos)->getPiece();
+}
+
+ValidPosition BoardStructure::getKing(PieceColor color) const {
+  for (int i = 0; i < 8 ; i++) {
+    for (int j = 0; j < 8; j++) {
+      if (const auto piece = squareAt(i, j)->getPiece().value_or(nullptr)) {
+        if (color == piece->color && piece->type == PieceType::KING) {
+          return ValidPosition(i, j)  ;
+        }
+      }
+    }
+  }
 }
 

@@ -54,17 +54,6 @@ bool Board::unmovedRookAtPosition(const ValidPosition &pos) const {
 
 
 
-ValidPosition Board::getKing(PieceColor color) const {
-  for (int i = 0; i < 8 ; i++) {
-    for (int j = 0; j < 8; j++) {
-      if (const auto piece = squareAt(i, j)->getPiece().value_or(nullptr)) {
-        if (color == piece->color && piece->type == PieceType::KING) {
-          return ValidPosition(i, j)  ;
-        }
-      }
-    }
-  }
-}
 
 std::vector<ValidPosition> generateAllValidPositions() {
   std::vector<ValidPosition> allPositions;
@@ -84,7 +73,7 @@ bool moveCapturesPosition(const Move &move, const ValidPosition &pos) {
 }
 
 bool Board::king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const {
-  const auto positionOfColorKingWeAreConcernedAbout = getKing(colorKingWeAreConcernedAbout);
+  const auto positionOfColorKingWeAreConcernedAbout = board.getKing(colorKingWeAreConcernedAbout);
   const auto opposite_color_of_king_we_are_concerned_about = opposite_color(colorKingWeAreConcernedAbout) ;
   for (const auto &position : generateAllValidPositions()) {
     auto allValidMoves = generateAllValidMovesForPieceAtPosition(position, false) ;
@@ -109,18 +98,18 @@ void Board::processMove(const Move &move) {
     if (move.promoteTo == PieceType::QUEEN) {
       // auto squarePosition = this->squareAt(move)
       // auto *piece = new Piece(currentColor, PieceType::QUEEN, ) ;
-      movePiece(move.getOriginalSquare(), move.getDestination()) ;
+      board.movePiece(move.getOriginalSquare(), move.getDestination()) ;
     }
     break;
   }
   case MoveType::CASTLE: {
     const auto current_pos = move.castlee.value().first;
     const auto dest = move.castlee.value().second;
-    movePiece(current_pos, dest);
+    board.movePiece(current_pos, dest);
     break;
   }
   case MoveType::NORMAL:
-    movePiece(move.getOriginalSquare(), move.getDestination());
+    board.movePiece(move.getOriginalSquare(), move.getDestination());
     break;
   default:
     throw RuntimeError() ;
@@ -129,9 +118,7 @@ void Board::processMove(const Move &move) {
   this->colorToMove = opposite_color(this->colorToMove) ;
 }
 
-void Board::movePiece(const ValidPosition &currentPosition, const ValidPosition &destination) {
-  return board.movePiece(currentPosition, destination) ;
-}
+
 
 using move_function = std::function<std::vector<Move> (const Board *, const ValidPosition &, const Piece *)> ;
 
@@ -204,17 +191,6 @@ Square *Board::squareAt(int i, int j) const {
   return this->board.squareAt(ValidPosition(i, j) );
 }
 
-void Board::setSquareColor(const ValidPosition &position, sf::Color color) {
-  // this->squareAt(position)->shape.set
-}
-
-void Board::resetAllSquaresColor() {
-  // for (auto &row : this->board) {
-  //     for(auto &square : row) {
-  //         square->setOriginalColor();
-  //     }
-  // }
-}
 
 
 

@@ -24,11 +24,6 @@ class Board : public sf::Drawable {
 
   void processMove(const Move &move) ;
 
-  void movePiece(const ValidPosition &currentPosition, const ValidPosition &destination) ;
-  void setSquareColor(const ValidPosition &position, sf::Color color) ;
-  void resetAllSquaresColor();
-
-
   std::optional<Piece *> pieceAtPosition(const ValidPosition &pos) const;
   bool hasPieceAtPosition(const ValidPosition &pos) const ;
   std::vector<Move> generateAllValidMovesForPieceAtPosition(const ValidPosition &current, bool careIfPlacesKingInCheck=true) const;
@@ -45,6 +40,6 @@ class Board : public sf::Drawable {
   bool legal_move(const Move &move, bool careIfPlacesKingInCheck) const ;
   Square *squareAt(const ValidPosition &coord) const;
   Square *squareAt(int row, int col) const ;
-  ValidPosition getKing(PieceColor color) const ;
+
 
 };
