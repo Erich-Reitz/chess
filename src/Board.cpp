@@ -47,62 +47,50 @@ std::optional<ValidPosition> Board::getRowAndColOfMouse(const sf::Vector2f mouse
 
 
 bool Board::unmovedRookAtPosition(const ValidPosition &pos) const {
-  const auto pieceAtSquare = pieceAtPosition(pos) ;
-  if (pieceAtSquare.has_value()) {
-    const auto piece = pieceAtSquare.value();
-    return piece->type == PieceType::ROOK && !piece->hasMoved();
-  }
-  return false;
+  return board.unmovedRookAtPosition(pos);
 }
 
 
 
 
-std::set<std::pair<ValidPosition, Piece *>> Board::getAllPieces(PieceColor searchColor) const {
-  std::set<std::pair<ValidPosition, Piece *>> pieces;
-  for (int i = 0; i < 8 ; i++) {
-    for (int j = 0; j < 8; j++) {
-      if (squareAt(i, j)->getPiece().has_value()) {
-        auto piece = squareAt(i, j)->getPiece().value() ;
-        auto pos = ValidPosition(i, j)  ;
-        auto pieceInfo = std::make_pair(pos, piece) ;
-        if (searchColor == piece->color) {
-          pieces.insert(pieceInfo);
-        }
-      }
-    }
-  }
-  return pieces;
-}
 
-std::pair<ValidPosition, Piece *> Board::getKing(PieceColor color) const {
+ValidPosition Board::getKing(PieceColor color) const {
   for (int i = 0; i < 8 ; i++) {
     for (int j = 0; j < 8; j++) {
-      if (squareAt(i, j)->getPiece().has_value()) {
-        auto piece = squareAt(i, j)->getPiece().value() ;
-        auto pos = ValidPosition(i, j)  ;
-        auto pieceInfo = std::make_pair(pos, piece) ;
+      if (const auto piece = squareAt(i, j)->getPiece().value_or(nullptr)) {
         if (color == piece->color && piece->type == PieceType::KING) {
-          return pieceInfo ;
+          return ValidPosition(i, j)  ;
         }
       }
     }
   }
 }
 
+std::vector<ValidPosition> generateAllValidPositions() {
+  std::vector<ValidPosition> allPositions;
+  for (int i = 0; i <= 7; i++) {
+    for (int j = 0; j <= 7; ++j) {
+      allPositions.push_back(ValidPosition(i, j));
+    }
+  }
+  return allPositions;
+}
 
+bool moveCapturesPosition(const Move &move, const ValidPosition &pos) {
+  if (!move.capturee.has_value()) {
+    return false;
+  }
+  return move.capturee.value() == pos;
+}
 
 bool Board::king_is_attacked(PieceColor colorKingWeAreConcernedAbout) const {
-  const auto positionOfColorKingWeAreConcernedAbout = getKing(colorKingWeAreConcernedAbout).first ;
+  const auto positionOfColorKingWeAreConcernedAbout = getKing(colorKingWeAreConcernedAbout);
   const auto opposite_color_of_king_we_are_concerned_about = opposite_color(colorKingWeAreConcernedAbout) ;
-  const auto all_pieces = getAllPieces(opposite_color_of_king_we_are_concerned_about) ;
-  for (const auto &piece : all_pieces) {
-    auto allValidMoves = generateAllValidMovesForPiece(piece.first, false) ;
+  for (const auto &position : generateAllValidPositions()) {
+    auto allValidMoves = generateAllValidMovesForPieceAtPosition(position, false) ;
     for (auto valid_move : allValidMoves) {
-      if (valid_move.capturee.has_value() ) {
-        if (valid_move.capturee.value() == positionOfColorKingWeAreConcernedAbout) {
-          return true;
-        }
+      if (moveCapturesPosition(valid_move, positionOfColorKingWeAreConcernedAbout)) {
+        return true;
       }
     }
   }
@@ -142,14 +130,7 @@ void Board::processMove(const Move &move) {
 }
 
 void Board::movePiece(const ValidPosition &currentPosition, const ValidPosition &destination) {
-  std::optional<Piece *> userSelectedPiece = pieceAtPosition(currentPosition);
-  if (!userSelectedPiece.has_value()) {
-    throw CurrentSquareDoesNotContainPiece();
-  }
-  Piece *movingPiece = userSelectedPiece.value();
-  this->squareAt(currentPosition)->removePiece();
-  this->squareAt(destination)->setPiece(movingPiece);
-  movingPiece->timesMoved += 1;
+  return board.movePiece(currentPosition, destination) ;
 }
 
 using move_function = std::function<std::vector<Move> (const Board *, const ValidPosition &, const Piece *)> ;
@@ -170,7 +151,7 @@ move_function move_gen_function(PieceType type) {
 }
 
 
-std::vector<Move> Board::generateAllValidMovesForPiece(const ValidPosition &current,  bool careIfPlacesKingInCheck) const {
+std::vector<Move> Board::generateAllValidMovesForPieceAtPosition(const ValidPosition &current,  bool careIfPlacesKingInCheck) const {
   const auto piece = pieceAtPosition(current) ;
   if (!piece.has_value()) {
     return {};
@@ -200,7 +181,7 @@ bool Board::legal_move(const Move &move, bool careIfPlacesKingInCheck) const {
 
 
 std::optional<Piece *> Board::pieceAtPosition(const ValidPosition &pos) const {
-  return this->squareAt(pos)->getPiece();
+  return this->board.pieceAtPosition(pos);
 }
 
 bool Board::hasPieceAtPosition(const ValidPosition &pos) const {
@@ -208,16 +189,10 @@ bool Board::hasPieceAtPosition(const ValidPosition &pos) const {
 }
 
 bool Board::hasPieceAtPosition(const ValidPosition &pos, const PieceColor target_color) const {
-  std::optional<Piece *> piece;
-  try {
-    piece = this->squareAt(pos)->getPiece();
-  } catch (const std::out_of_range &exp) {
-    return false;
+  if (const auto piece = this->pieceAtPosition(pos).value_or(nullptr)) {
+    return piece->color == target_color;
   }
-  if (! piece.has_value() ) {
-    return false;
-  }
-  return piece.value()->color == target_color;
+  return false;
 }
 
 
@@ -226,8 +201,7 @@ Square *Board::squareAt(const ValidPosition &coord) const {
 }
 
 Square *Board::squareAt(int i, int j) const {
-  ValidPosition pos = ValidPosition(i, j) ;
-  return this->board.squareAt(pos);
+  return this->board.squareAt(ValidPosition(i, j) );
 }
 
 void Board::setSquareColor(const ValidPosition &position, sf::Color color) {

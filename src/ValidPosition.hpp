@@ -32,6 +32,11 @@ class ValidPosition {
     return this->c < rhs.c;
   }
 
+  explicit operator bool() const {
+    return true;
+  }
+
+
   bounded_value<int, 0,  7>   r;
   bounded_value<int, 0,  7>    c;
 };

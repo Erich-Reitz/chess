@@ -10,35 +10,24 @@
 #include "Piece.hpp"
 
 
+std::map<PieceType, std::string> piece_type_to_string = {
+  {PieceType::ROOK, "rook"},
+  {PieceType::BISHOP, "bishop"},
+  {PieceType::QUEEN, "queen"},
+  {PieceType::KING, "king"},
+  {PieceType::KNIGHT, "knight"},
+  {PieceType::PAWN, "pawn"},
+};
+
 std::string getTextureNameFromPieceType(bool isWhite, PieceType _type) {
   std::string piece_color_string = isWhite ? "w" : "b";
-  std::string piece_name_string;
-  switch (_type) {
-  case PieceType::ROOK:
-    piece_name_string = "rook";
-    break;
-  case PieceType::BISHOP:
-    piece_name_string = "bishop";
-    break;
-  case PieceType::QUEEN:
-    piece_name_string = "queen";
-    break;
-  case PieceType::KING:
-    piece_name_string = "king";
-    break;
-  case PieceType::KNIGHT:
-    piece_name_string = "knight";
-    break;
-  case PieceType::PAWN:
-    piece_name_string = "pawn";
-    break;
-  default:
+  if (piece_type_to_string.count(_type) == 0) {
     throw std::invalid_argument("Invalid Piece Type");
   }
+  std::string piece_name_string = piece_type_to_string[_type];
   std::string texture_path = piece_color_string + "_" + piece_name_string + "_2x_ns.png";
   return texture_path;
 }
-
 
 std::optional<PieceType> initial_piece_type(ValidPosition position) {
   auto row = position.r;
@@ -119,6 +108,16 @@ void BoardStructure::draw(sf::RenderTarget &target, sf::RenderStates states) con
   }
 }
 
+void BoardStructure::movePiece(const ValidPosition &currentPosition, const ValidPosition &destination) {
+  if (const auto userSelectedPiece = pieceAtPosition(currentPosition).value_or(nullptr)) {
+    this->squareAt(currentPosition)->removePiece();
+    this->squareAt(destination)->setPiece(userSelectedPiece);
+    userSelectedPiece->timesMoved += 1;
+  } else {
+    throw CurrentSquareDoesNotContainPiece();
+  }
+}
+
 std::optional<ValidPosition> BoardStructure::getRowAndColOfMouse(const sf::Vector2f mousePos) const {
   for (const auto &row : this->board) {
     for (const auto &square : row) {
@@ -135,6 +134,16 @@ Square *BoardStructure::squareAt(const ValidPosition &coord) const {
 }
 
 
-Square *BoardStructure::squareAt(int row, int col) const {
-  return this->board.at(row).at(col);
+bool BoardStructure::unmovedRookAtPosition(const ValidPosition &pos) const {
+  const auto pieceAtSquare = pieceAtPosition(pos) ;
+  if (pieceAtSquare.has_value()) {
+    const auto piece = pieceAtSquare.value();
+    return piece->type == PieceType::ROOK && !piece->hasMoved();
+  }
+  return false;
 }
+
+std::optional<Piece *> BoardStructure::pieceAtPosition(const ValidPosition &pos) const {
+  return this->squareAt(pos)->getPiece();
+}
+
