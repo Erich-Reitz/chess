@@ -29,7 +29,8 @@ class GameObject : public sf::Drawable {
 
   // getters
 
-  sf::FloatRect getShape() const;
+  sf::FloatRect globalBounds() const;
+
 
   sf::Vector2f getPosition() const;
  protected:

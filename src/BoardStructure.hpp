@@ -33,6 +33,6 @@ class BoardStructure : public sf::Drawable {
 
  private:
   std::unordered_map<std::string, sf::Texture *> m_textures ;
-  std::vector<std::vector<std::unique_ptr<DrawableSquare>>> board; 
+  std::vector<std::vector<std::unique_ptr<DrawableSquare>>> board;
   DrawableSquare *squareAt(int i, int j) const;
 };

@@ -14,13 +14,14 @@
 class DrawableSquare : public GameObject {
  public:
   DrawableSquare() = default;
-  DrawableSquare(bool white, ValidPosition position, float xPos, float yPos, float size, std::optional<PieceType> pieceType,
+  DrawableSquare(bool white, float xPos, float yPos, float size, std::optional<PieceType> pieceType, std::optional<PieceColor> pieceColor,
+
                  sf::Texture *m_texture,
                  std::optional<sf::Texture *> piece_texture);
   DrawableSquare(const DrawableSquare &rhs);
   DrawableSquare &operator=(const DrawableSquare &rhs);
   ~DrawableSquare();
-  std::optional<DrawablePiece *> getPiece() const;
+  std::optional<DrawablePiece *> piece() const;
 
 
   void setPiece(DrawablePiece *piece);
@@ -30,10 +31,6 @@ class DrawableSquare : public GameObject {
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 
-
-  sf::FloatRect getBoundaries() const;
-  ValidPosition getPosition() const;
-
   void setPieceSize();
 
  protected:
@@ -41,7 +38,6 @@ class DrawableSquare : public GameObject {
  private:
   std::optional<DrawablePiece *> m_piece;
   std::unordered_map<std::string, sf::Texture *> m_textures;
-  ValidPosition position;
 
 
 };

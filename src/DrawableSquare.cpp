@@ -2,13 +2,13 @@
 
 #include "chess_exceptions.hpp"
 
-std::optional<DrawablePiece *> initial_piece(ValidPosition position, float squareXPos, float squareYPos, std::optional<PieceType> pieceType,
+std::optional<DrawablePiece *> initial_piece(float squareXPos, float squareYPos, std::optional<PieceType> pieceType,
+    std::optional<PieceColor> pieceColor,
     std::optional<sf::Texture *> piece_texture) {
   if (!pieceType) {
     return {};
   }
-  bool isWhitePiece = position.r == 6 || position.r == 7;
-  return new DrawablePiece(isWhitePiece, *pieceType, squareXPos, squareYPos, piece_texture.value());
+  return new DrawablePiece(pieceColor.value(), *pieceType, squareXPos, squareYPos, piece_texture.value());
 }
 
 DrawableSquare::~DrawableSquare() {
@@ -18,11 +18,11 @@ DrawableSquare::~DrawableSquare() {
 }
 
 
-DrawableSquare::DrawableSquare(bool white, ValidPosition position, float xPos, float yPos, float size, std::optional<PieceType> pieceType,
+DrawableSquare::DrawableSquare(bool white,  float xPos, float yPos, float size, std::optional<PieceType> pieceType,
+                               std::optional<PieceColor> pieceColor,
                                sf::Texture *m_texture, std::optional<sf::Texture *> piece_texture) : GameObject(xPos, yPos, size, m_texture) {
-  this->position = position;
   this->white = white;
-  this->m_piece = initial_piece(position, xPos+25, yPos+25, pieceType, piece_texture);
+  this->m_piece = initial_piece( xPos+25, yPos+25, pieceType,pieceColor,  piece_texture);
   if (this->m_piece.has_value()) {
     this->setPiece(this->m_piece.value()) ;
   }
@@ -32,8 +32,7 @@ void DrawableSquare::setPieceSize() {
   this->m_piece.value()->setRadius(size / 2.0);
 }
 
-DrawableSquare::DrawableSquare(const DrawableSquare &rhs) : GameObject(rhs), white(rhs.white), m_piece(rhs.m_piece),
-  position(rhs.position) {
+DrawableSquare::DrawableSquare(const DrawableSquare &rhs) : GameObject(rhs), white(rhs.white), m_piece(rhs.m_piece) {
   if (rhs.m_piece) {
     m_piece = std::make_optional<DrawablePiece *>(new DrawablePiece(**rhs.m_piece));
   } else {
@@ -44,7 +43,6 @@ DrawableSquare::DrawableSquare(const DrawableSquare &rhs) : GameObject(rhs), whi
 DrawableSquare &DrawableSquare::operator=(const DrawableSquare &rhs) {
   if (this != &rhs) {
     white = rhs.white;
-    position = rhs.position;
     if (rhs.m_piece) {
       m_piece = std::make_optional<DrawablePiece *>(new DrawablePiece(**rhs.m_piece));
     } else {
@@ -61,11 +59,7 @@ void DrawableSquare::draw(sf::RenderTarget &target) const {
   }
 }
 
-sf::FloatRect DrawableSquare::getBoundaries() const {
-  return sprite.getGlobalBounds();
-}
-
-std::optional<DrawablePiece *> DrawableSquare::getPiece() const {
+std::optional<DrawablePiece *> DrawableSquare::piece() const {
   return this->m_piece;
 }
 
@@ -79,10 +73,5 @@ void DrawableSquare::setPiece(DrawablePiece *_piece) {
 void DrawableSquare::removePiece() {
   this->m_piece = std::nullopt;
 }
-
-ValidPosition DrawableSquare::getPosition() const {
-  return position;
-}
-
 void DrawableSquare::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 }

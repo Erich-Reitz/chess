@@ -60,7 +60,7 @@ void GameObject::flipDirection() {
   sprite.setRotation(sprite.getRotation() + 180);
 }
 
-sf::FloatRect GameObject::getShape() const {
+sf::FloatRect GameObject::globalBounds() const {
   return sprite.getGlobalBounds();
 }
 

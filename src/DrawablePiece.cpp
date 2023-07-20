@@ -12,49 +12,13 @@
 
 DrawablePiece::~DrawablePiece() = default;;
 
-DrawablePiece::DrawablePiece(bool _white, PieceType _type, float squareXPos, float squareYPos,
+
+DrawablePiece::DrawablePiece(PieceColor pieceColor, PieceType type, float squareXPos, float squareYPos,
                              sf::Texture *texture  ) : GameObject(squareXPos, squareYPos,
-                                   .0625, texture)  {
-  if (_white) {
-    this->color = PieceColor::WHITE;
-  } else {
-    this->color = PieceColor::BLACK;
-  }
-  this->type = _type;
-  std::string piece_color_string;
-  if (_white) {
-    piece_color_string = "w";
-  } else {
-    piece_color_string = "b";
-  }
-  std::string piece_name_string ;
-  switch (_type) {
-  case PieceType::ROOK:
-    piece_name_string = "rook";
-    break;
-  case PieceType::BISHOP:
-    piece_name_string = "bishop";
-    break;
-  case PieceType::QUEEN:
-    piece_name_string = "queen";
-    break;
-  case PieceType::KING:
-    piece_name_string = "king";
-    break;
-  case PieceType::KNIGHT:
-    piece_name_string = "knight";
-    break;
-  case PieceType::PAWN:
-    piece_name_string = "pawn";
-    break;
-  default:
-    throw PieceTypeSwitchFallthrough();
-  }
-  this->timesMoved = 0;
-  const std::string texture_path = "assets/textures/pieces/no_shadow/2x/" + piece_color_string + "_" + piece_name_string  +"_2x_ns.png";
+                                   .0625, texture), Piece(pieceColor, type) {
 }
 
-DrawablePiece::DrawablePiece(const DrawablePiece &rhs) : GameObject(rhs), timesMoved(rhs.timesMoved), color(rhs.color), type(rhs.type) {
+DrawablePiece::DrawablePiece(const DrawablePiece &rhs) : GameObject(rhs), Piece(rhs) {
 }
 
 
@@ -84,11 +48,6 @@ void DrawablePiece::setRadius(float radius) {
 
 void DrawablePiece::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   target.draw(sprite);
-}
-
-
-bool DrawablePiece::hasMoved() const {
-  return this->timesMoved != 0;
 }
 
 
